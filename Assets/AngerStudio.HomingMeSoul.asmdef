@@ -1,0 +1,16 @@
+{
+    "name": "AngerStudio.HomingMeSoul",
+    "references": [
+        "BA_Studio_StatePattern",
+        "SimpleInput",
+        "NoBrainer_GlobalVariables"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}
