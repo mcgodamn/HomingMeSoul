@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61db637d76328ba4681ca91b595923ad, type: 3}
   m_Name: MaxPlayers
   m_EditorClassIdentifier: 
-  value: 0
+  value: 8
   readOnly: 1
   description: 
