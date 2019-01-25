@@ -1,0 +1,15 @@
+{
+    "name": "VariableSystem",
+    "references": [
+        "BA_Studio_General",
+        "BA_Studio_SingletonAttachment"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}

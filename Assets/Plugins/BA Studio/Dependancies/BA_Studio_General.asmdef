@@ -1,0 +1,8 @@
+{
+    "name": "BA_Studio_General",
+    "references": [
+        "NoBrainer_GlobalVariables"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": []
+}

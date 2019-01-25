@@ -1,0 +1,16 @@
+{
+    "name": "NoBrainer_GlobalVariables Editor_Variable",
+    "references": [
+        "NoBrainer_GlobalVariables"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}

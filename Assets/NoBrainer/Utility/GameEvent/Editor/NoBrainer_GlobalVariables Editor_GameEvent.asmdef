@@ -1,0 +1,11 @@
+{
+    "name": "NoBrainer_GlobalVariables Editor_GameEvent",
+    "references": [
+        "NoBrainer_GlobalVariables",
+        "NoBrainer_GlobalVariables Editor_Variable"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": []
+}

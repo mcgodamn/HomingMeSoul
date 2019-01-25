@@ -1,0 +1,10 @@
+{
+    "name": "BA_Studio_Dependancies_TagSelector_Editor",
+    "references": [
+        "BA_Studio_General"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": []
+}

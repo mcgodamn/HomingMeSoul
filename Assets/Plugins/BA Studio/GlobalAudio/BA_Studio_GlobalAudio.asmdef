@@ -1,0 +1,9 @@
+{
+    "name": "BA_Studio_GlobalAudio",
+    "references": [
+        "NoBrainer_GlobalVariables",
+        "BA_Studio_SingletonAttachment"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": []
+}
