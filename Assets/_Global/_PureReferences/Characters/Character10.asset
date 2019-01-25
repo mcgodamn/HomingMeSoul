@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 317c25486668bce4dbfa60ef8151c635, type: 3}
-  m_Name: Character_StaminaDecayRate
+  m_Script: {fileID: 11500000, guid: da4484a873d6f3e43a3f05e43829a0c6, type: 3}
+  m_Name: Character10
   m_EditorClassIdentifier: 
-  value: 0.01
+  value: {fileID: 0}
   readOnly: 1
   description: 
