@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using BA_Studio.StatePattern;
 
-public class AppCore : MonoBehaviour
+namespace AngerStudio.HomingMeSoul.Core
 {
-    
-    StateMachine<AppCore> stateMachine;
 
-    void Awake ()
+    public class AppCore : MonoBehaviour
     {
-        stateMachine = new StateMachine<AppCore>(this);
+        
+        StateMachine<AppCore> stateMachine;
+
+        void Awake ()
+        {
+            stateMachine = new StateMachine<AppCore>(this);
+        }
+        
     }
-    
 }
