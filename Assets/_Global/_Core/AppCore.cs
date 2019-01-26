@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using BA_Studio.StatePattern;
@@ -9,6 +10,18 @@ namespace AngerStudio.HomingMeSoul.Core
 
     public class AppCore : MonoBehaviour
     {
+        HashSet<KeyCode> blocked = new HashSet<KeyCode> 
+        {
+            KeyCode.LeftAlt, KeyCode.RightAlt,
+            KeyCode.LeftWindows, KeyCode.RightWindows,
+            KeyCode.Escape,
+            KeyCode.F1, KeyCode.F2, KeyCode.F3, KeyCode.F4, KeyCode.F5, KeyCode.F6,
+            KeyCode.F7, KeyCode.F8, KeyCode.F9, KeyCode.F10, KeyCode.F11, KeyCode.F12,
+            KeyCode.ScrollLock, KeyCode.Print, KeyCode.Break
+        };
+
+        HashSet<KeyCode> allowed;
+
         [SerializeField]
         AppView m_View;
 
@@ -24,6 +37,9 @@ namespace AngerStudio.HomingMeSoul.Core
             SingletonBehaviourLocator<AppCore>.Set(this);
 
             avaliableColors = new List<Color>(config.playerColorPool);
+
+            allowed = new HashSet<KeyCode>((System.Enum.GetValues(typeof(KeyCode)) as KeyCode[]).Except(blocked));
+
         }
 
         public Dictionary<KeyCode, Color> activePlayers;
@@ -31,20 +47,17 @@ namespace AngerStudio.HomingMeSoul.Core
 
         public void ReceiveInput()
         {
-            foreach (KeyCode vKey in System.Enum.GetValues(typeof(KeyCode)))
+            foreach (KeyCode vKey in allowed)
             {
                 if (SimpleInput.GetKeyDown(vKey))
                 {
-                    if (activePlayers.ContainsKey(vKey))
+                    if (!activePlayers.Any(kvp => kvp.Key == vKey)) AddPlayer(vKey);
+                    else
                     {
                         avaliableColors.Add(activePlayers[vKey]);
                         activePlayers.Remove(vKey);
-                        m_View.RemovePlayerCard(vKey);
-                    }
-                    else
-                    {
-                        AddPlayer(vKey);
-                    }
+                        m_View.RemovePlayerCard(vKey);                        
+                    }             
                 }
             }
         }
