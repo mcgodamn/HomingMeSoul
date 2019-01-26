@@ -94,7 +94,9 @@ namespace AngerStudio.HomingMeSoul.Game
                 if (Players[player].Stamina.Value > 0)
                     Players[player].Stamina.Value -= decentValue;
                 else
+                {
                     Players[player].Stamina.Value = 0;
+                }
             }
         }
 

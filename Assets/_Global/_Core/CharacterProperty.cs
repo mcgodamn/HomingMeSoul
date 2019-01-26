@@ -37,8 +37,9 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public void PlayerMove()
         {
-            transform.position = transform.position + (gravityAccelator + ForwardVector) * Time.deltaTime;
-            if (Stamina <= 0) ForwardVector = Vector3.zero;
+            ForwardVector += gravityAccelator;
+            transform.position = transform.position + ForwardVector * Time.deltaTime;
+            if (Stamina <= 0) ForwardVector = gravityAccelator;
         }
 
         public float GetSpeed()
