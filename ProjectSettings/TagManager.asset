@@ -4,10 +4,14 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - location
-  - Supply(Book)
-  - Supply(Food)
-  - Supply(Money)
+  - Pickup1
+  - Pickup2
+  - Pickup3
+  - Pickup4
+  - Pickup5
+  - Pickup6
+  - Pickup7
+  - Pickup8
   layers:
   - Default
   - TransparentFX

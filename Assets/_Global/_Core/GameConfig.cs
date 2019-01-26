@@ -10,13 +10,9 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public float[] gravityZoneSteps = {5, 10, 15, 20, 25};
 
-        public float supplyWeightLV1 = 0.7f, supplyWeightLV2 = 0.2f, supplyWeightLV3 = 0.1f;
+        public Sprite[] forbiddenPickupTypes;
 
-        public int bookWeight = 1, moneyWeight = 1, foodWeight = 1;
-
-        public bool forbidBook1, forbidBook2, forbidBook3,
-                    forbidFood1, forbidFood2, forbidFood3,
-                    forbidMoney1, forbidMoney2, forbidMoney3;
+        public float treasureChance = 0.05f;
 
         public float rimRewardFactor = 1.01f;
 

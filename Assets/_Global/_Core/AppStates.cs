@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using BA_Studio.StatePattern;
 using UnityEngine;
+using DG.Tweening;
 
 namespace AngerStudio.HomingMeSoul.Core
 {
@@ -15,11 +16,50 @@ namespace AngerStudio.HomingMeSoul.Core
 
         public override void OnEntered ()
         {
-            ChangeState(new AwaitingPlayer(StateMachine));
+            ChangeState(new TitleScreen(StateMachine));
         }
 
         public override void Update ()
         {
+        }
+    }
+
+    public class TitleScreen : State<AppCore>
+    {
+        public TitleScreen (StateMachine<AppCore> machine) : base(machine)
+        {
+        }
+
+        public override void OnEntered ()
+        {
+             Context.titleGroup.DOFade(1, 0.43f).OnComplete(() => ChangeState(new TitleScreen_ON(StateMachine)));    
+        }
+
+        public override void Update ()
+        {
+        }
+    }
+    
+    public class TitleScreen_ON : State<AppCore>
+    {
+        public TitleScreen_ON (StateMachine<AppCore> machine) : base(machine)
+        {
+        }
+
+        public override void OnEntered ()
+        {
+
+        }
+
+        public override void Update ()
+        {
+            foreach (KeyCode k in Context.allowedKeys)
+            {
+                if (SimpleInput.GetKey(k))
+                    Context.titleT.DOLocalMoveY(Context.titleT.localPosition.y + 900, 0.75f, true)
+                        .OnComplete(() => Context.titleT.gameObject.SetActive(false))
+                        .OnComplete(() => ChangeState(new AwaitingPlayer(StateMachine)));      
+            }
         }
     }
 
@@ -37,15 +77,9 @@ namespace AngerStudio.HomingMeSoul.Core
         {
             foreach (KeyCode vKey in Context.allowedKeys)
             {
-                if (SimpleInput.GetKeyUp(vKey))
+                if (SimpleInput.GetKeyDown(vKey))
                 {
-                    if (!Context.activePlayers.Any(kvp => kvp.Key == vKey)) Context.AddPlayer(vKey);
-                    else
-                    {
-                        Context.avaliableColors.Add(Context.activePlayers[vKey]);
-                        Context.activePlayers.Remove(vKey);
-                        Context.m_View.RemovePlayerCard(vKey);                        
-                    }
+                    Context.TogglePlayer(vKey);
                 }
             }
         }

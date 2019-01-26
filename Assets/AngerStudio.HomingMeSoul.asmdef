@@ -6,7 +6,8 @@
         "NoBrainer_GlobalVariables",
         "BA_Studio_SingletonLocator",
         "Unity.TextMeshPro",
-        "BA_Studio_GameObjectPool"
+        "BA_Studio_GameObjectPool",
+        "BA_Studio_Main"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
