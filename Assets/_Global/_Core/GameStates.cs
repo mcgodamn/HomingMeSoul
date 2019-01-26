@@ -37,6 +37,9 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public override void Update ()
         {
+            //Rotate the supply belt
+            for (int i = 0; i < Context.gravityZones.Value.Length; i++) Context.gravityZones.Value[i].transform.Rotate(Vector3.back * Context.config.Value.gravityZonesRevolutionSpeeds[i] * Time.deltaTime);
+
             //Spawning supplies...
             //Controlling bad guys...
             //Random events...

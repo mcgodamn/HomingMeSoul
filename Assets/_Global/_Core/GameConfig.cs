@@ -18,6 +18,8 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public GameObject[] foodSupplyPrefabs, moneySupplyPrefabs, bookSupplyPrefabs;
 
+        public float[] gravityZonesRevolutionSpeeds = { 3f, 5f, 8f, 12f, 16f, 20f, 25f, 30f, 35f, 40f, 48f, 56f };
+
 
     }
 }
