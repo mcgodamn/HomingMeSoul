@@ -12,6 +12,12 @@ namespace AngerStudio.HomingMeSoul.Game
         {
         }
 
+        public override void OnEntered ()
+        {
+            Context.Prepare();
+            ChangeState(new GameStarting(StateMachine));
+        } 
+
         public override void Update ()
         {
         }
@@ -22,6 +28,10 @@ namespace AngerStudio.HomingMeSoul.Game
         public GameStarting (StateMachine<GameCore> machine) : base(machine)
         {
         }
+        public override void OnEntered ()
+        {
+            ChangeState(new GameOngoing(StateMachine));
+        } 
 
         public override void Update ()
         {
@@ -35,11 +45,27 @@ namespace AngerStudio.HomingMeSoul.Game
         {
         }
 
+        float lastSupplyTime, lastPassiveSpGainTime;
+
         public override void Update ()
         {
             //Rotate the supply belt
             for (int i = 0; i < Context.gravityZones.Value.Length; i++) Context.gravityZones.Value[i].transform.Rotate(Vector3.back * Context.config.Value.gravityZonesRevolutionSpeeds[i] * Time.deltaTime);
             //Spawning supplies...
+            if (Context.SuppliesSum < Context.config.Value.minSupplyDrops)
+            {
+                Context.SpawnSupplyInMostEmptyZone(Context.GetRandomSupplySet());
+                lastSupplyTime = Time.time;
+            }
+            if (Time.time - lastSupplyTime > 3f && Context.SuppliesSum < Context.config.Value.maxSupplyDrops)
+            {
+                Context.SpawnSupplyInRandomZone(Context.GetRandomSupplySet());
+                lastSupplyTime = Time.time;
+            }
+            //Free SP
+            if (Time.time - lastPassiveSpGainTime > Context.config.Value.passiveSPGainDelayInSconds) Context.SP.Value += 1;
+            lastPassiveSpGainTime = Time.time;
+
             //Controlling bad guys...
             //Random events...
         }
