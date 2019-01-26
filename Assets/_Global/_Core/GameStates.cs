@@ -10,7 +10,8 @@ namespace AngerStudio.HomingMeSoul.Game
     {
         public GamePreparing (StateMachine<GameCore> machine) : base(machine)
         {
-            
+            // Context.Prepare();
+            Context.CreaterPlayers();
         }
 
         public override void Update ()
@@ -38,6 +39,11 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public override void Update ()
         {
+            Context.ReceieveInput();
+            Context.PlayerMove();
+            Context.RotatePlayerInHome();
+            Context.RotatePlayerOnLocation();
+
             //Spawning supplies...
             //Controlling bad guys...
             //Random events...

@@ -4,12 +4,11 @@ using UnityEngine;
 
 public static class Gravity
 {
-    public static Vector3 getGravity(Vector3 nowPosition)
+    public static Vector3 getGravity(Vector3 nowPosition, float speed)
     {
         Vector3 origin = Vector3.zero;
         Vector3 newVector = Vector3.zero;
         float distance;
-        float speed = 1;
         float dx = nowPosition.x - origin.x;
         float dy = nowPosition.y - origin.y;
         float dz = nowPosition.z - origin.z;

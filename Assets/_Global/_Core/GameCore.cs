@@ -20,15 +20,23 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public static GameCore Instance { get => SingletonBehaviourLocator<GameCore>.Instance; }
 
-        public Dictionary<KeyCode, Character> Players;
-        public Dictionary<KeyCode, Color> playersChoose; 
+        public Dictionary<KeyCode, CharacterProperty> Players;
+        public Dictionary<KeyCode, Color> playersChoose;
 
         StateMachine<GameCore> stateMachine;
+
+        public Vector3 homePosition = Vector3.zero;
 
         void Awake()
         {
             SingletonBehaviourLocator<GameCore>.Set(this);
             stateMachine = new StateMachine<GameCore>(this);
+            playersChoose = new Dictionary<KeyCode, Color>(){{KeyCode.Q,Color.black}};
+        }
+        void Start()
+        {
+            stateMachine.ChangeState(new GamePreparing(stateMachine));
+            stateMachine.ChangeState(new GameOngoing(stateMachine));
         }
 
         void Update()
@@ -38,17 +46,23 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public void CreaterPlayers()
         {
-            Players = new Dictionary<KeyCode, Character>();
+            Players = new Dictionary<KeyCode, CharacterProperty>();
 
             int i = 0;
             foreach(var player in playersChoose)
             {
                 //Initialize character
-                GameObject temp = Instantiate(characterPrefab, Vector3.zero, Quaternion.identity);
-                Characters[i++].Value = temp;
-                Players.Add(player.Key, temp.GetComponent<Character>());
-            }
+                GameObject temp = Instantiate(characterPrefab, new Vector3(1,1,0), Quaternion.identity);
+                Characters[i].Value = temp;
+                CharacterProperty character = temp.GetComponent<CharacterProperty>();
+                character.Ready = true;
+                character.Stamina = CharacterStamina[i];
+                Players.Add(player.Key, character);
 
+                listPlayerInHome.Add(player.Key);
+
+                i++;
+            }
         }
 
         public void ReceieveInput()
@@ -58,19 +72,68 @@ namespace AngerStudio.HomingMeSoul.Game
                 if (SimpleInput.GetKeyDown(key))
                 {
                     if (Players[key].Ready)
-                        Players[key].Shoot();
+                    {
+                        Shoot(key);
+                    }
                 }
             }
         }
 
-        public void PlayerMove()
+        void Shoot(KeyCode key)
         {
+            if (listPlayerOnLocation.Contains(key))
+            {
+                Players[key].ForwardVector = Players[key].transform.position - Players[key].collideLocation.transform.position;
+                listPlayerOnLocation.Remove(key);
+            }
+            if (listPlayerInHome.Contains(key))
+            {
+                Players[key].ForwardVector = Players[key].transform.position - homePosition;
+                listPlayerInHome.Remove(key);
+            }
 
+            Players[key].Ready = false;
+            listPlayerMoving.Add(key);
         }
 
+        List<KeyCode> listPlayerMoving = new List<KeyCode>();
+        const float GRAVITY_MULTILER = 1;
+        public void PlayerMove()
+        {
+            foreach(var player in listPlayerMoving)
+            {
+                float gravityMagnitude = GRAVITY_MULTILER  / Players[player].Stamina;
+                // Vector3 vGravity = Gravity.getGravity(Players[player].transform.position,gravityMagnitude);
+
+                // Players[player].ForwardVector += vGravity;
+                Players[player].PlayerMove();
+            }
+        }
+
+        List<KeyCode> listPlayerOnLocation = new List<KeyCode>();
+        public void RotatePlayerOnLocation()
+        {
+            
+        }
+
+        List<KeyCode> listPlayerInHome = new List<KeyCode>();
         public void RotatePlayerInHome()
         {
+            foreach(var player in listPlayerInHome)
+            {
+                Players[player].transform.RotateAround(homePosition,Vector3.forward,1f);
+            }
+        }
 
+        float GetHomeRadius(int peopleNumber)
+        {
+            if (peopleNumber <= 3) return 0.1f;
+
+            float r = 0.05f;
+            for (int n = 3; n < peopleNumber; n++)
+                r = r + r * 0.1f * n;
+
+            return r;
         }
 
         public void Prepare ()
