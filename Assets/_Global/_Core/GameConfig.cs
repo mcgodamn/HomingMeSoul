@@ -6,7 +6,7 @@ namespace AngerStudio.HomingMeSoul.Game
     [System.Serializable]
     public class GameConfig
     {
-        public FloatReference characterStatminaDecayRate, supplyRevolutionSpeed, gravityMultiplier;
+        public FloatReference characterStatminaDecayRate, supplyRevolutionSpeed, gravityMultiplier, staminaChargeNumber, speedMultiplier, worldRidius;
 
         public float[] gravityZoneSteps = {5, 10, 15, 20, 25};
 

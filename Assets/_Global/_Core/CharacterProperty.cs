@@ -25,6 +25,7 @@ namespace AngerStudio.HomingMeSoul.Game
         public int supplyPoint;
 
         public Vector3 ForwardVector;
+        public Vector3 gravityAccelator;
         public Vector3 RotatePoint;
         public bool Ready = true;
         public bool canCollide = true;
@@ -36,12 +37,14 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public void PlayerMove()
         {
-            transform.position = transform.position + ForwardVector * Time.deltaTime;
+            transform.position = transform.position + (gravityAccelator + ForwardVector) * Time.deltaTime;
+            if (Stamina <= 0) ForwardVector = Vector3.zero;
         }
 
         public float GetSpeed()
         {
-            return Stamina.Value * 0.1f;
+            // return Stamina.Value * GameCore.Instance.config.Value.speedMultiplier;
+            return GameCore.Instance.config.Value.speedMultiplier;
         }
 
         void onHit(Collider2D other)

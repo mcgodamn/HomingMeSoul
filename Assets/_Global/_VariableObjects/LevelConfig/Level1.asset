@@ -15,11 +15,27 @@ MonoBehaviour:
   value:
     characterStatminaDecayRate:
       globalVariable: {fileID: 0}
-      localValue: 0
+      localValue: 0.5
       usingGlobal: 0
     supplyRevolutionSpeed:
       globalVariable: {fileID: 0}
       localValue: 4
+      usingGlobal: 0
+    gravityMultiplier:
+      globalVariable: {fileID: 0}
+      localValue: 0.1
+      usingGlobal: 0
+    staminaChargeNumber:
+      globalVariable: {fileID: 0}
+      localValue: 10
+      usingGlobal: 0
+    speedMultiplier:
+      globalVariable: {fileID: 0}
+      localValue: 5
+      usingGlobal: 0
+    worldRidius:
+      globalVariable: {fileID: 0}
+      localValue: 8
       usingGlobal: 0
     gravityZoneSteps:
     - 3

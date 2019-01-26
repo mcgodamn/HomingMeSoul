@@ -28,7 +28,6 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public Transform homeTransform;
 
-        public float DEFAULT_STAMINA = 10;
         public void CreaterPlayers()
         {
             int i = 0;
@@ -42,7 +41,7 @@ namespace AngerStudio.HomingMeSoul.Game
                 character.Ready = true;
                 character.m_key = player.Key;
                 character.Stamina = CharacterStamina[i];
-                character.Stamina.Value = DEFAULT_STAMINA;
+                character.Stamina.Value = config.Value.staminaChargeNumber;
                 Players.Add(player.Key, character);
 
                 listPlayerInHome.Add(player.Key);
@@ -92,7 +91,10 @@ namespace AngerStudio.HomingMeSoul.Game
             float decentValue = config.Value.characterStatminaDecayRate * Time.deltaTime;
             foreach(var player in Players.Keys)
             {
-                Players[player].Stamina.Value -= decentValue;
+                if (Players[player].Stamina.Value > 0)
+                    Players[player].Stamina.Value -= decentValue;
+                else
+                    Players[player].Stamina.Value = 0;
             }
         }
 
@@ -120,16 +122,29 @@ namespace AngerStudio.HomingMeSoul.Game
         }
 
         List<KeyCode> listPlayerMoving = new List<KeyCode>();
-        const float GRAVITY_MULTILER = 1;
         public void PlayerMove()
         {
             foreach(var player in listPlayerMoving)
             {
-                float gravityMagnitude = GRAVITY_MULTILER  / Players[player].Stamina;
-                Vector3 vGravity = Gravity.getGravity(Players[player].transform.position,gravityMagnitude);
-
-                Players[player].ForwardVector += vGravity * Time.deltaTime;
+                // float gravityMagnitude = config.Value.gravityMultiplier / (Players[player].Stamina + 1);
+                Vector3 vGravity = Gravity.getGravity(Players[player].transform.position,config.Value.gravityMultiplier);
+                
+                Players[player].gravityAccelator = vGravity;
                 Players[player].PlayerMove();
+
+                BorderDectection(player);
+            }
+        }
+
+        void BorderDectection(KeyCode player)
+        {
+
+            if (Vector2.Distance(Players[player].transform.position, homeTransform.position) >= config.Value.worldRidius)
+            {
+                Vector3 inVector = Players[player].ForwardVector.normalized;
+                Vector3 normal = (Players[player].transform.position - homeTransform.position).normalized;
+                Vector2 outVector = -1 * (Vector2.Dot(inVector, normal) * normal * 2 - inVector);
+                Players[player].ForwardVector = outVector.normalized * Players[player].ForwardVector.magnitude;
             }
         }
 
@@ -151,7 +166,7 @@ namespace AngerStudio.HomingMeSoul.Game
         {
             foreach(var player in listPlayerInHome)
             {
-                Players[player].Stamina.Value = DEFAULT_STAMINA;
+                Players[player].Stamina.Value = config.Value.staminaChargeNumber;
                 Players[player].transform.RotateAround(homeTransform.position,Vector3.forward,1f);
             }
         }

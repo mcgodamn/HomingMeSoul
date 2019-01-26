@@ -17,10 +17,6 @@ public static class Gravity
         float dy = nowPosition.y - origin.y;
         float dz = nowPosition.z - origin.z;
 
-        if(dx < 0)dx = -dx;
-        if (dy < 0)dy = -dy;
-        if (dz < 0)dz = -dz;
-
         distance = Mathf.Sqrt(dx * dx + dy * dy + dz * dz);
 
         dx = origin.x - nowPosition.x;
@@ -31,9 +27,6 @@ public static class Gravity
         newVector.y = dy / distance;
         newVector.z = dz / distance;
         return (speed * newVector);
-
-        // newVector = nowPosition - origin;
-        // return (speed * newVector * gravityMultiplier);
     }
 
 }
