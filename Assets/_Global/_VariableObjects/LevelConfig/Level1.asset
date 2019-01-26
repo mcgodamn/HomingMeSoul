@@ -34,7 +34,7 @@ MonoBehaviour:
     bookWeight: 1
     moneyWeight: 1
     foodWeight: 1
-    rimRewardFactor: 1
+    rimRewardFactor: 1.01
     badGuySpawnChancePerMinute: 0.1
     building_Exchange: 1
     building_Upgrade: 1
@@ -64,8 +64,9 @@ MonoBehaviour:
     - 40
     - 48
     - 56
-    maxSupplyDrops: 25
-    minSupplyDrops: 10
+    maxSupplyDrops: 100
+    minSupplyDrops: 40
     densityBalancingDistance: 3
+    passiveSPGainDelayInSconds: 5
   readOnly: 1
   description: 

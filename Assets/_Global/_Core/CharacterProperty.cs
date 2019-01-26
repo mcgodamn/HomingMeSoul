@@ -15,6 +15,8 @@ namespace AngerStudio.HomingMeSoul.Game
         public bool Ready = true;
         public FloatReference Stamina;
 
+        public SupplyType type;
+
         public void PlayerMove()
         {
             transform.position = transform.position + ForwardVector * Time.deltaTime;
@@ -22,7 +24,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public float GetSpeed()
         {
-            return Stamina.Value;
+            return Stamina.Value * 50;
         }
 
         public void onCollisionEnter(Collision2D other)

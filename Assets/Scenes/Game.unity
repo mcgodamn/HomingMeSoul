@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311918, g: 0.3807398, b: 0.35872716, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -180,15 +180,15 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 62ee59326af07fc4da29765a50894404, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.28, y: 0.36}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &423913999
@@ -5033,7 +5033,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &818132378
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5227,8 +5227,29 @@ MonoBehaviour:
       maxSupplyDrops: 100
       minSupplyDrops: 40
       densityBalancingDistance: 3
+      passiveSPGainDelayInSconds: 5
     usingGlobal: 1
+  Score:
+    globalVariable: {fileID: 0}
+    localValue: 0
+    usingGlobal: 0
+  SP:
+    globalVariable: {fileID: 0}
+    localValue: 0
+    usingGlobal: 0
   suppliesCountOfZones: 
+  characterPrefab: {fileID: 1141335040402591599, guid: 645b1452426304727af92059b089fff5,
+    type: 3}
+  Characters:
+  - globalVariable: {fileID: 11400000, guid: 3e3ee24fa0f275947b3613fe456ac718, type: 2}
+    localValue: {fileID: 0}
+    usingGlobal: 1
+  CharacterStamina:
+  - globalVariable: {fileID: 11400000, guid: 20fd23f8e0a2c314d926aa46bede0ac7, type: 2}
+    localValue: 0
+    usingGlobal: 1
+  homeTransform: {fileID: 1086845254}
+  DEFAULT_STAMINA: 10
 --- !u!4 &1661560565
 Transform:
   m_ObjectHideFlags: 0

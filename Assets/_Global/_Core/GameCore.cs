@@ -16,41 +16,26 @@ namespace AngerStudio.HomingMeSoul.Game
         public GameConfigReference config;
         public IntReference Score, SP;
         public int[] suppliesCountOfZones;
+
         public GameObject characterPrefab;
         public GameObjectReference[] Characters;
         public FloatReference[] CharacterStamina;
 
         public static GameCore Instance { get => SingletonBehaviourLocator<GameCore>.Instance; }
 
-        public Dictionary<KeyCode, CharacterProperty> Players;
+        Dictionary<KeyCode, CharacterProperty> Players;
         public Dictionary<KeyCode, Color> playersChoose;
 
-        StateMachine<GameCore> stateMachine;
-
-        public Vector3 homePosition = Vector3.zero;
-
-        void Awake()
-        {
-            SingletonBehaviourLocator<GameCore>.Set(this);
-            stateMachine = new StateMachine<GameCore>(this);
-            playersChoose = new Dictionary<KeyCode, Color>(){{KeyCode.Q,Color.black}};
-        }
-        void Start()
-        {
-            stateMachine.ChangeState(new GamePreparing(stateMachine));
-            stateMachine.ChangeState(new GameOngoing(stateMachine));
-        }
+        public Transform homeTransform;
 
         public float DEFAULT_STAMINA = 10;
         public void CreaterPlayers()
         {
-            Players = new Dictionary<KeyCode, CharacterProperty>();
-
             int i = 0;
             foreach(var player in playersChoose)
             {
                 //Initialize character
-                GameObject temp = Instantiate(characterPrefab, new Vector3(1,1,0), Quaternion.identity);
+                GameObject temp = Instantiate(characterPrefab, new Vector3(0,1,0), Quaternion.identity);
                 Characters[i].Value = temp;
                 CharacterProperty character = temp.GetComponent<CharacterProperty>();
                 character.Ready = true;
@@ -62,6 +47,12 @@ namespace AngerStudio.HomingMeSoul.Game
 
                 i++;
             }
+        }
+
+
+        void GetSpawnPosition(int playerNumber)
+        {
+
         }
 
         public void ReceieveInput()
@@ -78,18 +69,23 @@ namespace AngerStudio.HomingMeSoul.Game
             }
         }
 
+
         void Shoot(KeyCode key)
         {
+            Vector3 midPosition = Vector3.zero;
             if (listPlayerOnLocation.Contains(key))
             {
-                Players[key].ForwardVector = Players[key].transform.position - Players[key].collideLocation.transform.position * Players[key].GetSpeed();
+                midPosition = Players[key].collideLocation.transform.position;
                 listPlayerOnLocation.Remove(key);
             }
             if (listPlayerInHome.Contains(key))
             {
-                Players[key].ForwardVector = Players[key].transform.position - homePosition;
+                midPosition = homeTransform.position;
                 listPlayerInHome.Remove(key);
             }
+
+            Players[key].ForwardVector = Players[key].transform.position - midPosition * Players[key].GetSpeed();
+            listPlayerOnLocation.Remove(key);
 
             Players[key].Ready = false;
             listPlayerMoving.Add(key);
@@ -104,7 +100,7 @@ namespace AngerStudio.HomingMeSoul.Game
                 float gravityMagnitude = GRAVITY_MULTILER  / Players[player].Stamina;
                 Vector3 vGravity = Gravity.getGravity(Players[player].transform.position,gravityMagnitude);
 
-                Players[player].ForwardVector += vGravity;
+                Players[player].ForwardVector += vGravity * Time.deltaTime;
                 Players[player].PlayerMove();
             }
         }
@@ -127,7 +123,7 @@ namespace AngerStudio.HomingMeSoul.Game
         {
             foreach(var player in listPlayerInHome)
             {
-                Players[player].transform.RotateAround(homePosition,Vector3.forward,1f);
+                Players[player].transform.RotateAround(homeTransform.position,Vector3.forward,1f);
             }
         }
 
@@ -140,7 +136,8 @@ namespace AngerStudio.HomingMeSoul.Game
                 r = r + r * 0.1f * n;
 
             return r;
-
+        }
+        
         public int SuppliesSum
         {
             get
@@ -157,7 +154,12 @@ namespace AngerStudio.HomingMeSoul.Game
 
         void Awake ()
         {
+            SingletonBehaviourLocator<GameCore>.Set(this);
             stateMachine = new StateMachine<GameCore>(this);
+
+            Players = new Dictionary<KeyCode, CharacterProperty>();
+            playersChoose = new Dictionary<KeyCode, Color>() { { KeyCode.Q, Color.black } };
+
             stateMachine.ChangeState(new GamePreparing(stateMachine));
         }
 

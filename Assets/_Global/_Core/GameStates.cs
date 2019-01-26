@@ -10,13 +10,12 @@ namespace AngerStudio.HomingMeSoul.Game
     {
         public GamePreparing (StateMachine<GameCore> machine) : base(machine)
         {
-            // Context.Prepare();
-            Context.CreaterPlayers();
         }
 
         public override void OnEntered ()
         {
             Context.Prepare();
+            Context.CreaterPlayers();
             ChangeState(new GameStarting(StateMachine));
         } 
 
