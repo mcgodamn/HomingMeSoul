@@ -31,19 +31,22 @@ namespace AngerStudio.HomingMeSoul.Game
         public void CreaterPlayers()
         {
             int i = 0;
+            Vector2[] positions = GetSpawnPosition(playersChoose.Count);
             foreach(var player in playersChoose)
             {
                 //Initialize character
-                GameObject temp = Instantiate(characterPrefab, new Vector3(0,1,0), Quaternion.identity);
+                GameObject temp = Instantiate(characterPrefab, positions[i], Quaternion.identity);
                 Characters[i].Value = temp;
                 CharacterProperty character = temp.GetComponent<CharacterProperty>();
                 character.type = SupplyType.Food;
+                character.collideLocation = homeTransform.gameObject;
                 character.Ready = true;
                 character.m_key = player.Key;
                 character.Stamina = CharacterStamina[i];
                 character.Stamina.Value = config.Value.staminaChargeNumber;
-                Players.Add(player.Key, character);
+                character.faceLocation();
 
+                Players.Add(player.Key, character);
                 listPlayerInHome.Add(player.Key);
 
                 i++;
@@ -51,9 +54,45 @@ namespace AngerStudio.HomingMeSoul.Game
         }
 
 
-        void GetSpawnPosition(int playerNumber)
+        Vector2[] GetSpawnPosition(int playerNumber)
         {
+            int radius = 1;
+            Vector2[] returnVectors;
 
+            switch(playerNumber)
+            {
+                case 1:
+                    returnVectors = new Vector2[]{new Vector2(0,radius)};
+                    break;
+                case 2:
+                    returnVectors = new Vector2[] { new Vector2(0, radius),new Vector2(0, -radius) };
+                    break;
+                case 3:
+                    returnVectors = new Vector2[] {new Vector2(0, radius), new Vector2(radius*Mathf.Cos(210 * Mathf.Deg2Rad), radius*Mathf.Sin(210*Mathf.Deg2Rad)),new Vector2(radius * Mathf.Cos(330 * Mathf.Deg2Rad), radius * Mathf.Sin(330 * Mathf.Deg2Rad)) };
+                    break;
+                case 4:
+                    returnVectors = new Vector2[] { new Vector2(0, radius),new Vector2(-radius,0),new Vector2(0, -radius),new Vector2(radius,0) };
+                
+                    break;
+                case 5:
+                    returnVectors = new Vector2[] { new Vector2(0, radius), new Vector2(radius * Mathf.Cos(162 * Mathf.Deg2Rad), radius * Mathf.Sin(162 * Mathf.Deg2Rad)), new Vector2(radius * Mathf.Cos(234 * Mathf.Deg2Rad), radius * Mathf.Sin(234 * Mathf.Deg2Rad)),new Vector2(radius * Mathf.Cos(306 * Mathf.Deg2Rad), radius * Mathf.Sin(306 * Mathf.Deg2Rad)),new Vector2(radius * Mathf.Cos(18 * Mathf.Deg2Rad), radius * Mathf.Sin(18 * Mathf.Deg2Rad)) };
+                    break;
+                case 6:
+                    returnVectors = new Vector2[] { new Vector2(0, radius), new Vector2(radius * Mathf.Cos(150 * Mathf.Deg2Rad), radius * Mathf.Sin(150 * Mathf.Deg2Rad)), new Vector2(radius * Mathf.Cos(210 * Mathf.Deg2Rad), radius * Mathf.Sin(210 * Mathf.Deg2Rad)), new Vector2(radius * Mathf.Cos(270 * Mathf.Deg2Rad), radius * Mathf.Sin(270 * Mathf.Deg2Rad)), new Vector2(radius * Mathf.Cos(330 * Mathf.Deg2Rad), radius * Mathf.Sin(330 * Mathf.Deg2Rad)),new Vector2(radius * Mathf.Cos(30 * Mathf.Deg2Rad), radius * Mathf.Sin(30 * Mathf.Deg2Rad)) };
+                   break;
+                case 7:
+                    returnVectors = new Vector2[] { new Vector2(0, radius), new Vector2(radius * Mathf.Cos(141 * Mathf.Deg2Rad), radius * Mathf.Sin(141 * Mathf.Deg2Rad)), new Vector2(radius * Mathf.Cos(192 * Mathf.Deg2Rad), radius * Mathf.Sin(192 * Mathf.Deg2Rad)), new Vector2(radius * Mathf.Cos(243 * Mathf.Deg2Rad), radius * Mathf.Sin(243 * Mathf.Deg2Rad)), new Vector2(radius * Mathf.Cos(294 * Mathf.Deg2Rad), radius * Mathf.Sin(294 * Mathf.Deg2Rad)), new Vector2(radius * Mathf.Cos(345 * Mathf.Deg2Rad), radius * Mathf.Sin(345 * Mathf.Deg2Rad)),new Vector2(radius * Mathf.Cos(39 * Mathf.Deg2Rad), radius * Mathf.Sin(39 * Mathf.Deg2Rad)) };
+                    break;
+                case 8:
+                    returnVectors = new Vector2[] { new Vector2(0, radius), new Vector2(-radius, 0), new Vector2(0, -radius), new Vector2(radius, 0),new Vector2(radius * Mathf.Cos(135 * Mathf.Deg2Rad), radius * Mathf.Sin(135 * Mathf.Deg2Rad)), new Vector2(radius * Mathf.Cos(225 * Mathf.Deg2Rad), radius * Mathf.Sin(225 * Mathf.Deg2Rad)), new Vector2(radius * Mathf.Cos(315 * Mathf.Deg2Rad), radius * Mathf.Sin(315 * Mathf.Deg2Rad)), new Vector2(radius * Mathf.Cos(45 * Mathf.Deg2Rad), radius * Mathf.Sin(45 * Mathf.Deg2Rad)) };
+                    break;
+                default:
+                    returnVectors = new Vector2[1];
+                    break;
+            }
+            
+
+            return returnVectors;
         }
 
         public void ReceieveInput()
@@ -204,7 +243,16 @@ namespace AngerStudio.HomingMeSoul.Game
             stateMachine = new StateMachine<GameCore>(this);
 
             Players = new Dictionary<KeyCode, CharacterProperty>();
-            playersChoose = new Dictionary<KeyCode, Color>() { { KeyCode.Q, Color.black } };
+            playersChoose = new Dictionary<KeyCode, Color>() {
+                { KeyCode.Q, Color.black },
+                { KeyCode.W, Color.black },
+                { KeyCode.E, Color.black },
+                { KeyCode.R, Color.black },
+                { KeyCode.T, Color.black },
+                { KeyCode.Y, Color.black },
+                { KeyCode.U, Color.black },
+                { KeyCode.I, Color.black }
+            };
 
             stateMachine.ChangeState(new GamePreparing(stateMachine));
         }

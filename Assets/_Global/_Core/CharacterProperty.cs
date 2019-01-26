@@ -50,13 +50,16 @@ namespace AngerStudio.HomingMeSoul.Game
 
         void onHit(Collider2D other)
         {
-            Vector2 direction = transform.position - other.transform.position;
-
-            transform.up = direction;
-
+            collideLocation = other.gameObject;
+            faceLocation();
             canCollide = false;
             Ready = true;
-            collideLocation = other.gameObject;
+        }
+
+        public void faceLocation()
+        {
+            Vector2 direction = transform.position - collideLocation.transform.position;
+            transform.up = direction;
         }
 
         void OnTriggerEnter2D(Collider2D other)

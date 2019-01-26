@@ -31,7 +31,7 @@ MonoBehaviour:
       usingGlobal: 0
     speedMultiplier:
       globalVariable: {fileID: 0}
-      localValue: 5
+      localValue: 7.5
       usingGlobal: 0
     worldRidius:
       globalVariable: {fileID: 0}

@@ -5212,6 +5212,18 @@ MonoBehaviour:
         globalVariable: {fileID: 0}
         localValue: 0
         usingGlobal: 0
+      staminaChargeNumber:
+        globalVariable: {fileID: 0}
+        localValue: 0
+        usingGlobal: 0
+      speedMultiplier:
+        globalVariable: {fileID: 0}
+        localValue: 0
+        usingGlobal: 0
+      worldRidius:
+        globalVariable: {fileID: 0}
+        localValue: 0
+        usingGlobal: 0
       gravityZoneSteps:
       - 5
       - 10
@@ -5265,12 +5277,59 @@ MonoBehaviour:
   - globalVariable: {fileID: 11400000, guid: 3e3ee24fa0f275947b3613fe456ac718, type: 2}
     localValue: {fileID: 0}
     usingGlobal: 1
+  - globalVariable: {fileID: 11400000, guid: e7e0da7cdb10b62479e619ad133234bd, type: 2}
+    localValue: {fileID: 0}
+    usingGlobal: 1
+  - globalVariable: {fileID: 11400000, guid: e8dffce3100829d4b8d268c137d107b2, type: 2}
+    localValue: {fileID: 0}
+    usingGlobal: 1
+  - globalVariable: {fileID: 11400000, guid: 1d001437227b2ab4d875a193b2e5af78, type: 2}
+    localValue: {fileID: 0}
+    usingGlobal: 1
+  - globalVariable: {fileID: 11400000, guid: 8e735ba5164dffe4ea3f92999447b010, type: 2}
+    localValue: {fileID: 0}
+    usingGlobal: 1
+  - globalVariable: {fileID: 11400000, guid: ad990c58c84d7d546b37d8bce656e75e, type: 2}
+    localValue: {fileID: 0}
+    usingGlobal: 1
+  - globalVariable: {fileID: 11400000, guid: ad990c58c84d7d546b37d8bce656e75e, type: 2}
+    localValue: {fileID: 0}
+    usingGlobal: 1
+  - globalVariable: {fileID: 11400000, guid: 791fbb20075e3bc4faa5ce0f7bcaa92b, type: 2}
+    localValue: {fileID: 0}
+    usingGlobal: 1
+  - globalVariable: {fileID: 11400000, guid: 70130499696afa14fa359bc95399bf27, type: 2}
+    localValue: {fileID: 0}
+    usingGlobal: 1
   CharacterStamina:
   - globalVariable: {fileID: 11400000, guid: 20fd23f8e0a2c314d926aa46bede0ac7, type: 2}
     localValue: 0
     usingGlobal: 1
+  - globalVariable: {fileID: 11400000, guid: 8e02e7f1858ea33459124ea384a7d2d0, type: 2}
+    localValue: 0
+    usingGlobal: 1
+  - globalVariable: {fileID: 11400000, guid: 1a8c6e4fccba83845940edf6d678e4b2, type: 2}
+    localValue: 0
+    usingGlobal: 1
+  - globalVariable: {fileID: 11400000, guid: f631094da1581a5419338e533a1fa30d, type: 2}
+    localValue: 0
+    usingGlobal: 1
+  - globalVariable: {fileID: 11400000, guid: e46c130b15fa6b34486bbf2d116e6253, type: 2}
+    localValue: 0
+    usingGlobal: 1
+  - globalVariable: {fileID: 11400000, guid: db2a50283f89b2447adc046cbd6c439e, type: 2}
+    localValue: 0
+    usingGlobal: 1
+  - globalVariable: {fileID: 11400000, guid: db2a50283f89b2447adc046cbd6c439e, type: 2}
+    localValue: 0
+    usingGlobal: 1
+  - globalVariable: {fileID: 11400000, guid: 2ec4ce5709ce3b042887e7f7c2c88575, type: 2}
+    localValue: 0
+    usingGlobal: 1
+  - globalVariable: {fileID: 11400000, guid: bf5e4de98d0cf4b4fa7f436291bf0575, type: 2}
+    localValue: 0
+    usingGlobal: 1
   homeTransform: {fileID: 1086845254}
-  DEFAULT_STAMINA: 10
 --- !u!4 &1661560565
 Transform:
   m_ObjectHideFlags: 0
