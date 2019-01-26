@@ -32,13 +32,36 @@ namespace AngerStudio.HomingMeSoul.Core
 
         public override void OnEntered ()
         {
-             Context.titleGroup.DOFade(1, 0.3f);    
+             Context.titleGroup.DOFade(1, 0.43f).OnComplete(() => ChangeState(new TitleScreen_ON(StateMachine)));    
         }
 
         public override void Update ()
         {
         }
-    }    
+    }
+    
+    public class TitleScreen_ON : State<AppCore>
+    {
+        public TitleScreen_ON (StateMachine<AppCore> machine) : base(machine)
+        {
+        }
+
+        public override void OnEntered ()
+        {
+
+        }
+
+        public override void Update ()
+        {
+            foreach (KeyCode k in Context.allowedKeys)
+            {
+                if (SimpleInput.GetKey(k))
+                    Context.titleT.DOLocalMoveY(Context.titleT.localPosition.y + 900, 0.75f, true)
+                        .OnComplete(() => Context.titleT.gameObject.SetActive(false))
+                        .OnComplete(() => ChangeState(new AwaitingPlayer(StateMachine)));      
+            }
+        }
+    }
 
     public class AwaitingPlayer : State<AppCore>
     {
@@ -54,15 +77,9 @@ namespace AngerStudio.HomingMeSoul.Core
         {
             foreach (KeyCode vKey in Context.allowedKeys)
             {
-                if (SimpleInput.GetKeyUp(vKey))
+                if (SimpleInput.GetKeyDown(vKey))
                 {
-                    if (!Context.activePlayers.Any(kvp => kvp.Key == vKey)) Context.AddPlayer(vKey);
-                    else
-                    {
-                        Context.avaliableColors.Add(Context.activePlayers[vKey]);
-                        Context.activePlayers.Remove(vKey);
-                        Context.m_View.RemovePlayerCard(vKey);                        
-                    }
+                    Context.TogglePlayer(vKey);
                 }
             }
         }

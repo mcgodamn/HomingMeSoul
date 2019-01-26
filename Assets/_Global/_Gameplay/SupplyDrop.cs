@@ -7,12 +7,9 @@ namespace AngerStudio.HomingMeSoul.Game
         
     public class SupplyDrop : MonoBehaviour
     {
-        public SupplyType type;
+        public int typeIndex;
 
-        [Range(0, 2)]
-        public int level;
-
-        public void Picked ()
+        public void Picked (int playerIndex)
         {
             GameCore.Instance.Picked(this);
         }

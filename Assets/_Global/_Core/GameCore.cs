@@ -5,6 +5,7 @@ using UnityEngine;
 using BA_Studio.StatePattern;
 using BA_Studio.UnityLib.SingletonLocator;
 using BA_Studio.UnityLib.GameObjectPool;
+using BA_Studio.DataStructure;
 using AngerStudio.HomingMeSoul.Core;
 
 namespace AngerStudio.HomingMeSoul.Game
@@ -24,7 +25,10 @@ namespace AngerStudio.HomingMeSoul.Game
 
         Dictionary<SupplyDrop, int> zoneIndexMap = new Dictionary<SupplyDrop, int>();
         
-        Dictionary<KeyCode, (Sprite, Color)> profiles;
+
+        BiMap<int, HashSet<SupplyDrop>> pickUpInstances;
+
+        public GameObject burstVFXPrefab;
 
         float poolDepth = 0;
 
@@ -50,6 +54,7 @@ namespace AngerStudio.HomingMeSoul.Game
             SingletonBehaviourLocator<GameCore>.Set(this);
 
             dropsPool = new GameObjectPool<SupplyDrop>(AppCore.Instance.config.supplyDropPrefab, 20);
+            pickUpInstances = new BiMap<int, HashSet<SupplyDrop>>();
 
         }
 
@@ -81,18 +86,12 @@ namespace AngerStudio.HomingMeSoul.Game
         }
 
 
-        public (SupplyType, int) GetLeastPickupType ()
+        public int GetLeastPickupTypeIndex ()
         {
-            float r = Random.Range(0, poolDepth);
-            for (int i = 0; i < pool.Count; i++)
-            {
-                r -= pool[i].depth;
-                if (r < pool[i+1].depth && r > 0) return (pool[i].Item4, pool[i].Item3);
-            }
-            throw new System.Exception("Should not happen!");
+            return pickUpInstances.First(i => i.Value.Count == pickUpInstances.Min(s => s.Value.Count)).Key;
         }
 
-        public int SpawnSupplyInMostEmptyZone ((SupplyType type, int supplyLevel) s)
+        public int SpawnSupplyInMostEmptyZone (int typeIndex)
         {
             int emptyZoneIndex = gravityZones.Value.Length - 1, lastLeast = dropsInZones[emptyZoneIndex].Count;
             for (int i = emptyZoneIndex - 1; i > 0; i--)
@@ -104,26 +103,24 @@ namespace AngerStudio.HomingMeSoul.Game
                 }                
             }
 
-            PlaceSupply(emptyZoneIndex, s);
+            PlaceSupply(emptyZoneIndex, typeIndex);
             return emptyZoneIndex;
         }
 
-        public int SpawnSupplyInRandomZone ((SupplyType type, int supplyLevel) s)
+        public int SpawnSupplyInRandomZone (int pickupType)
         {
             int t = Random.Range(1, gravityZones.Value.Length);
-            PlaceSupply(t, s);
+            PlaceSupply(t, pickupType);
             return t;
         }
 
-        public void PlaceSupply (int zoneIndex, (SupplyType type, int supplyLevel) s)
+        public void PlaceSupply (int zoneIndex, int pickupType)
         {
-            if (Random.Range(0f, Mathf.Pow(1 + config.Value.rimRewardFactor, zoneIndex)) > 1 && s.supplyLevel < 2) s.supplyLevel += 1;
             
             GameObject t = null;
             SupplyDrop d = dropsPool.GetObjectFromPool(null);
             t = d.gameObject;
-            d.type = s.type;
-            d.level = s.supplyLevel;
+            d.typeIndex = pickupType;
             
             PlaceToOrbit(Random.Range(config.Value.gravityZoneSteps[zoneIndex - 1], config.Value.gravityZoneSteps[zoneIndex]),
             gravityZones.Value[zoneIndex].transform,
@@ -151,6 +148,8 @@ namespace AngerStudio.HomingMeSoul.Game
                     t.transform.position = parentZone.position + Quaternion.Euler(0, 0, Random.Range(0f, 359.9f)) * Vector2.left * distance;
                 else break;
             }
+            GameObject p = GameObject.Instantiate(burstVFXPrefab, t.transform.position, Quaternion.identity);
+            MonoBehaviour.Destroy(p, 5f);
         }
     }
 }
