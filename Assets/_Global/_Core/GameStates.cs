@@ -54,6 +54,7 @@ namespace AngerStudio.HomingMeSoul.Game
             Context.PlayerMove();
             Context.RotatePlayerInHome();
             Context.RotatePlayerOnLocation();
+            Context.DecentStamina();
 
             //Rotate the supply belt
             for (int i = 0; i < Context.gravityZones.Value.Length; i++) Context.gravityZones.Value[i].transform.Rotate(Vector3.back * Context.config.Value.gravityZonesRevolutionSpeeds[i] * Time.deltaTime);

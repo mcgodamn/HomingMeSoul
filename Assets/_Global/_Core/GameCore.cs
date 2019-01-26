@@ -38,7 +38,9 @@ namespace AngerStudio.HomingMeSoul.Game
                 GameObject temp = Instantiate(characterPrefab, new Vector3(0,1,0), Quaternion.identity);
                 Characters[i].Value = temp;
                 CharacterProperty character = temp.GetComponent<CharacterProperty>();
+                character.type = SupplyType.Food;
                 character.Ready = true;
+                character.m_key = player.Key;
                 character.Stamina = CharacterStamina[i];
                 character.Stamina.Value = DEFAULT_STAMINA;
                 Players.Add(player.Key, character);
@@ -69,6 +71,30 @@ namespace AngerStudio.HomingMeSoul.Game
             }
         }
 
+        public void EnterHome(KeyCode key)
+        {
+            if (!listPlayerMoving.Contains(key)) return;
+
+            listPlayerMoving.Remove(key);
+            listPlayerInHome.Add(key);
+        }
+
+        public void EnterLocation(KeyCode key)
+        {
+            if (!listPlayerMoving.Contains(key)) return;
+
+            listPlayerMoving.Remove(key);
+            listPlayerOnLocation.Add(key);
+        }
+
+        public void DecentStamina()
+        {
+            float decentValue = config.Value.characterStatminaDecayRate * Time.deltaTime;
+            foreach(var player in Players.Keys)
+            {
+                Players[player].Stamina.Value -= decentValue;
+            }
+        }
 
         void Shoot(KeyCode key)
         {
@@ -84,10 +110,12 @@ namespace AngerStudio.HomingMeSoul.Game
                 listPlayerInHome.Remove(key);
             }
 
-            Players[key].ForwardVector = Players[key].transform.position - midPosition * Players[key].GetSpeed();
-            listPlayerOnLocation.Remove(key);
+            Players[key].collideLocation = null;
+
+            Players[key].ForwardVector = (Players[key].transform.position - midPosition).normalized * Players[key].GetSpeed();
 
             Players[key].Ready = false;
+            Players[key].canCollide = true;
             listPlayerMoving.Add(key);
         }
 
@@ -123,6 +151,7 @@ namespace AngerStudio.HomingMeSoul.Game
         {
             foreach(var player in listPlayerInHome)
             {
+                Players[player].Stamina.Value = DEFAULT_STAMINA;
                 Players[player].transform.RotateAround(homeTransform.position,Vector3.forward,1f);
             }
         }

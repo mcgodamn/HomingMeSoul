@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 14131959552681583}
   - component: {fileID: 5055052006370638627}
   - component: {fileID: 956997363227243410}
-  - component: {fileID: 3845514603853469248}
+  - component: {fileID: 1198994224965342054}
   m_Layer: 0
   m_Name: Supply(Food2)
   m_TagString: Supply(Food)
@@ -98,7 +98,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.1875, y: 0.15625}
+    oldSize: {x: 0.375, y: 0.3125}
     newSize: {x: 0.12, y: 0.12}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -107,7 +107,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.12, y: 0.12}
   m_EdgeRadius: 0
---- !u!114 &3845514603853469248
+--- !u!114 &1198994224965342054
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -116,31 +116,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6038634438410672312}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34ea907026f40d540a69f294ec218d00, type: 3}
+  m_Script: {fileID: 11500000, guid: 4349b5f1b815c4669993968b027022c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filter:
-    targetGOFilter: []
-    ignoreGOList: []
-    targetTagFilter:
-    - Player
-    ignoreTagFilter: []
-    layerFilter:
-      serializedVersion: 2
-      m_Bits: 311
-  triggerZone: {fileID: 0}
-  triggerEnter:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: BA_Studio.UnityLib.General.CommonEvents.Collider2DEvent, BA_Studio_General,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  triggerStay:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: BA_Studio.UnityLib.General.CommonEvents.Collider2DEvent, BA_Studio_General,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  triggerExit:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: BA_Studio.UnityLib.General.CommonEvents.Collider2DEvent, BA_Studio_General,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  type: 0

@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LocationProperty : MonoBehaviour
+
+
+namespace AngerStudio.HomingMeSoul.Game
 {
-
-    
-
+    public class LocationProperty : MonoBehaviour
+    {
+        public SupplyType type;
+    }
 }

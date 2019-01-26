@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6396038321617379912}
   - component: {fileID: 2222061331883556612}
   - component: {fileID: 6176280131694311349}
-  - component: {fileID: 7903673508009824871}
+  - component: {fileID: 3864813403568510058}
   m_Layer: 0
   m_Name: Supply(money3)
   m_TagString: Supply(Money)
@@ -98,7 +98,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.203125, y: 0.15625}
+    oldSize: {x: 0.40625, y: 0.3125}
     newSize: {x: 0.12, y: 0.12}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -107,7 +107,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.12, y: 0.12}
   m_EdgeRadius: 0
---- !u!114 &7903673508009824871
+--- !u!114 &3864813403568510058
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -116,31 +116,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 809790319917571231}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34ea907026f40d540a69f294ec218d00, type: 3}
+  m_Script: {fileID: 11500000, guid: 4349b5f1b815c4669993968b027022c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filter:
-    targetGOFilter: []
-    ignoreGOList: []
-    targetTagFilter:
-    - Player
-    ignoreTagFilter: []
-    layerFilter:
-      serializedVersion: 2
-      m_Bits: 311
-  triggerZone: {fileID: 0}
-  triggerEnter:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: BA_Studio.UnityLib.General.CommonEvents.Collider2DEvent, BA_Studio_General,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  triggerStay:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: BA_Studio.UnityLib.General.CommonEvents.Collider2DEvent, BA_Studio_General,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  triggerExit:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: BA_Studio.UnityLib.General.CommonEvents.Collider2DEvent, BA_Studio_General,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  type: 1
