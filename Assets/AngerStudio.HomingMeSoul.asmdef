@@ -4,7 +4,8 @@
         "BA_Studio_StatePattern",
         "SimpleInput",
         "NoBrainer_GlobalVariables",
-        "BA_Studio_SingletonLocator"
+        "BA_Studio_SingletonLocator",
+        "Unity.TextMeshPro"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
