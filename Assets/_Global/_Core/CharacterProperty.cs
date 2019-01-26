@@ -8,6 +8,8 @@ namespace AngerStudio.HomingMeSoul.Game
     public class CharacterProperty : MonoBehaviour
     {
         public GameObject collideLocation;
+        public Vector3 lastLocationPosition;
+
         public Vector3 ForwardVector;
         public Vector3 RotatePoint;
         public bool Ready = true;
@@ -16,6 +18,16 @@ namespace AngerStudio.HomingMeSoul.Game
         public void PlayerMove()
         {
             transform.position = transform.position + ForwardVector * Time.deltaTime;
+        }
+
+        public float GetSpeed()
+        {
+            return Stamina.Value;
+        }
+
+        public void onCollisionEnter(Collision2D other)
+        {
+            
         }
 
 

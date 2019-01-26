@@ -44,6 +44,7 @@ namespace AngerStudio.HomingMeSoul.Game
             stateMachine.Update();
         }
 
+        public float DEFAULT_STAMINA = 10;
         public void CreaterPlayers()
         {
             Players = new Dictionary<KeyCode, CharacterProperty>();
@@ -57,6 +58,7 @@ namespace AngerStudio.HomingMeSoul.Game
                 CharacterProperty character = temp.GetComponent<CharacterProperty>();
                 character.Ready = true;
                 character.Stamina = CharacterStamina[i];
+                character.Stamina.Value = DEFAULT_STAMINA;
                 Players.Add(player.Key, character);
 
                 listPlayerInHome.Add(player.Key);
@@ -83,7 +85,7 @@ namespace AngerStudio.HomingMeSoul.Game
         {
             if (listPlayerOnLocation.Contains(key))
             {
-                Players[key].ForwardVector = Players[key].transform.position - Players[key].collideLocation.transform.position;
+                Players[key].ForwardVector = Players[key].transform.position - Players[key].collideLocation.transform.position * Players[key].GetSpeed();
                 listPlayerOnLocation.Remove(key);
             }
             if (listPlayerInHome.Contains(key))
@@ -103,9 +105,9 @@ namespace AngerStudio.HomingMeSoul.Game
             foreach(var player in listPlayerMoving)
             {
                 float gravityMagnitude = GRAVITY_MULTILER  / Players[player].Stamina;
-                // Vector3 vGravity = Gravity.getGravity(Players[player].transform.position,gravityMagnitude);
+                Vector3 vGravity = Gravity.getGravity(Players[player].transform.position,gravityMagnitude);
 
-                // Players[player].ForwardVector += vGravity;
+                Players[player].ForwardVector += vGravity;
                 Players[player].PlayerMove();
             }
         }
@@ -113,7 +115,14 @@ namespace AngerStudio.HomingMeSoul.Game
         List<KeyCode> listPlayerOnLocation = new List<KeyCode>();
         public void RotatePlayerOnLocation()
         {
-            
+            foreach (var player in listPlayerOnLocation)
+            {
+                Players[player].transform.position += Players[player].collideLocation.transform.position - Players[player].lastLocationPosition;
+
+                Players[player].lastLocationPosition = Players[player].collideLocation.transform.position;
+
+                Players[player].transform.RotateAround(Players[player].collideLocation.transform.position, Vector3.forward, 1f);
+            }
         }
 
         List<KeyCode> listPlayerInHome = new List<KeyCode>();

@@ -11,9 +11,11 @@ GameObject:
   - component: {fileID: 1141335040402591596}
   - component: {fileID: 1141335040402591597}
   - component: {fileID: 1141335040402591598}
+  - component: {fileID: 2735982371091581955}
+  - component: {fileID: 6402281222220426559}
   m_Layer: 0
   m_Name: New Sprite
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -93,6 +95,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collideLocation: {fileID: 0}
+  lastLocationPosition: {x: 0, y: 0, z: 0}
   ForwardVector: {x: 0, y: 0, z: 0}
   RotatePoint: {x: 0, y: 0, z: 0}
   Ready: 0
@@ -100,3 +103,59 @@ MonoBehaviour:
     globalVariable: {fileID: 0}
     localValue: 0
     usingGlobal: 1
+--- !u!114 &2735982371091581955
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1141335040402591599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3aca272b023c15458bf29e7475fbee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  col: {fileID: 6402281222220426559}
+  tagFilter: []
+  collisionEnter:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1141335040402591598}
+        m_MethodName: onCollisionEnter
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: BA_Studio.UnityLib.General.CommonEvents.Collision2DEvent, BA_Studio_General,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  collisionStay:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: BA_Studio.UnityLib.General.CommonEvents.Collision2DEvent, BA_Studio_General,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  collisionExit:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: BA_Studio.UnityLib.General.CommonEvents.Collision2DEvent, BA_Studio_General,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+--- !u!58 &6402281222220426559
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1141335040402591599}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.5
