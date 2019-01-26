@@ -141,6 +141,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26cf3397f98be1749adbbba0f7c63a4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_View: {fileID: 0}
+  config:
+    playerColorPool:
+    - {r: 0.9528302, g: 0.20225172, b: 0.20225172, a: 0}
+    - {r: 0.9056604, g: 0.86943114, b: 0.2776789, a: 0}
+    - {r: 0.5442762, g: 0.8773585, b: 0.376602, a: 0}
+    - {r: 0.19784619, g: 0.7138836, b: 0.735849, a: 0}
+    - {r: 0.7735849, g: 0.36124954, b: 0.7114514, a: 0}
+    - {r: 0.31359026, g: 0.32544622, b: 0.8207547, a: 0}
+    - {r: 0.8207547, g: 0.5326928, b: 0.127759, a: 0}
+    - {r: 1, g: 0.5330188, b: 0.7634726, a: 0}
+    maxPlayers: 8
+    keySets: 710000007a00000065000000630000007400000062000000750000006d000000
 --- !u!4 &263668417
 Transform:
   m_ObjectHideFlags: 0
@@ -153,5 +166,68 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &341002513
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 341002515}
+  - component: {fileID: 341002514}
+  - component: {fileID: 341002516}
+  m_Layer: 0
+  m_Name: '! AmsMultiSceneSetup'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &341002514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 341002513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 085c2289556c08443b40563cfe8016e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isMainScene: 1
+  _sceneSetup: []
+  _thisScenePath: Assets/Scenes/Loader.unity
+--- !u!4 &341002515
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 341002513}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &341002516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 341002513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15cc1e8a133b04c4ba5d1c4801149eaa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _version: 1
+  _crossSceneReferences: []
+  _realSceneRootsForPostBuild: []
+  _mergedScenes: []
