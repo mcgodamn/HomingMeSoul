@@ -38,6 +38,8 @@ namespace AngerStudio.HomingMeSoul.Core
 
         public AppConfig config;
 
+        public CanvasGroup titleGroup;
+
         void Awake ()
         {
             stateMachine = new StateMachine<AppCore>(this);

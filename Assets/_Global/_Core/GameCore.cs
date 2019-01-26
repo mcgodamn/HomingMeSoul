@@ -24,7 +24,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
         Dictionary<SupplyDrop, int> zoneIndexMap = new Dictionary<SupplyDrop, int>();
         
-        List<(Sprite, float depth, int, SupplyType)> pool = new List<(Sprite, float, int, SupplyType)>();
+        Dictionary<KeyCode, (Sprite, Color)> profiles;
 
         float poolDepth = 0;
 
@@ -51,7 +51,6 @@ namespace AngerStudio.HomingMeSoul.Game
 
             dropsPool = new GameObjectPool<SupplyDrop>(AppCore.Instance.config.supplyDropPrefab, 20);
 
-            GenerateSupplyPool();
         }
 
         void Update ()
@@ -81,21 +80,8 @@ namespace AngerStudio.HomingMeSoul.Game
             }
         }
 
-        void GenerateSupplyPool ()
-        {
-            if (!config.Value.forbidBook1) pool.Add((AppCore.Instance.config.knowledgeSprites[0], config.Value.bookWeight * config.Value.supplyWeightLV1, 0, SupplyType.Book));
-            if (!config.Value.forbidBook2) pool.Add((AppCore.Instance.config.knowledgeSprites[1], config.Value.bookWeight * config.Value.supplyWeightLV2, 1, SupplyType.Book));
-            if (!config.Value.forbidBook3) pool.Add((AppCore.Instance.config.knowledgeSprites[2], config.Value.bookWeight * config.Value.supplyWeightLV3, 2, SupplyType.Book));
-            if (!config.Value.forbidFood1) pool.Add((AppCore.Instance.config.foodSprites[0], config.Value.foodWeight * config.Value.supplyWeightLV1, 0, SupplyType.Food));
-            if (!config.Value.forbidFood2) pool.Add((AppCore.Instance.config.foodSprites[1], config.Value.foodWeight * config.Value.supplyWeightLV2, 1, SupplyType.Food));
-            if (!config.Value.forbidFood3) pool.Add((AppCore.Instance.config.foodSprites[2], config.Value.foodWeight * config.Value.supplyWeightLV3, 2, SupplyType.Food));
-            if (!config.Value.forbidMoney1) pool.Add((AppCore.Instance.config.moneySprites[0], config.Value.moneyWeight * config.Value.supplyWeightLV1, 0, SupplyType.Money));
-            if (!config.Value.forbidMoney2) pool.Add((AppCore.Instance.config.moneySprites[1], config.Value.moneyWeight * config.Value.supplyWeightLV2, 1, SupplyType.Money));
-            if (!config.Value.forbidMoney3) pool.Add((AppCore.Instance.config.moneySprites[2], config.Value.moneyWeight * config.Value.supplyWeightLV3, 2, SupplyType.Money));
-            poolDepth = pool.Sum(p => p.Item2);
-        }
 
-        public (SupplyType, int) GetRandomSupplySet ()
+        public (SupplyType, int) GetLeastPickupType ()
         {
             float r = Random.Range(0, poolDepth);
             for (int i = 0; i < pool.Count; i++)

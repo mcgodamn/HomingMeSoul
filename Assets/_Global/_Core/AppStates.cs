@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using BA_Studio.StatePattern;
 using UnityEngine;
+using DG.Tweening;
 
 namespace AngerStudio.HomingMeSoul.Core
 {
@@ -15,13 +16,29 @@ namespace AngerStudio.HomingMeSoul.Core
 
         public override void OnEntered ()
         {
-            ChangeState(new AwaitingPlayer(StateMachine));
+            ChangeState(new TitleScreen(StateMachine));
         }
 
         public override void Update ()
         {
         }
     }
+
+    public class TitleScreen : State<AppCore>
+    {
+        public TitleScreen (StateMachine<AppCore> machine) : base(machine)
+        {
+        }
+
+        public override void OnEntered ()
+        {
+             Context.titleGroup.DOFade(1, 0.3f);    
+        }
+
+        public override void Update ()
+        {
+        }
+    }    
 
     public class AwaitingPlayer : State<AppCore>
     {
