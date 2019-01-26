@@ -5,7 +5,8 @@
         "SimpleInput",
         "NoBrainer_GlobalVariables",
         "BA_Studio_SingletonLocator",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "BA_Studio_GameObjectPool"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

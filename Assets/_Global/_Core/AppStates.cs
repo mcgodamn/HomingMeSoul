@@ -25,16 +25,29 @@ namespace AngerStudio.HomingMeSoul.Core
 
     public class AwaitingPlayer : State<AppCore>
     {
+        float[] lastKeyDownTime = new float[8];
+        float[] lastKeyUpTime = new float[8];
         
+
         public AwaitingPlayer (StateMachine<AppCore> machine) : base(machine)
         {
         }
 
         public override void Update ()
         {
-            Context.ReceiveInput();
-            // foreach (KeyCode k in Context.config.keySets)
-                // if (Input.GetKeyDown(k) && Context.activePlayers.All(p => p.Item1 == k )) Context.AddPlayer(k);
+            foreach (KeyCode vKey in Context.allowedKeys)
+            {
+                if (SimpleInput.GetKeyUp(vKey))
+                {
+                    if (!Context.activePlayers.Any(kvp => kvp.Key == vKey)) Context.AddPlayer(vKey);
+                    else
+                    {
+                        Context.avaliableColors.Add(Context.activePlayers[vKey]);
+                        Context.activePlayers.Remove(vKey);
+                        Context.m_View.RemovePlayerCard(vKey);                        
+                    }
+                }
+            }
         }
     }
 
@@ -42,6 +55,11 @@ namespace AngerStudio.HomingMeSoul.Core
     {
         public GameStarting (StateMachine<AppCore> machine) : base(machine)
         {
+        }
+
+        public override void OnEntered ()
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene(Context.toLoad);
         }
 
         public override void Update ()
