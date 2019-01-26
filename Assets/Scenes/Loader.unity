@@ -142,6 +142,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_View: {fileID: 0}
+  toLoad:
+    sceneAsset: {fileID: 102900000, guid: 039b2216cf21a9d4292c8fe29d2b3d23, type: 3}
+    sceneName: Game
   config:
     playerColorPool:
     - {r: 0.9528302, g: 0.20225172, b: 0.20225172, a: 0}
@@ -153,7 +156,20 @@ MonoBehaviour:
     - {r: 0.8207547, g: 0.5326928, b: 0.127759, a: 0}
     - {r: 1, g: 0.5330188, b: 0.7634726, a: 0}
     maxPlayers: 8
-    keySets: 710000007a00000065000000630000007400000062000000750000006d000000
+    foodSprites:
+    - {fileID: 21300000, guid: 5174db0f8cd789e4ba61fe9fd2d993f8, type: 3}
+    - {fileID: 21300000, guid: eb016e60c0dff274086cf38656abfb6d, type: 3}
+    - {fileID: 21300000, guid: b5a432ef655e6fb48b9b0b275ca8e432, type: 3}
+    knowledgeSprites:
+    - {fileID: 21300000, guid: 3f4a479e173717040b8af948a4eadc77, type: 3}
+    - {fileID: 21300000, guid: b61a2aae04db6d247bec5808f9a7a956, type: 3}
+    - {fileID: 21300000, guid: 7caac3ca35533f548bf1279742a88b05, type: 3}
+    moneySprites:
+    - {fileID: 21300000, guid: c852fdc8eea207346b03b63bbf2ef5ca, type: 3}
+    - {fileID: 21300000, guid: 77e74b63d1ed5a948b8b0fc59a11e662, type: 3}
+    - {fileID: 21300000, guid: 22577bf98c86e254c8444dc4594b6470, type: 3}
+    supplyDropPrefab: {fileID: 4901898632862311033, guid: 9e235d81704d34f478da3d1b2df8807d,
+      type: 3}
 --- !u!4 &263668417
 Transform:
   m_ObjectHideFlags: 0
@@ -166,7 +182,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &341002513
 GameObject:
@@ -213,7 +229,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &341002516
 MonoBehaviour:

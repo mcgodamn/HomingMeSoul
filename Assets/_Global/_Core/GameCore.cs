@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using BA_Studio.StatePattern;
+using BA_Studio.UnityLib.GameObjectPool;
+using AngerStudio.HomingMeSoul.Core;
 using BA_Studio.UnityLib.SingletonLocator;
 
 namespace AngerStudio.HomingMeSoul.Game
@@ -10,12 +12,21 @@ namespace AngerStudio.HomingMeSoul.Game
 
     public class GameCore : MonoBehaviour
     {
+        public static GameCore Instance { get => SingletonBehaviourLocator<GameCore>.Instance; }
         StateMachine<GameCore> stateMachine;
         public GameObject gravityZonePrefab;
         public GameObjectArrayReference gravityZones;
         public GameConfigReference config;
-        public IntReference Score, SP;
-        public int[] suppliesCountOfZones;
+        public IntReference score, sp;
+        public List<HashSet<SupplyDrop>> dropsInZones;
+
+        GameObjectPool<SupplyDrop> dropsPool;
+
+        Dictionary<SupplyDrop, int> zoneIndexMap = new Dictionary<SupplyDrop, int>();
+        
+        List<(Sprite, float depth, int, SupplyType)> pool = new List<(Sprite, float, int, SupplyType)>();
+
+        float poolDepth = 0;
 
         public GameObject characterPrefab;
         public GameObjectReference[] Characters;
@@ -228,9 +239,9 @@ namespace AngerStudio.HomingMeSoul.Game
             get
             {
                 int t = 0;
-                foreach (int i in suppliesCountOfZones)
+                foreach (HashSet<SupplyDrop> h in dropsInZones)
                 {
-                    t += i;
+                    t += h.Count;
                 }
                 return t;
 
@@ -255,6 +266,12 @@ namespace AngerStudio.HomingMeSoul.Game
             };
 
             stateMachine.ChangeState(new GamePreparing(stateMachine));
+
+            SingletonBehaviourLocator<GameCore>.Set(this);
+
+            dropsPool = new GameObjectPool<SupplyDrop>(AppCore.Instance.config.supplyDropPrefab, 20);
+
+            GenerateSupplyPool();
         }
 
         void Update ()
@@ -262,9 +279,16 @@ namespace AngerStudio.HomingMeSoul.Game
             stateMachine?.Update();
         }
 
+        public void Picked (SupplyDrop s)
+        {
+            dropsInZones[zoneIndexMap[s]].Remove(s);
+            zoneIndexMap.Remove(s);
+            dropsPool.ReturnToPool(s);          
+        }
+
         public void Prepare ()
         {
-            suppliesCountOfZones = new int[config.Value.gravityZoneSteps.Length - 1];
+            dropsInZones = new List<HashSet<SupplyDrop>>();            
 
             gravityZones.Value = new GameObject[config.Value.gravityZoneSteps.Length - 1];
             GameObject g = GameObject.Instantiate(gravityZonePrefab);
@@ -277,22 +301,39 @@ namespace AngerStudio.HomingMeSoul.Game
             }
         }
 
+        void GenerateSupplyPool ()
+        {
+            if (!config.Value.forbidBook1) pool.Add((AppCore.Instance.config.knowledgeSprites[0], config.Value.bookWeight * config.Value.supplyWeightLV1, 0, SupplyType.Book));
+            if (!config.Value.forbidBook2) pool.Add((AppCore.Instance.config.knowledgeSprites[1], config.Value.bookWeight * config.Value.supplyWeightLV2, 1, SupplyType.Book));
+            if (!config.Value.forbidBook3) pool.Add((AppCore.Instance.config.knowledgeSprites[2], config.Value.bookWeight * config.Value.supplyWeightLV3, 2, SupplyType.Book));
+            if (!config.Value.forbidFood1) pool.Add((AppCore.Instance.config.foodSprites[0], config.Value.foodWeight * config.Value.supplyWeightLV1, 0, SupplyType.Food));
+            if (!config.Value.forbidFood2) pool.Add((AppCore.Instance.config.foodSprites[1], config.Value.foodWeight * config.Value.supplyWeightLV2, 1, SupplyType.Food));
+            if (!config.Value.forbidFood3) pool.Add((AppCore.Instance.config.foodSprites[2], config.Value.foodWeight * config.Value.supplyWeightLV3, 2, SupplyType.Food));
+            if (!config.Value.forbidMoney1) pool.Add((AppCore.Instance.config.moneySprites[0], config.Value.moneyWeight * config.Value.supplyWeightLV1, 0, SupplyType.Money));
+            if (!config.Value.forbidMoney2) pool.Add((AppCore.Instance.config.moneySprites[1], config.Value.moneyWeight * config.Value.supplyWeightLV2, 1, SupplyType.Money));
+            if (!config.Value.forbidMoney3) pool.Add((AppCore.Instance.config.moneySprites[2], config.Value.moneyWeight * config.Value.supplyWeightLV3, 2, SupplyType.Money));
+            poolDepth = pool.Sum(p => p.Item2);
+        }
+
         public (SupplyType, int) GetRandomSupplySet ()
         {
-            float r = Random.Range(0f, 1f);
-            if (r < config.Value.supplyWeightLV3) return ((SupplyType) Random.Range(0, 3), 2);
-            else if (r < config.Value.supplyWeightLV2) return ((SupplyType) Random.Range(0, 3), 1);
-            else return ((SupplyType) Random.Range(0, 3), 1);
+            float r = Random.Range(0, poolDepth);
+            for (int i = 0; i < pool.Count; i++)
+            {
+                r -= pool[i].depth;
+                if (r < pool[i+1].depth && r > 0) return (pool[i].Item4, pool[i].Item3);
+            }
+            throw new System.Exception("Should not happen!");
         }
 
         public int SpawnSupplyInMostEmptyZone ((SupplyType type, int supplyLevel) s)
         {
-            int emptyZoneIndex = gravityZones.Value.Length - 1, lastLeast = suppliesCountOfZones[emptyZoneIndex];
+            int emptyZoneIndex = gravityZones.Value.Length - 1, lastLeast = dropsInZones[emptyZoneIndex].Count;
             for (int i = emptyZoneIndex - 1; i > 0; i--)
             {
-                if (suppliesCountOfZones[i] < lastLeast)
+                if (dropsInZones[emptyZoneIndex].Count < lastLeast)
                 {
-                    lastLeast = suppliesCountOfZones[i];
+                    lastLeast = dropsInZones[emptyZoneIndex].Count;
                     emptyZoneIndex = i;
                 }                
             }
@@ -310,33 +351,30 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public void PlaceSupply (int zoneIndex, (SupplyType type, int supplyLevel) s)
         {
-            if (Random.Range(0f, Mathf.Pow(1 + config.Value.rimRewardFactor, zoneIndex)) > 1 && s.supplyLevel < 2) s.supplyLevel += 1; 
-            PlaceSupply(Random.Range(config.Value.gravityZoneSteps[zoneIndex - 1], config.Value.gravityZoneSteps[zoneIndex]),
+            if (Random.Range(0f, Mathf.Pow(1 + config.Value.rimRewardFactor, zoneIndex)) > 1 && s.supplyLevel < 2) s.supplyLevel += 1;
+            
+            GameObject t = null;
+            SupplyDrop d = dropsPool.GetObjectFromPool(null);
+            t = d.gameObject;
+            d.type = s.type;
+            d.level = s.supplyLevel;
+            
+            PlaceToOrbit(Random.Range(config.Value.gravityZoneSteps[zoneIndex - 1], config.Value.gravityZoneSteps[zoneIndex]),
             gravityZones.Value[zoneIndex].transform,
-            s);
-            suppliesCountOfZones[zoneIndex] += 1;
+            t);
+
+            if (dropsInZones[zoneIndex] == null) dropsInZones[zoneIndex] = new HashSet<SupplyDrop>();
+            dropsInZones[zoneIndex].Add(d);
+
+            zoneIndexMap.Add(d, zoneIndex);
         }
 
         ContactFilter2D filter = new ContactFilter2D () { useTriggers = true };
 
         Collider2D[] colCache;
 
-        public void PlaceSupply (float distance, Transform parentZone, (SupplyType type, int supplyLevel) s)
+        void PlaceToOrbit (float distance, Transform parentZone, GameObject t)
         {
-            GameObject t = null;
-            switch (s.type)
-            {
-                case SupplyType.Money:
-                    t = GameObject.Instantiate(config.Value.moneySupplyPrefabs[s.supplyLevel]);
-                    break;
-                case SupplyType.Book:
-                    t = GameObject.Instantiate(config.Value.bookSupplyPrefabs[s.supplyLevel]);
-                    break;
-                case SupplyType.Food:
-                    t = GameObject.Instantiate(config.Value.foodSupplyPrefabs[s.supplyLevel]);
-                    break;
-            }
-            
             t.transform.SetParent(parentZone);
             t.transform.localPosition = Vector3.zero;
             distance = distance / 2f; // Steps is scale value for zones.
