@@ -65,6 +65,12 @@ namespace AngerStudio.HomingMeSoul.Game
             transform.up = direction;
         }
 
+        public void setIsDry(bool isDry)
+        {
+            normalCharacter.SetActive(!isDry);
+            dryCharacter.SetActive(isDry);
+        }
+
         public void setColor(Color color)
         {
             glowRenderer.color = color;

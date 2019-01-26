@@ -56,6 +56,7 @@ namespace AngerStudio.HomingMeSoul.Game
             Context.RotatePlayerInHome();
             Context.RotatePlayerOnLocation();
 
+            /*
             //Rotate the supply belt
             for (int i = 0; i < Context.gravityZones.Value.Length; i++) Context.gravityZones.Value[i].transform.Rotate(Vector3.back * Context.config.Value.gravityZonesRevolutionSpeeds[i] * Time.deltaTime);
             //Spawning supplies...
@@ -75,6 +76,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
             //Controlling bad guys...
             //Random events...
+            */
         }
     }
 

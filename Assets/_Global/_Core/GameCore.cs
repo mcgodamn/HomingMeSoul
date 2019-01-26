@@ -158,7 +158,7 @@ namespace AngerStudio.HomingMeSoul.Game
         public void EnterHome(KeyCode key)
         {
             if (!listPlayerMoving.Contains(key)) return;
-
+            Players[key].setIsDry(false);
             listPlayerMoving.Remove(key);
             listPlayerInHome.Add(key);
         }
@@ -178,9 +178,10 @@ namespace AngerStudio.HomingMeSoul.Game
             {
                 if (Players[player].Stamina.Value > 0)
                     Players[player].Stamina.Value -= decentValue;
-                else
+                else if (Players[player].Stamina.Value < 0)
                 {
                     Players[player].Stamina.Value = 0;
+                    Players[player].setIsDry(true);
                 }
             }
         }
@@ -293,7 +294,6 @@ namespace AngerStudio.HomingMeSoul.Game
             stateMachine.ChangeState(new GamePreparing(stateMachine));
 
             SingletonBehaviourLocator<GameCore>.Set(this);
-
             dropsPool = new GameObjectPool<SupplyDrop>(AppCore.Instance.config.supplyDropPrefab, 20);
             pickUpInstances = new BiMap<int, HashSet<SupplyDrop>>();
 

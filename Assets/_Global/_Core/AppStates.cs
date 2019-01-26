@@ -83,14 +83,8 @@ namespace AngerStudio.HomingMeSoul.Core
                 }
             }
 
-
             if (Context.activePlayers.Count >= 8)
             {
-                foreach(var player in Context.activePlayers)
-                {
-                    Debug.Log(player.Value.assginedPickupType);
-                }
-
                 ChangeState(new GameStarting(StateMachine));
             }
 
