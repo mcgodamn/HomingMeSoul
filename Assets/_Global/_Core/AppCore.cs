@@ -9,6 +9,9 @@ namespace AngerStudio.HomingMeSoul.Core
 
     public class AppCore : MonoBehaviour
     {
+        [SerializeField]
+        AppView m_View;
+
         public static AppCore Instance { get => SingletonBehaviourLocator<AppCore>.Instance; }
 
         StateMachine<AppCore> stateMachine;
@@ -23,18 +26,40 @@ namespace AngerStudio.HomingMeSoul.Core
             avaliableColors = new List<Color>(config.playerColorPool);
         }
 
-        public List<(KeyCode, Color)> activePlayers;
+        public Dictionary<KeyCode, Color> activePlayers;
         List<Color> avaliableColors;
 
-        public void AddPlayer (KeyCode slot)
+        public void ReceiveInput()
         {
-            if (avaliableColors.Count == 0) return;
+            foreach (KeyCode vKey in System.Enum.GetValues(typeof(KeyCode)))
+            {
+                if (SimpleInput.GetKeyDown(vKey))
+                {
+                    if (activePlayers.ContainsKey(vKey))
+                    {
+                        avaliableColors.Add(activePlayers[vKey]);
+                        activePlayers.Remove(vKey);
+                        m_View.RemovePlayerCard(vKey);
+                    }
+                    else
+                    {
+                        AddPlayer(vKey);
+                    }
+                }
+            }
+        }
+
+        void AddPlayer (KeyCode slot)
+        {
+            if (avaliableColors.Count == 0 || activePlayers.Count >= config.maxPlayers) return;
             int r = Random.Range(0, avaliableColors.Count);
-            activePlayers.Add((slot, avaliableColors[r]));
+            activePlayers.Add(slot,avaliableColors[r]);
+            m_View.AddPlayerCard(slot, avaliableColors[r]);
             avaliableColors.RemoveAt(r);
         }
-        
     }
+
+
 
     [System.Serializable]
     public class AppConfig
@@ -44,7 +69,5 @@ namespace AngerStudio.HomingMeSoul.Core
         public int maxPlayers;
 
         public KeyCode[] keySets = { KeyCode.Q, KeyCode.Z, KeyCode.E, KeyCode.C, KeyCode.T, KeyCode.B, KeyCode.U, KeyCode.M };
-
-
     }
 }

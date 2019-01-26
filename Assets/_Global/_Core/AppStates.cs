@@ -32,8 +32,9 @@ namespace AngerStudio.HomingMeSoul.Core
 
         public override void Update ()
         {
-            foreach (KeyCode k in Context.config.keySets)
-                if (Input.GetKeyDown(k) && Context.activePlayers.All(p => p.Item1 == k )) Context.AddPlayer(k);
+            Context.ReceiveInput();
+            // foreach (KeyCode k in Context.config.keySets)
+                // if (Input.GetKeyDown(k) && Context.activePlayers.All(p => p.Item1 == k )) Context.AddPlayer(k);
         }
     }
 
