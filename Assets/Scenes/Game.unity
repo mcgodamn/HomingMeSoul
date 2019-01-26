@@ -5059,7 +5059,8 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 52530351}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5229,21 +5230,8 @@ MonoBehaviour:
       - 15
       - 20
       - 25
-      supplyWeightLV1: 0.7
-      supplyWeightLV2: 0.2
-      supplyWeightLV3: 0.1
-      bookWeight: 1
-      moneyWeight: 1
-      foodWeight: 1
-      forbidBook1: 0
-      forbidBook2: 0
-      forbidBook3: 0
-      forbidFood1: 0
-      forbidFood2: 0
-      forbidFood3: 0
-      forbidMoney1: 0
-      forbidMoney2: 0
-      forbidMoney3: 0
+      forbiddenPickupTypes: []
+      treasureChance: 0.05
       rimRewardFactor: 1
       badGuySpawnChancePerMinute: 0.1
       building_Exchange: 0
@@ -5275,9 +5263,10 @@ MonoBehaviour:
     globalVariable: {fileID: 0}
     localValue: 0
     usingGlobal: 0
-  suppliesCountOfZones: 
-  characterPrefab: {fileID: 1141335040402591599, guid: 645b1452426304727af92059b089fff5,
-    type: 3}
+  burstVFXPrefab: {fileID: 0}
+  c1: {fileID: 1935575473720799479, guid: 39d333d5a2ce8432290c2bfee50f9dc6, type: 3}
+  c2: {fileID: 5675535322407437489, guid: 4f1b2d7c3be53444d8a4d762ef7f8040, type: 3}
+  c3: {fileID: 2271166676175569968, guid: db9fcee7279c14811893228c022cee15, type: 3}
   Characters:
   - globalVariable: {fileID: 11400000, guid: 3e3ee24fa0f275947b3613fe456ac718, type: 2}
     localValue: {fileID: 0}

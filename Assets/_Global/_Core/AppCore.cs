@@ -24,9 +24,6 @@ namespace AngerStudio.HomingMeSoul.Core
         };
 
         internal HashSet<KeyCode> allowedKeys;
-
-        [SerializeField]
-        internal AppView m_View;
         
 
         public SceneField toLoad;

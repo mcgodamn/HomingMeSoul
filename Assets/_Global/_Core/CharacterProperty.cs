@@ -22,6 +22,9 @@ namespace AngerStudio.HomingMeSoul.Game
         }
         public Vector3 lastLocationPosition;
 
+        public GameObject normalCharacter, dryCharacter;
+        public SpriteRenderer glowRenderer;
+
         public int supplyPoint;
 
         public Vector3 ForwardVector;
@@ -33,7 +36,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public KeyCode m_key;
 
-        public SupplyType type;
+        public int typeIndex;
 
         public void PlayerMove()
         {
@@ -62,15 +65,19 @@ namespace AngerStudio.HomingMeSoul.Game
             transform.up = direction;
         }
 
+        public void setColor(Color color)
+        {
+            glowRenderer.color = color;
+        }
+
         void OnTriggerEnter2D(Collider2D other)
         {
             if (!canCollide || collideLocation == other.gameObject) return;
             if (other.gameObject.GetComponent<SpriteRenderer>().sortingLayerName == "Supplies")
             {
-                if (other.gameObject.GetComponent<LocationProperty>().type == type)
+                if (other.gameObject.GetComponent<SupplyDrop>().typeIndex == typeIndex)
                 {
                     onHit(other);
-                    // other.gameObject.GetComponent<SpriteRenderer>().enabled = false;
                     GameCore.Instance.EnterLocation(m_key);
                 }
             }

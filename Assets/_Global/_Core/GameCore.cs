@@ -32,41 +32,72 @@ namespace AngerStudio.HomingMeSoul.Game
 
         float poolDepth = 0;
 
-        public GameObject characterPrefab;
+        public GameObject c1,c2,c3;
         public GameObjectReference[] Characters;
         public FloatReference[] CharacterStamina;
 
-        public static GameCore Instance { get => SingletonBehaviourLocator<GameCore>.Instance; }
-
         Dictionary<KeyCode, CharacterProperty> Players;
-        public Dictionary<KeyCode, Color> playersChoose;
 
         public Transform homeTransform;
 
         public void CreaterPlayers()
         {
             int i = 0;
-            Vector2[] positions = GetSpawnPosition(playersChoose.Count);
-            foreach(var player in playersChoose)
+            Vector2[] positions = GetSpawnPosition(AppCore.Instance.activePlayers.Count);
+
+            foreach(var player in AppCore.Instance.activePlayers)
             {
+                GameObject prefab;
+
+                switch (player.Value.assginedPickupType)
+                {
+                    case 0:
+                    case 1:
+                    case 2:
+                        prefab = c1;
+                        break;
+                    case 3:
+                    case 4:
+                    case 5:
+                        prefab = c2;
+                        break;
+                    case 6:
+                    case 7:
+                    case 8:
+                        prefab = c3;
+                        break;
+                    default:
+                        prefab = c1;
+                        break;
+                }
+
+
                 //Initialize character
-                GameObject temp = Instantiate(characterPrefab, positions[i], Quaternion.identity);
+                GameObject temp = Instantiate(prefab, positions[i], Quaternion.identity);
                 Characters[i].Value = temp;
+
                 CharacterProperty character = temp.GetComponent<CharacterProperty>();
-                character.type = SupplyType.Food;
-                character.collideLocation = homeTransform.gameObject;
-                character.Ready = true;
+                character.typeIndex = player.Value.assginedPickupType;
+                character.setColor(player.Value.assignedColor);
                 character.m_key = player.Key;
                 character.Stamina = CharacterStamina[i];
-                character.Stamina.Value = config.Value.staminaChargeNumber;
-                character.faceLocation();
-
+                InitializeCharacter(character);
+                
                 Players.Add(player.Key, character);
                 listPlayerInHome.Add(player.Key);
 
                 i++;
             }
         }
+
+        void InitializeCharacter(CharacterProperty character)
+        {
+            character.collideLocation = homeTransform.gameObject;
+            character.Ready = true;
+            character.Stamina.Value = config.Value.staminaChargeNumber;
+            character.faceLocation();
+        }
+
 
 
         Vector2[] GetSpawnPosition(int playerNumber)
@@ -258,16 +289,6 @@ namespace AngerStudio.HomingMeSoul.Game
             stateMachine = new StateMachine<GameCore>(this);
 
             Players = new Dictionary<KeyCode, CharacterProperty>();
-            playersChoose = new Dictionary<KeyCode, Color>() {
-                { KeyCode.Q, Color.black },
-                { KeyCode.W, Color.black },
-                { KeyCode.E, Color.black },
-                { KeyCode.R, Color.black },
-                { KeyCode.T, Color.black },
-                { KeyCode.Y, Color.black },
-                { KeyCode.U, Color.black },
-                { KeyCode.I, Color.black }
-            };
 
             stateMachine.ChangeState(new GamePreparing(stateMachine));
 
