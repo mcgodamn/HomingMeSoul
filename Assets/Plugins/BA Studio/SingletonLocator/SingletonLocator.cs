@@ -1,6 +1,6 @@
 
 
-namespace BA_Studio.Singleton
+namespace BA_Studio.SingletonLocator
 {
     // public static class StaticSingletonLazy<T> where T : class, new()
     // {

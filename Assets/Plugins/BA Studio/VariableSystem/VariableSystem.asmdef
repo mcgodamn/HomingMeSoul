@@ -2,7 +2,7 @@
     "name": "VariableSystem",
     "references": [
         "BA_Studio_General",
-        "BA_Studio_SingletonAttachment"
+        "BA_Studio_SingletonLocator"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

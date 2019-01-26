@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using BA_Studio.UnityLib.Singleton;
+using BA_Studio.UnityLib.SingletonLocator;
 
 namespace BA_Studio.UnityLib.GlobalAudio
 {

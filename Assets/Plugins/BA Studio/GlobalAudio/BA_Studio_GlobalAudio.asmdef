@@ -2,8 +2,14 @@
     "name": "BA_Studio_GlobalAudio",
     "references": [
         "NoBrainer_GlobalVariables",
-        "BA_Studio_SingletonAttachment"
+        "BA_Studio_SingletonLocator"
     ],
+    "optionalUnityReferences": [],
     "includePlatforms": [],
-    "excludePlatforms": []
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
 }

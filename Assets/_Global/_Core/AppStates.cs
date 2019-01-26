@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using BA_Studio.StatePattern;
 using UnityEngine;
@@ -12,21 +13,27 @@ namespace AngerStudio.HomingMeSoul.Core
         {
         }
 
-        public override void Update ()
+        public override void OnEntered ()
         {
             ChangeState(new AwaitingPlayer(StateMachine));
+        }
+
+        public override void Update ()
+        {
         }
     }
 
     public class AwaitingPlayer : State<AppCore>
     {
+        
         public AwaitingPlayer (StateMachine<AppCore> machine) : base(machine)
         {
         }
 
         public override void Update ()
         {
-            throw new System.NotImplementedException();
+            foreach (KeyCode k in Context.config.keySets)
+                if (Input.GetKeyDown(k) && Context.activePlayers.All(p => p.Item1 == k )) Context.AddPlayer(k);
         }
     }
 

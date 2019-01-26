@@ -81,13 +81,21 @@ namespace UnityEngine.UI.ProceduralImage
             }
             set
             {
-                if (this.GetComponent<ProceduralImageModifier>() != null)
+                if (modifier != null && modifier.GetType() != value)
                 {
-                    DestroyImmediate(this.GetComponent<ProceduralImageModifier>());
+                    if (this.GetComponent<ProceduralImageModifier>() != null)
+                    {
+                        DestroyImmediate(this.GetComponent<ProceduralImageModifier>());
+                    }
+                    this.gameObject.AddComponent(value);
+                    Modifier = this.GetComponent<ProceduralImageModifier>();
+                    this.SetAllDirty();
                 }
-                this.gameObject.AddComponent(value);
-                Modifier = this.GetComponent<ProceduralImageModifier>();
-                this.SetAllDirty();
+                else if(modifier == null){
+                    this.gameObject.AddComponent(value);
+                    Modifier = this.GetComponent<ProceduralImageModifier>();
+                    this.SetAllDirty();
+                }
             }
         }
 
@@ -97,13 +105,21 @@ namespace UnityEngine.UI.ProceduralImage
             this.Init();
         }
 
+        override protected void OnDisable()
+        {
+            base.OnDisable();
+            this.m_OnDirtyVertsCallback -= OnVerticesDirty;
+        }
+
         /// <summary>
         /// Initializes this instance.
         /// </summary>
         void Init()
         {
+            this.m_OnDirtyVertsCallback += OnVerticesDirty;
             this.preserveAspect = false;
-            if(this.sprite == null){
+            if (this.sprite == null)
+            {
                 this.sprite = EmptySprite.Get();
             }
             if (materialInstance == null)
@@ -111,6 +127,14 @@ namespace UnityEngine.UI.ProceduralImage
                 materialInstance = new Material(Shader.Find("UI/Procedural UI Image"));
             }
             this.material = materialInstance;
+        }
+
+        protected void OnVerticesDirty()
+        {
+            if (this.sprite == null)
+            {
+                this.sprite = EmptySprite.Get();
+            }
         }
 
 #if UNITY_EDITOR
@@ -144,10 +168,6 @@ namespace UnityEngine.UI.ProceduralImage
 
         ProceduralImageInfo CalculateInfo()
         {
-            if(this.sprite == null){
-                this.sprite = EmptySprite.Get();
-            }
-            
             var r = GetPixelAdjustedRect();
 
             Vector3[] corners = new Vector3[4];
@@ -158,8 +178,8 @@ namespace UnityEngine.UI.ProceduralImage
             Vector4 radius = FixRadius(Modifier.CalculateRadius(r));
 
             float minside = Mathf.Min(r.width, r.height);
-         
-            ProceduralImageInfo info = new ProceduralImageInfo(r.width + falloffDistance, r.height + falloffDistance, falloffDistance, pixelSize, radius/minside, borderWidth/minside*2);
+
+            ProceduralImageInfo info = new ProceduralImageInfo(r.width + falloffDistance, r.height + falloffDistance, falloffDistance, pixelSize, radius / minside, borderWidth / minside * 2);
 
             return info;
         }
@@ -179,7 +199,7 @@ namespace UnityEngine.UI.ProceduralImage
                 vert.position += ((Vector3)vert.uv0 - new Vector3(0.5f, 0.5f)) * info.fallOffDistance;
                 //vert.uv0 = vert.uv0;
                 vert.uv1 = uv1;
-                vert.uv2 = uv2; 
+                vert.uv2 = uv2;
                 vert.uv3 = uv3;
 
                 vh.SetUIVertex(vert, i);
@@ -195,7 +215,7 @@ namespace UnityEngine.UI.ProceduralImage
         float EncodeFloats_0_1_16_16(float a, float b)
         {
             Vector2 kDecodeDot = new Vector2(1.0f, 1f / 65535.0f);
-            return Vector2.Dot(new Vector2(Mathf.Floor(a*65534)/65535f, Mathf.Floor(b * 65534)/65535f), kDecodeDot);
+            return Vector2.Dot(new Vector2(Mathf.Floor(a * 65534) / 65535f, Mathf.Floor(b * 65534) / 65535f), kDecodeDot);
         }
 
 #if UNITY_EDITOR

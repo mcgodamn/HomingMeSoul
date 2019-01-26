@@ -3,7 +3,8 @@
     "references": [
         "BA_Studio_StatePattern",
         "SimpleInput",
-        "NoBrainer_GlobalVariables"
+        "NoBrainer_GlobalVariables",
+        "BA_Studio_SingletonLocator"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

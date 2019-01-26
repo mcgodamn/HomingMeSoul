@@ -9,20 +9,28 @@ namespace AngerStudio.HomingMeSoul.Game
     {
         public GameObject gravityZonePrefab;
         public GameObjectArrayReference gravityZones;
-
         public GameConfigReference config;
-
         public int[] suppliesCountOfZones;
 
         public void Prepare ()
         {
             suppliesCountOfZones = new int[config.Value.gravityZoneSteps.Length - 1];
+
+            gravityZones.Value = new GameObject[config.Value.gravityZoneSteps.Length];
+            gravityZones.Value[0] = GameObject.Instantiate(gravityZonePrefab);
+            gravityZones.Value[0].transform.localScale = Vector3.one * config.Value.gravityZoneSteps[0];
+
+            for (int i = 1; i < config.Value.gravityZoneSteps.Length; i++)
+            {
+                gravityZones.Value[i] = GameObject.Instantiate(gravityZonePrefab);
+                gravityZones.Value[i].transform.localScale = Vector3.one * config.Value.gravityZoneSteps[i];                    
+            }
         }
 
         public int SpawnSupplyInMostEmptyZone (SupplyType type, int supplyLevel)
         {
-            int emptyZoneIndex = 0, lastLeast = 100;
-            for (int i = 0; i < config.Value.gravityZoneSteps.Length - 1; i++)
+            int emptyZoneIndex = 0, lastLeast = -1;
+            for (int i = 0; i < gravityZones.Value.Length; i++)
             {
                 if (suppliesCountOfZones[i] > lastLeast)
                 {
@@ -32,12 +40,12 @@ namespace AngerStudio.HomingMeSoul.Game
             }
 
             PlaceSupply(emptyZoneIndex, type, supplyLevel);
-            return emptyZoneIndex;            
+            return emptyZoneIndex;
         }
 
         public int SpawnSupplyInRandomZone (SupplyType type, int supplyLevel)
         {
-            int t = Random.Range(1, gravityZones.Value.Length);
+            int t = Random.Range(0, gravityZones.Value.Length);
             PlaceSupply(t, gravityZones.Value[t].transform, type, supplyLevel);
             return t;
         }
