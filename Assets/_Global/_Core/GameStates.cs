@@ -10,6 +10,7 @@ namespace AngerStudio.HomingMeSoul.Game
     {
         public GamePreparing (StateMachine<GameCore> machine) : base(machine)
         {
+            
         }
 
         public override void Update ()

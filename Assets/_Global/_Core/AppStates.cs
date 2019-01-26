@@ -46,7 +46,7 @@ namespace AngerStudio.HomingMeSoul.Core
 
         public override void Update ()
         {
-            throw new System.NotImplementedException();
+            
         }
     }
 
