@@ -21,6 +21,10 @@ namespace AngerStudio.HomingMeSoul.Game
         public IntCollectionEvent comboProfit;
         public IntEvent scored;
 
+        void Start ()
+        {
+        }
+
         void Update ()
         {
             if (Time.frameCount > lastConsumeFrame + GameCore.Instance.config.Value.updatesDelayBetweenProfits)
@@ -30,10 +34,12 @@ namespace AngerStudio.HomingMeSoul.Game
             }
         }
 
+        List<int> t = new List<int>();
+        
         ICollection<int> CheckCombos ()
         {
-            List<int> t = new List<int>();
-
+            if (storage == null || storage.Length != AppCore.Instance.activePlayers.Count) 
+                storage = new int[AppCore.Instance.activePlayers.Count];
             for (int i = 0; i < AppCore.Instance.activePlayers.Count; i++)
             {
                 if (storage[i] > 0) t.Add(i);

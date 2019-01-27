@@ -56,7 +56,7 @@ namespace AngerStudio.HomingMeSoul.Core
             foreach (KeyCode k in Context.allowedKeys)
             {
                 if (SimpleInput.GetKey(k))
-                    Context.titleT.DOLocalMoveY(Context.titleT.localPosition.y + 900, 0.75f, true)
+                    Context.titleT.DOLocalMoveY(Context.titleT.localPosition.y + (Context.titleT.transform as RectTransform).rect.height, 0.75f, true)
                         .OnComplete(() => Context.titleT.gameObject.SetActive(false))
                         .OnComplete(() => ChangeState(new AwaitingPlayer(StateMachine)));      
             }
