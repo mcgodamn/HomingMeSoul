@@ -58,7 +58,6 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public float GetSpeed()
         {
-            // return Stamina.Value * GameCore.Instance.config.Value.speedMultiplier;
             return GameCore.Instance.config.Value.speedMultiplier;
         }
 

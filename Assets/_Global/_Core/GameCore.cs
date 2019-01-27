@@ -100,8 +100,6 @@ namespace AngerStudio.HomingMeSoul.Game
             character.faceLocation();
         }
 
-
-
         Vector2[] GetSpawnPosition(int playerNumber)
         {
             int radius = 1;
@@ -306,6 +304,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public void Picked (SupplyDrop s)
         {
+            s.m_collider.enabled = false;
             s.Occupied = false;
             dropsInZones[zoneIndexMap[s]].Remove(s);
             pickUpInstances[s.typeIndex].Remove(s);
@@ -372,10 +371,10 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public void PlaceSupply (int zoneIndex, int pickupType)
         {
-            
             GameObject t = null;
             SupplyDrop d = dropsPool.GetObjectFromPool(null);
             t = d.gameObject;
+            d.m_collider.enabled = true;
             d.typeIndex = pickupType;
             t.GetComponentInChildren<SpriteRenderer>().sprite = AppCore.Instance.config.usablePickupSprites[d.typeIndex];
             
