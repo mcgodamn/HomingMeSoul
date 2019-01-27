@@ -67,10 +67,12 @@ namespace AngerStudio.HomingMeSoul.Core
     {
         float[] lastKeyDownTime = new float[8];
         float[] lastKeyUpTime = new float[8];
-        
+        float countDown;
 
         public AwaitingPlayer (StateMachine<AppCore> machine) : base(machine)
         {
+            countDown = Time.time;
+            Context.countDownText.enabled = true;
         }
 
         public override void Update ()
@@ -82,10 +84,15 @@ namespace AngerStudio.HomingMeSoul.Core
                     Context.TogglePlayer(vKey);
                 }
             }
-
-            if (Context.activePlayers.Count >= 8)
+            float GAME_START_TIME = 10;
+            float sec = GAME_START_TIME - (Time.time - countDown);
+            if (sec < 0)
             {
                 ChangeState(new GameStarting(StateMachine));
+            }
+            else
+            {
+                Context.countDownText.text = ((int)sec).ToString();
             }
 
         }

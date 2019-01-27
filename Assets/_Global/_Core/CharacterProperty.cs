@@ -23,7 +23,7 @@ namespace AngerStudio.HomingMeSoul.Game
         public GameObject normalCharacter, dryCharacter;
         public SpriteRenderer glowRenderer;
 
-        public int supplyPoint;
+        public int supplyPoint = 0;
 
         public Vector3 ForwardVector;
         public Vector3 gravityAccelator;
@@ -33,6 +33,7 @@ namespace AngerStudio.HomingMeSoul.Game
         public FloatReference Stamina;
 
         public KeyCode m_key;
+        public int playerIndex;
 
         public int typeIndex;
 
@@ -43,11 +44,15 @@ namespace AngerStudio.HomingMeSoul.Game
             this.audio = this.gameObject.AddComponent<AudioSource>();
         }
 
+        List<CharacterProperty> dryHomies = new List<CharacterProperty>();
+
         public void PlayerMove()
         {
             ForwardVector += gravityAccelator;
             transform.position = transform.position + ForwardVector * Time.deltaTime;
             if (Stamina <= 0) ForwardVector = gravityAccelator;
+
+            if (draging) transform.position = dragger.transform.position + relativeVector;
         }
 
         public float GetSpeed()
@@ -56,12 +61,18 @@ namespace AngerStudio.HomingMeSoul.Game
             return GameCore.Instance.config.Value.speedMultiplier;
         }
 
-        void onHit(Collider2D other)
+        void onHit(GameObject other)
         {
-            collideLocation = other.gameObject;
+            collideLocation = other;
             faceLocation();
             canCollide = false;
             Ready = true;
+        }
+
+        void fitCircleCollider()
+        {
+            Vector2 dir = transform.up.normalized;
+            transform.position = dir;
         }
 
         public void faceLocation()
@@ -70,8 +81,10 @@ namespace AngerStudio.HomingMeSoul.Game
             transform.up = direction;
         }
 
+        public bool isDry;
         public void setIsDry(bool isDry)
         {
+            this.isDry = isDry;
             normalCharacter.SetActive(!isDry);
             dryCharacter.SetActive(isDry);
         }
@@ -81,26 +94,67 @@ namespace AngerStudio.HomingMeSoul.Game
             glowRenderer.color = color;
         }
 
-        void OnTriggerEnter2D(Collider2D other)
+        public void ReturnSupply()
         {
-            if (!canCollide || collideLocation == other.gameObject) return;
-            if (other.gameObject.CompareTag("Pickup"))
+            var supply = collideLocation.GetComponent<SupplyDrop>();
+            if(supply)
             {
-                if (other.gameObject.GetComponent<SupplyDrop>().typeIndex == typeIndex)
-                {
-                    onHit(other);
-                    other.gameObject.GetComponent<SupplyDrop>().Picked(0);
-                    GameCore.Instance.EnterLocation(m_key);
-                }
-            }
-
-            else if (other.gameObject.GetComponent<SpriteRenderer>().sortingLayerName == "Home")
-            {
-                onHit(other);
-                GameCore.Instance.EnterHome(m_key);
+                supply.Picked(playerIndex);
             }
         }
 
+        public void ReturnHome()
+        {
+            draging = false;
+            onHit(GameCore.Instance.homeTransform.gameObject);
+            GameCore.Instance.homeTransform.gameObject.GetComponent<ScoreBase>().DeliverPickups(m_key, supplyPoint);
+            supplyPoint = 0;
+            fitCircleCollider();
+            GameCore.Instance.EnterHome(m_key);
+        }
 
+        CharacterProperty dragger;
+        Vector3 relativeVector;
+        bool draging = false;
+        public void setDragger(CharacterProperty dragger)
+        {
+            draging = true;
+            this.dragger = dragger;
+            relativeVector = transform.position - dragger.transform.position;
+        }
+
+        void OnTriggerEnter2D(Collider2D other)
+        {
+            if (!canCollide || collideLocation == other.gameObject || draging) return;
+            if (other.gameObject.CompareTag("Pickup"))
+            {
+                var supply = other.gameObject.GetComponent<SupplyDrop>();
+                if (supply.typeIndex == typeIndex && !supply.Occupied)
+                {
+                    supplyPoint += 1;
+                    supply.Occupied = true;
+                    onHit(other.gameObject);
+                    GameCore.Instance.EnterLocation(m_key);
+                }
+            }
+            else if (other.gameObject.CompareTag("Home"))
+            {
+                ReturnHome();
+                foreach(var homie in dryHomies)
+                {
+                    homie.ReturnHome();
+                }
+                dryHomies.Clear();
+            }
+            else if (other.gameObject.CompareTag("Player"))
+            {
+                var homie = other.gameObject.GetComponent<CharacterProperty>();
+                if (homie.isDry)
+                {
+                    homie.setDragger(this);
+                    dryHomies.Add(homie);
+                }
+            }
+        }
     }
 }

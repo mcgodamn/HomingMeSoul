@@ -80,6 +80,7 @@ namespace AngerStudio.HomingMeSoul.Game
                 character.typeIndex = player.Value.assginedPickupType;
                 character.setColor(player.Value.assignedColor);
                 character.m_key = player.Key;
+                character.playerIndex = player.Value.UsingPlayerSlot;
                 character.Stamina = CharacterStamina[i];
                 InitializeCharacter(character);
                 
@@ -200,7 +201,7 @@ namespace AngerStudio.HomingMeSoul.Game
                 midPosition = homeTransform.position;
                 listPlayerInHome.Remove(key);
             }
-
+            Players[key].ReturnSupply();
             Players[key].collideLocation = null;
 
             Players[key].ForwardVector = (Players[key].transform.position - midPosition).normalized * Players[key].GetSpeed();
@@ -305,6 +306,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public void Picked (SupplyDrop s)
         {
+            s.Occupied = false;
             dropsInZones[zoneIndexMap[s]].Remove(s);
             pickUpInstances[s.typeIndex].Remove(s);
             zoneIndexMap.Remove(s);
