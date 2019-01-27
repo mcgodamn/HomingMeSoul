@@ -84,6 +84,7 @@ namespace AngerStudio.HomingMeSoul.Game
                 character.Stamina = CharacterStamina[i];
                 InitializeCharacter(character);
                 
+
                 Players.Add(player.Key, character);
                 listPlayerInHome.Add(player.Key);
 
@@ -207,6 +208,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
             Players[key].Ready = false;
             Players[key].canCollide = true;
+            Players[key].audio.PlayOneShot(AppCore.Instance.activePlayers[key].assignedActionAudio);
             listPlayerMoving.Add(key);
         }
 
@@ -289,12 +291,8 @@ namespace AngerStudio.HomingMeSoul.Game
         {
             SingletonBehaviourLocator<GameCore>.Set(this);
             stateMachine = new StateMachine<GameCore>(this);
-
-            Players = new Dictionary<KeyCode, CharacterProperty>();
-
             stateMachine.ChangeState(new GamePreparing(stateMachine));
 
-            SingletonBehaviourLocator<GameCore>.Set(this);
             dropsPool = new GameObjectPool<SupplyDrop>(AppCore.Instance.config.supplyDropPrefab, 20);
             pickUpInstances = new BiMap<int, HashSet<SupplyDrop>>();
             for (int i = 0; i < AppCore.Instance.config.usablePickupSprites.Length; i++) pickUpInstances.Add(i, new HashSet<SupplyDrop>());
@@ -330,6 +328,8 @@ namespace AngerStudio.HomingMeSoul.Game
                 gravityZones.Value[i - 1] = GameObject.Instantiate(gravityZonePrefab);
                 gravityZones.Value[i - 1].transform.localScale = Vector3.one * config.Value.gravityZoneSteps[i];                    
             }
+            
+            Players = new Dictionary<KeyCode, CharacterProperty>();
         }
 
 

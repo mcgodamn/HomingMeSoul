@@ -460,6 +460,15 @@ MonoBehaviour:
     - {fileID: 21300000, guid: fa79ad4d4968aed46b0c71e15eac74a0, type: 3}
     - {fileID: 21300000, guid: f775c217f42de6342a227973ae720aff, type: 3}
     - {fileID: 21300000, guid: b61ce19713ba60947ab5dbdab56b3458, type: 3}
+    characterActionAudio:
+    - {fileID: 8300000, guid: 6ff56d73fbd5bcc48b9a3e69c7822576, type: 3}
+    - {fileID: 8300000, guid: f09aa6721ff1e4c4ab799d09a5daf267, type: 3}
+    - {fileID: 8300000, guid: 3e3bbf2b31ac6114ca282967ec5e08e7, type: 3}
+    - {fileID: 8300000, guid: bd9720400330f014f8eceb6e60b8d7c2, type: 3}
+    - {fileID: 8300000, guid: b085d18380b07c6468e14c8d6a362891, type: 3}
+    - {fileID: 8300000, guid: 059923cb49ac345429dbf233674fb44a, type: 3}
+    - {fileID: 8300000, guid: 82e9972a00bf3374484beaba8fd518aa, type: 3}
+    - {fileID: 8300000, guid: ea9aadc04c7a8d349b8ca81c7888c55b, type: 3}
   titleT: {fileID: 892078048}
   titleGroup: {fileID: 1501394223}
   cSPanel: {fileID: 178645023}

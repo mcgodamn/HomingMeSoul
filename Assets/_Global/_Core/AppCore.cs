@@ -46,6 +46,10 @@ namespace AngerStudio.HomingMeSoul.Core
             avaliableSlots = new Stack<int>();
             for (int i = config.maxPlayers - 1; i >= 0; i--) avaliableSlots.Push(i);
 
+            avaliableAudio = new Stack<AudioClip>();
+            foreach (AudioClip a in
+                resourceConfig.characterActionAudio.OrderBy(a => a.GetHashCode() > resourceConfig.characterActionAudio[Random.Range(0, resourceConfig.characterActionAudio.Length)].GetHashCode())) avaliableAudio.Push(a);
+
             for (int i= 0; i < config.usablePickupSprites.Length; i++) avaliablePickup.Add(i);
 
             allowedKeys = new HashSet<KeyCode>((System.Enum.GetValues(typeof(KeyCode)) as KeyCode[]).Except(blocked));
@@ -70,6 +74,8 @@ namespace AngerStudio.HomingMeSoul.Core
         
         internal Stack<int> avaliableSlots;
 
+        internal Stack<AudioClip> avaliableAudio;
+
         public void TogglePlayer (KeyCode slot)
         {
             if (activePlayers.ContainsKey(slot)) RemovePlayer(slot);
@@ -80,7 +86,7 @@ namespace AngerStudio.HomingMeSoul.Core
         {
             if (avaliableColors.Count == 0 || activePlayers.Count >= config.maxPlayers || activePlayers.ContainsKey(slot)) return;
             int r1 = Random.Range(0, avaliableColors.Count), r2 = Random.Range(0, avaliablePickup.Count);
-            activePlayers.Add(slot, new PlayerProfile(avaliableSlots.Pop(), avaliablePickup[r2], avaliableColors[r1]));
+            activePlayers.Add(slot, new PlayerProfile(avaliableSlots.Pop(), avaliablePickup[r2], avaliableColors[r1], avaliableAudio.Pop()));
             //m_View.AddPlayerCard(slot, avaliableColors[r]);
             cSPanel.AddCard(slot);
             avaliableColors.RemoveAt(r1);         
@@ -96,6 +102,7 @@ namespace AngerStudio.HomingMeSoul.Core
             avaliableColors.Add(activePlayers[slot].assignedColor);
             avaliablePickup.Add(activePlayers[slot].assginedPickupType);
             avaliableSlots.Push(activePlayers[slot].UsingPlayerSlot);
+            avaliableAudio.Push(activePlayers[slot].assignedActionAudio);
             activePlayers.Remove(slot);
         }
 
@@ -109,11 +116,14 @@ namespace AngerStudio.HomingMeSoul.Core
 
             public int UsingPlayerSlot;
 
-            public PlayerProfile( int usingPlayerSlot, int assginedPickupType, Color assignedColor)
+            public AudioClip assignedActionAudio;
+
+            public PlayerProfile( int usingPlayerSlot, int assginedPickupType, Color assignedColor, AudioClip actionAudio)
             {
                 this.assignedColor = assignedColor;
                 this.assginedPickupType = assginedPickupType;
                 UsingPlayerSlot = usingPlayerSlot;
+                this.assignedActionAudio = actionAudio;
             }
         }
     }
