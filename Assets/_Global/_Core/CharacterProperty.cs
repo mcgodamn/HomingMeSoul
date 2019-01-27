@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using AngerStudio.HomingMeSoul.Core;
 
 
 namespace AngerStudio.HomingMeSoul.Game
@@ -34,6 +35,13 @@ namespace AngerStudio.HomingMeSoul.Game
         public KeyCode m_key;
 
         public int typeIndex;
+
+        public AudioSource audio;
+
+        void Awake ()
+        {
+            this.audio = this.gameObject.AddComponent<AudioSource>();
+        }
 
         public void PlayerMove()
         {
