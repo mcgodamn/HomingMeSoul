@@ -103,8 +103,6 @@ namespace AngerStudio.HomingMeSoul.Game
             character.faceLocation();
         }
 
-
-
         Vector2[] GetSpawnPosition(int playerNumber)
         {
             int radius = 1;
@@ -318,6 +316,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public void PickedBy (SupplyDrop s, int playerIndex)
         {
+            s.m_collider.enabled = false;
             s.Occupied = false;
             dropsInZones[zoneIndexMap[s]].Remove(s);
             pickUpInstances[playerIndex].Remove(s);
@@ -385,10 +384,11 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public void PlaceSupply (int zoneIndex, int activePickupType)
         {
-            
             GameObject t = null;
             SupplyDrop d = dropsPool.GetObjectFromPool(null);
             t = d.gameObject;
+            d.typeIndex = pickupType;
+            d.m_collider.enabled = true;
             d.typeIndex = AppCore.Instance.orderedPlayers[activePickupType].assginedPickupType;
             t.GetComponentInChildren<SpriteRenderer>().sprite = AppCore.Instance.config.usablePickupSprites[d.typeIndex];
             
@@ -424,5 +424,49 @@ namespace AngerStudio.HomingMeSoul.Game
             // GameObject p = GameObject.Instantiate(burstVFXPrefab, t.transform.position, Quaternion.identity);
             // MonoBehaviour.Destroy(p, 5f);
         }
+
+
+
+        public TMPro.TextMeshProUGUI countDownText;
+        public GameObject FinishUI;
+        public TMPro.TextMeshProUGUI Total;
+        public TMPro.TextMeshProUGUI[] PanelScore, PanelKey;
+
+        public void ShowFinishUI()
+        {
+            FinishUI.SetActive(true);
+            var score = homeTransform.gameObject.GetComponent<ScoreBase>();
+            Total.text = score.scoreR.Value.ToString();
+            Dictionary<KeyCode, int> scores = new Dictionary<KeyCode,int>();
+            foreach(var player in Players)
+                scores.Add(player.Key, player.Value.totalScore);
+
+            List<(int, KeyCode)> Top = new List<(int, KeyCode)>();
+            while(Top.Count < 3)
+            {
+                if (scores.Count <= 0) break;
+                KeyCode key = KeyCode.Q;
+                int s = -1;
+
+                foreach(var ds in scores)
+                {
+                    if (ds.Value > s)
+                    {
+                        key = ds.Key;
+                        s = ds.Value;
+                    } 
+                }
+                Top.Add((s,key));
+                scores.Remove(key);
+            }
+
+            for(int i = 0; i < Top.Count; i++)
+            {
+                PanelScore[i].text = Top[i].Item1.ToString();
+                PanelKey[i].text = Top[i].Item2.ToString();
+            }
+            
+        }
+        
     }
 }

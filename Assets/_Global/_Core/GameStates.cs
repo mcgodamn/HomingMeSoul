@@ -17,7 +17,7 @@ namespace AngerStudio.HomingMeSoul.Game
             Context.Prepare();
             Context.CreaterPlayers();
             ChangeState(new GameStarting(StateMachine));
-        } 
+        }
 
         public override void Update ()
         {
@@ -42,8 +42,12 @@ namespace AngerStudio.HomingMeSoul.Game
 
     public class GameOngoing : State<GameCore>
     {
+        float GAME_TIME = 60;
+        float countDown;
+
         public GameOngoing (StateMachine<GameCore> machine) : base(machine)
         {
+            countDown = Time.time;
         }
 
         float lastSupplyTime, lastPassiveSpGainTime;
@@ -79,7 +83,15 @@ namespace AngerStudio.HomingMeSoul.Game
 
             //Controlling bad guys...
             //Random events...
-            
+
+            if (Time.time - countDown > GAME_TIME)
+            {
+                ChangeState(new GameFinished(StateMachine));
+            }
+            else
+            {
+                Context.countDownText.text = ((int)(GAME_TIME - (Time.time - countDown))).ToString();
+            }
         }
     }
 
@@ -101,9 +113,17 @@ namespace AngerStudio.HomingMeSoul.Game
         {
         }
 
+        public override void OnEntered()
+        {
+            Context.ShowFinishUI();
+        }
+
         public override void Update ()
         {
-            throw new System.NotImplementedException();
+            if (SimpleInput.GetKeyDown(KeyCode.Space))
+            {
+                
+            }
         }
     }
 }
