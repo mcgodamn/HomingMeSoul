@@ -64,9 +64,9 @@ MonoBehaviour:
     - 40
     - 48
     - 56
-    maxSupplyDrops: 40
+    maxSupplyDrops: 36
     minSupplyDrops: 16
-    densityBalancingDistance: 5
+    densityBalancingDistance: 6
     passiveSPGainDelayInSconds: 5
   readOnly: 1
   description: 

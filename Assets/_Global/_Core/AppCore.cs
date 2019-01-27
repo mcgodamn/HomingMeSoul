@@ -23,22 +23,13 @@ namespace AngerStudio.HomingMeSoul.Core
             KeyCode.ScrollLock, KeyCode.Print, KeyCode.Break
         };
 
-        internal HashSet<KeyCode> allowedKeys;
-        
-
+        internal HashSet<KeyCode> allowedKeys;       
         public SceneField toLoad;
-
-
         StateMachine<AppCore> stateMachine;
-
-        public Dictionary<KeyCode, PlayerProfile> activePlayers;
-        public Dictionary<KeyCode, SupplyType> playerTypeMap;
-
         public AppConfig config;
-
         public ResourceConfig resourceConfig;
 
-
+        public Dictionary<KeyCode, PlayerProfile> activePlayers;
         public Transform titleT;
         public CanvasGroup titleGroup;
         public CSPanelController cSPanel;
@@ -49,6 +40,9 @@ namespace AngerStudio.HomingMeSoul.Core
             avaliableColors = new List<Color>(config.playerColorPool);
 
             avaliablePickup = new List<int>();
+
+            avaliableSlots = new Stack<int>();
+            for (int i = config.maxPlayers - 1; i >= 0; i--) avaliableSlots.Push(i);
 
             for (int i= 0; i < config.usablePickupSprites.Length; i++) avaliablePickup.Add(i);
 
@@ -71,6 +65,8 @@ namespace AngerStudio.HomingMeSoul.Core
         internal List<Color> avaliableColors;
 
         internal List<int> avaliablePickup;
+        
+        internal Stack<int> avaliableSlots;
 
         public void TogglePlayer (KeyCode slot)
         {
@@ -82,10 +78,10 @@ namespace AngerStudio.HomingMeSoul.Core
         {
             if (avaliableColors.Count == 0 || activePlayers.Count >= config.maxPlayers || activePlayers.ContainsKey(slot)) return;
             int r1 = Random.Range(0, avaliableColors.Count), r2 = Random.Range(0, avaliablePickup.Count);
-            activePlayers.Add(slot, new PlayerProfile(activePlayers.Count, avaliablePickup[r2], avaliableColors[r1]));
+            activePlayers.Add(slot, new PlayerProfile(avaliableSlots.Pop(), avaliablePickup[r2], avaliableColors[r1]));
             //m_View.AddPlayerCard(slot, avaliableColors[r]);
             cSPanel.AddCard(slot);
-            avaliableColors.RemoveAt(r1);            
+            avaliableColors.RemoveAt(r1);         
             avaliablePickup.RemoveAt(r2);
 
         }
@@ -97,6 +93,7 @@ namespace AngerStudio.HomingMeSoul.Core
             cSPanel.RemoveCard(slot);
             avaliableColors.Add(activePlayers[slot].assignedColor);
             avaliablePickup.Add(activePlayers[slot].assginedPickupType);
+            avaliableSlots.Push(activePlayers[slot].UsingPlayerSlot);
             activePlayers.Remove(slot);
         }
 

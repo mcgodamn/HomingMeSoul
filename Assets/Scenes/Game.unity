@@ -5501,6 +5501,7 @@ GameObject:
   - component: {fileID: 1086845254}
   - component: {fileID: 1086845253}
   - component: {fileID: 1086845255}
+  - component: {fileID: 1086845256}
   m_Layer: 0
   m_Name: Home
   m_TagString: Untagged
@@ -5586,6 +5587,28 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.9
+--- !u!114 &1086845256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1086845252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63f3c021db7ce254882cdde16255529c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  storage: 
+  scoreR:
+    globalVariable: {fileID: 0}
+    localValue: 0
+    usingGlobal: 0
+  comboProfit:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: BA_Studio.UnityLib.General.CommonEvents.IntCollectionEvent, BA_Studio_General,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 --- !u!1 &1157626899
 GameObject:
   m_ObjectHideFlags: 0
@@ -6115,7 +6138,16 @@ MonoBehaviour:
       maxSupplyDrops: 100
       minSupplyDrops: 40
       densityBalancingDistance: 3
+      rewardLevel:
+      - 1
+      - 1.15
+      - 1.3
+      - 1.4
+      - 1.5
+      - 1.7
+      - 2
       passiveSPGainDelayInSconds: 5
+      updatesDelayBetweenProfits: 6
     usingGlobal: 1
   score:
     globalVariable: {fileID: 0}

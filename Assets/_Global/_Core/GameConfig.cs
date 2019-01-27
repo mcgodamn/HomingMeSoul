@@ -26,7 +26,11 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public float densityBalancingDistance = 7f;
 
+        public float[] rewardLevel = { 1, 1.15f, 1.3f, 1.4f, 1.5f, 1.7f, 2f };
+
         public float passiveSPGainDelayInSconds = 5f;
+
+        public int updatesDelayBetweenProfits = 6;
 
     }
 }
