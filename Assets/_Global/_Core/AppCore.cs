@@ -34,6 +34,8 @@ namespace AngerStudio.HomingMeSoul.Core
         public CanvasGroup titleGroup;
         public CSPanelController cSPanel;
 
+        public TMPro.TextMeshProUGUI countDownText;
+
         void Awake ()
         {
 

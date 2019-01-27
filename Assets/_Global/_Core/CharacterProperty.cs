@@ -22,7 +22,7 @@ namespace AngerStudio.HomingMeSoul.Game
         public GameObject normalCharacter, dryCharacter;
         public SpriteRenderer glowRenderer;
 
-        public int supplyPoint;
+        public int supplyPoint = 0;
 
         public Vector3 ForwardVector;
         public Vector3 gravityAccelator;
@@ -32,6 +32,7 @@ namespace AngerStudio.HomingMeSoul.Game
         public FloatReference Stamina;
 
         public KeyCode m_key;
+        public int playerIndex;
 
         public int typeIndex;
 
@@ -56,6 +57,12 @@ namespace AngerStudio.HomingMeSoul.Game
             Ready = true;
         }
 
+        void fitCircleCollider()
+        {
+            Vector2 dir = transform.up.normalized;
+            transform.position = dir;
+        }
+
         public void faceLocation()
         {
             Vector2 direction = transform.position - collideLocation.transform.position;
@@ -73,22 +80,35 @@ namespace AngerStudio.HomingMeSoul.Game
             glowRenderer.color = color;
         }
 
+        public void ReturnSupply()
+        {
+            var supply = collideLocation.GetComponent<SupplyDrop>();
+            if(supply)
+            {
+                supply.Picked(playerIndex);
+            }
+        }
+
         void OnTriggerEnter2D(Collider2D other)
         {
             if (!canCollide || collideLocation == other.gameObject) return;
             if (other.gameObject.CompareTag("Pickup"))
             {
-                if (other.gameObject.GetComponent<SupplyDrop>().typeIndex == typeIndex)
+                var supply = other.gameObject.GetComponent<SupplyDrop>();
+                if (supply.typeIndex == typeIndex && !supply.Occupied)
                 {
+                    supplyPoint += 1;
+                    supply.Occupied = true;
                     onHit(other);
-                    other.gameObject.GetComponent<SupplyDrop>().Picked(0);
                     GameCore.Instance.EnterLocation(m_key);
                 }
             }
-
-            else if (other.gameObject.GetComponent<SpriteRenderer>().sortingLayerName == "Home")
+            else if (other.gameObject.CompareTag("Home"))
             {
                 onHit(other);
+                other.gameObject.GetComponent<ScoreBase>().DeliverPickups(m_key,supplyPoint);
+                supplyPoint = 0;
+                fitCircleCollider();
                 GameCore.Instance.EnterHome(m_key);
             }
         }
