@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
@@ -9,6 +10,9 @@ namespace BA_Studio.UnityLib.General.CommonEvents
 
 	[System.SerializableAttribute]
 	public class Int2Event : UnityEvent<int, int> {}
+	
+	[System.SerializableAttribute]
+	public class IntCollectionEvent : UnityEvent<ICollection<int>> {}
 
 	[System.SerializableAttribute]
 	public class BoolEvent : UnityEvent<bool> {}

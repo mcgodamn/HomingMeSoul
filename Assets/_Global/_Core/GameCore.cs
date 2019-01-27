@@ -350,11 +350,11 @@ namespace AngerStudio.HomingMeSoul.Game
             int emptyZoneIndex = gravityZones.Value.Length - 1, lastLeast = dropsInZones[emptyZoneIndex].Count;
             for (int i = emptyZoneIndex - 1; i > 0; i--)
             {
-                if (dropsInZones[emptyZoneIndex].Count < lastLeast)
+                if (dropsInZones[i].Count < lastLeast)
                 {
-                    lastLeast = dropsInZones[emptyZoneIndex].Count;
+                    lastLeast = dropsInZones[i].Count;
                     emptyZoneIndex = i;
-                }                
+                }
             }
 
             PlaceSupply(emptyZoneIndex, typeIndex);
@@ -381,7 +381,7 @@ namespace AngerStudio.HomingMeSoul.Game
             gravityZones.Value[zoneIndex].transform,
             t);
 
-            //if (dropsInZones[zoneIndex] == null) dropsInZones[zoneIndex] = new HashSet<SupplyDrop>();
+            if (dropsInZones[zoneIndex] == null) dropsInZones[zoneIndex] = new HashSet<SupplyDrop>();
             dropsInZones[zoneIndex].Add(d);
 
             zoneIndexMap.Add(d, zoneIndex);
