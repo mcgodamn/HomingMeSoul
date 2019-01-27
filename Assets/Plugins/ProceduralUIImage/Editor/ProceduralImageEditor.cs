@@ -96,12 +96,21 @@ namespace UnityEditor.UI
 
         protected void ProceduralImageSpriteGUI()
         {
-            Sprite s = (Sprite)EditorGUILayout.ObjectField("Sprite", EmptySprite.IsEmptySprite((Sprite)m_Sprite.objectReferenceValue) ? null : m_Sprite.objectReferenceValue, typeof(Sprite), false, GUILayout.Height(16));
-            if(s != null){
-                m_Sprite.objectReferenceValue = s;
+            if (m_Sprite.hasMultipleDifferentValues)
+            {
+                EditorGUILayout.PropertyField(m_Sprite);
             }
-            else{
-                m_Sprite.objectReferenceValue = EmptySprite.Get();
+            else
+            {
+                Sprite s = (Sprite)EditorGUILayout.ObjectField("Sprite", EmptySprite.IsEmptySprite((Sprite)m_Sprite.objectReferenceValue) ? null : m_Sprite.objectReferenceValue, typeof(Sprite), false, GUILayout.Height(16));
+                if (s != null)
+                {
+                    m_Sprite.objectReferenceValue = s;
+                }
+                else
+                {
+                    m_Sprite.objectReferenceValue = EmptySprite.Get();
+                }
             }
         }
 
@@ -111,7 +120,18 @@ namespace UnityEditor.UI
 
         protected void ProceduralImageTypeGUI()
         {
-            m_Type.enumValueIndex = Convert.ToInt32(EditorGUILayout.EnumPopup(spriteTypeContent, (ProceduralImageType)m_Type.enumValueIndex));
+            if (m_Type.hasMultipleDifferentValues)
+            {
+                int idx = Convert.ToInt32(EditorGUILayout.EnumPopup(spriteTypeContent, (ProceduralImageType)(-1)));
+                if (idx != -1)
+                {
+                    m_Type.enumValueIndex = idx;
+                }
+            }
+            else
+            {
+                m_Type.enumValueIndex = Convert.ToInt32(EditorGUILayout.EnumPopup(spriteTypeContent, (ProceduralImageType)m_Type.enumValueIndex));
+            }
 
             ++EditorGUI.indentLevel;
             {
@@ -178,48 +198,53 @@ namespace UnityEditor.UI
             {
                 con[i] = new GUIContent(attrList[i].Name);
             }
-            int index = EditorGUILayout.Popup(new GUIContent("Modifier Type"), selectedId, con);
-            if (selectedId != index)
+
+
+            bool hasMultipleValues = false;
+            if (targets.Length > 1)
             {
-                selectedId = index;
+                Type t = (targets[0] as ProceduralImage).GetComponent<ProceduralImageModifier>().GetType();
                 foreach (var item in targets)
                 {
-                    DestroyImmediate((item as ProceduralImage).GetComponent<ProceduralImageModifier>(), true);
-                    (item as ProceduralImage).ModifierType = ModifierUtility.GetTypeWithId(attrList[selectedId].Name);
-
-                    MoveComponentBehind((item as ProceduralImage), (item as ProceduralImage).GetComponent<ProceduralImageModifier>());
-
+                    if ((item as ProceduralImage).GetComponent<ProceduralImageModifier>().GetType() != t)
+                    {
+                        hasMultipleValues = true;
+                        break;
+                    }
                 }
-                //Exit GUI prevents Unity from trying to draw destroyed components editor;
-                EditorGUIUtility.ExitGUI();
             }
-        }
 
-        public override void OnPreviewGUI(Rect rect, GUIStyle background)
-        {
-            // ProceduralImage image = target as ProceduralImage;
-            // if (image == null || image.sprite == null) return;
+            if(!hasMultipleValues)
+            {
+                int index = EditorGUILayout.Popup(new GUIContent("Modifier Type"), selectedId, con);
+                if (selectedId != index)
+                {
+                    selectedId = index;
+                    foreach (var item in targets)
+                    {
+                        (item as ProceduralImage).ModifierType = ModifierUtility.GetTypeWithId(attrList[selectedId].Name);
 
-            // float min = Mathf.Min(rect.width, rect.height - 50);
-            // rect = new Rect(rect.x + rect.width / 2 - min / 2, rect.y + rect.height / 2 - min / 2 - 20, min, min);
+                        MoveComponentBehind((item as ProceduralImage), (item as ProceduralImage).GetComponent<ProceduralImageModifier>());
+                    }
+                    //Exit GUI prevents Unity from trying to draw destroyed components editor;
+                    EditorGUIUtility.ExitGUI();
+                }
+            }
+            else{
+                int index = EditorGUILayout.Popup(new GUIContent("Modifier Type"), -1, con);
+                if (index != -1)
+                {
+                    selectedId = index;
+                    foreach (var item in targets)
+                    {
+                        (item as ProceduralImage).ModifierType = ModifierUtility.GetTypeWithId(attrList[selectedId].Name);
 
-            // Rect r = image.rectTransform.rect;
-
-            // //Fixing proportion of rect
-            // Vector2 center = rect.center;
-            // if (r.width > r.height)
-            // {
-            //     rect.height = rect.height * (r.height / r.width);
-
-            // }
-            // else
-            // {
-            //     rect.width = rect.width * (r.width / r.height);
-            // }
-            // //recenter rect
-            // rect.center = center;
-
-            // EditorGUI.DrawPreviewTexture(rect, image.sprite.texture, image.material);
+                        MoveComponentBehind((item as ProceduralImage), (item as ProceduralImage).GetComponent<ProceduralImageModifier>());
+                    }
+                    //Exit GUI prevents Unity from trying to draw destroyed components editor;
+                    EditorGUIUtility.ExitGUI();
+                }
+            }
         }
 
         public override string GetInfoString()

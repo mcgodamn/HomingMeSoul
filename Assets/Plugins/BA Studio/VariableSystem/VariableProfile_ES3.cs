@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
-using BA_Studio.Singleton;
+using BA_Studio.SingletonLocator;
 
 namespace BA_Studio.UnityLib.VariableSystem
 {

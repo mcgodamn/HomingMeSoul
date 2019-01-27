@@ -3,7 +3,12 @@
     "references": [
         "BA_Studio_StatePattern",
         "SimpleInput",
-        "NoBrainer_GlobalVariables"
+        "NoBrainer_GlobalVariables",
+        "BA_Studio_SingletonLocator",
+        "Unity.TextMeshPro",
+        "BA_Studio_GameObjectPool",
+        "BA_Studio_Main",
+        "Unity.2D.Psdimporter.Editor"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

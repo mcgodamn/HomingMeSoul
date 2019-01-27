@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BA_Studio.UnityLib.Singleton
+namespace BA_Studio.UnityLib.SingletonLocator
 {
     ///You need to initialize this in Awake to take effect.
     public static class SingletonBehaviourLocator<T> where T : MonoBehaviour

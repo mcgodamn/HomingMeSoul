@@ -8,10 +8,17 @@ using UnityEngine.UI.ProceduralImage;
 [CanEditMultipleObjects]
 public class FreeModifierEditor : Editor
 {
-    protected SerializedProperty radiusProperty;
+    protected SerializedProperty radiusX;
+    protected SerializedProperty radiusY;
+    protected SerializedProperty radiusZ;
+    protected SerializedProperty radiusW;
+
     protected void OnEnable()
     {
-        radiusProperty = serializedObject.FindProperty("radius");
+        radiusX = serializedObject.FindProperty("radius.x");
+        radiusY = serializedObject.FindProperty("radius.y");
+        radiusZ = serializedObject.FindProperty("radius.z");
+        radiusW = serializedObject.FindProperty("radius.w");
     }
 
     public override void OnInspectorGUI()
@@ -24,20 +31,20 @@ public class FreeModifierEditor : Editor
 
     protected void RadiusGUI()
     {
-        Vector4 radius = radiusProperty.vector4Value;
         GUILayout.BeginHorizontal();
         {
-            radius.x = EditorGUILayout.FloatField("Upper Left:",radius.x);
-            radius.y = EditorGUILayout.FloatField("Upper Right:", radius.y);
+            EditorGUILayout.PropertyField(radiusX, new GUIContent("Upper Left"));
+            EditorGUILayout.PropertyField(radiusY, new GUIContent("Upper Right"));
+            GUILayout.Space(8);
         }
         GUILayout.EndHorizontal();
         GUILayout.Space(8);
         GUILayout.BeginHorizontal();
         {
-            radius.w = EditorGUILayout.FloatField("Lower Left:", radius.w);
-            radius.z = EditorGUILayout.FloatField("Lower Right:", radius.z);
+            EditorGUILayout.PropertyField(radiusW, new GUIContent("Lower Left"));
+            EditorGUILayout.PropertyField(radiusZ, new GUIContent("Lower Right"));
+            GUILayout.Space(8);
         }
         GUILayout.EndHorizontal();
-        radiusProperty.vector4Value = radius;
     }
 }
