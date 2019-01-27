@@ -172,7 +172,7 @@ GameObject:
   - component: {fileID: 1410771678428296189}
   m_Layer: 9
   m_Name: Supply
-  m_TagString: Supply(Book)
+  m_TagString: Pickup1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -268,5 +268,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d71e1374fe06d3148b6f3212c548c4e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
-  level: 0
+  typeIndex: 0

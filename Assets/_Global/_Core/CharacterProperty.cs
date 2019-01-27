@@ -12,9 +12,6 @@ namespace AngerStudio.HomingMeSoul.Game
         {
             get{return m_collideLocation;}
             set{
-                if (value == null && m_collideLocation != null)
-                    if (m_collideLocation.GetComponent<SpriteRenderer>().sortingLayerName == "Supplies")
-                        Destroy(m_collideLocation);
                 m_collideLocation = value;
                 if (value != null)
                     lastLocationPosition = m_collideLocation.transform.position;
@@ -79,11 +76,12 @@ namespace AngerStudio.HomingMeSoul.Game
         void OnTriggerEnter2D(Collider2D other)
         {
             if (!canCollide || collideLocation == other.gameObject) return;
-            if (other.gameObject.GetComponent<SpriteRenderer>().sortingLayerName == "Supplies")
+            if (other.gameObject.CompareTag("Pickup"))
             {
                 if (other.gameObject.GetComponent<SupplyDrop>().typeIndex == typeIndex)
                 {
                     onHit(other);
+                    other.gameObject.GetComponent<SupplyDrop>().Picked(0);
                     GameCore.Instance.EnterLocation(m_key);
                 }
             }

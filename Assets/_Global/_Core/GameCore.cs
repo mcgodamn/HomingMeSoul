@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -296,6 +296,7 @@ namespace AngerStudio.HomingMeSoul.Game
             SingletonBehaviourLocator<GameCore>.Set(this);
             dropsPool = new GameObjectPool<SupplyDrop>(AppCore.Instance.config.supplyDropPrefab, 20);
             pickUpInstances = new BiMap<int, HashSet<SupplyDrop>>();
+            for (int i = 0; i < AppCore.Instance.config.usablePickupSprites.Length; i++) pickUpInstances.Add(i, new HashSet<SupplyDrop>());
 
         }
 
@@ -307,17 +308,20 @@ namespace AngerStudio.HomingMeSoul.Game
         public void Picked (SupplyDrop s)
         {
             dropsInZones[zoneIndexMap[s]].Remove(s);
+            pickUpInstances[s.typeIndex].Remove(s);
             zoneIndexMap.Remove(s);
-            dropsPool.ReturnToPool(s);          
+            dropsPool.ReturnToPool(s);
         }
 
         public void Prepare ()
-        {
-            dropsInZones = new List<HashSet<SupplyDrop>>();            
+        {            
 
             gravityZones.Value = new GameObject[config.Value.gravityZoneSteps.Length - 1];
             GameObject g = GameObject.Instantiate(gravityZonePrefab);
             g.transform.localScale = Vector3.one * config.Value.gravityZoneSteps[0];
+            
+            dropsInZones = new List<HashSet<SupplyDrop>>();
+            for (int i = 0; i < gravityZones.Value.Length; i++) dropsInZones.Add(new HashSet<SupplyDrop>());
 
             for (int i = 1; i < config.Value.gravityZoneSteps.Length; i++)
             {
@@ -329,7 +333,16 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public int GetLeastPickupTypeIndex ()
         {
-            return pickUpInstances.First(i => i.Value.Count == pickUpInstances.Min(s => s.Value.Count)).Key;
+            int least = pickUpInstances[0].Count, resultIndex = 0;
+            for (int i = 1; i < pickUpInstances.Count; i++)
+            {
+                if (pickUpInstances[i].Count < least)
+                {
+                    least = pickUpInstances[i].Count;
+                    resultIndex = i;
+                }
+            }
+            return resultIndex; 
         }
 
         public int SpawnSupplyInMostEmptyZone (int typeIndex)
@@ -362,15 +375,18 @@ namespace AngerStudio.HomingMeSoul.Game
             SupplyDrop d = dropsPool.GetObjectFromPool(null);
             t = d.gameObject;
             d.typeIndex = pickupType;
+            t.GetComponentInChildren<SpriteRenderer>().sprite = AppCore.Instance.config.usablePickupSprites[d.typeIndex];
             
             PlaceToOrbit(Random.Range(config.Value.gravityZoneSteps[zoneIndex - 1], config.Value.gravityZoneSteps[zoneIndex]),
             gravityZones.Value[zoneIndex].transform,
             t);
 
-            if (dropsInZones[zoneIndex] == null) dropsInZones[zoneIndex] = new HashSet<SupplyDrop>();
+            //if (dropsInZones[zoneIndex] == null) dropsInZones[zoneIndex] = new HashSet<SupplyDrop>();
             dropsInZones[zoneIndex].Add(d);
 
             zoneIndexMap.Add(d, zoneIndex);
+
+            pickUpInstances[pickupType].Add(d);
         }
 
         ContactFilter2D filter = new ContactFilter2D () { useTriggers = true };
@@ -389,8 +405,8 @@ namespace AngerStudio.HomingMeSoul.Game
                     t.transform.position = parentZone.position + Quaternion.Euler(0, 0, Random.Range(0f, 359.9f)) * Vector2.left * distance;
                 else break;
             }
-            GameObject p = GameObject.Instantiate(burstVFXPrefab, t.transform.position, Quaternion.identity);
-            MonoBehaviour.Destroy(p, 5f);
+            // GameObject p = GameObject.Instantiate(burstVFXPrefab, t.transform.position, Quaternion.identity);
+            // MonoBehaviour.Destroy(p, 5f);
         }
     }
 }

@@ -12,6 +12,8 @@ TagManager:
   - Pickup6
   - Pickup7
   - Pickup8
+  - Supply(Book)
+  - Pickup
   layers:
   - Default
   - TransparentFX

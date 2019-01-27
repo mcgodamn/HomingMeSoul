@@ -8,7 +8,8 @@
         "Unity.TextMeshPro",
         "BA_Studio_GameObjectPool",
         "BA_Studio_Main",
-        "Unity.2D.Psdimporter.Editor"
+        "Unity.2D.Psdimporter.Editor",
+        "SceneField"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
