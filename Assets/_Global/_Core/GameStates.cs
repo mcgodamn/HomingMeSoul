@@ -15,6 +15,7 @@ namespace AngerStudio.HomingMeSoul.Game
         public override void OnEntered ()
         {
             Context.Prepare();
+            Context.CreaterPlayers();
             ChangeState(new GameStarting(StateMachine));
         } 
 
@@ -49,17 +50,24 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public override void Update ()
         {
+            Context.ReceieveInput();
+            Context.DecentStamina();
+            Context.PlayerMove();
+            Context.RotatePlayerInHome();
+            Context.RotatePlayerOnLocation();
+
+            
             //Rotate the supply belt
             for (int i = 0; i < Context.gravityZones.Value.Length; i++) Context.gravityZones.Value[i].transform.Rotate(Vector3.back * Context.config.Value.gravityZonesRevolutionSpeeds[i] * Time.deltaTime);
             //Spawning supplies...
             if (Context.SuppliesSum < Context.config.Value.minSupplyDrops)
             {
-                Context.SpawnSupplyInMostEmptyZone(Context.GetRandomSupplySet());
+                Context.SpawnSupplyInMostEmptyZone(Context.GetLeastPickupTypeIndex());
                 lastSupplyTime = Time.time;
             }
             if (Time.time - lastSupplyTime > 3f && Context.SuppliesSum < Context.config.Value.maxSupplyDrops)
             {
-                Context.SpawnSupplyInRandomZone(Context.GetRandomSupplySet());
+                Context.SpawnSupplyInRandomZone(Context.GetLeastPickupTypeIndex());
                 lastSupplyTime = Time.time;
             }
             //Free SP
@@ -68,6 +76,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
             //Controlling bad guys...
             //Random events...
+            
         }
     }
 

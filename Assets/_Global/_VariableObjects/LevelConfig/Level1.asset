@@ -15,11 +15,27 @@ MonoBehaviour:
   value:
     characterStatminaDecayRate:
       globalVariable: {fileID: 0}
-      localValue: 0
+      localValue: 0.5
       usingGlobal: 0
     supplyRevolutionSpeed:
       globalVariable: {fileID: 0}
       localValue: 4
+      usingGlobal: 0
+    gravityMultiplier:
+      globalVariable: {fileID: 0}
+      localValue: 0.1
+      usingGlobal: 0
+    staminaChargeNumber:
+      globalVariable: {fileID: 0}
+      localValue: 10
+      usingGlobal: 0
+    speedMultiplier:
+      globalVariable: {fileID: 0}
+      localValue: 7.5
+      usingGlobal: 0
+    worldRidius:
+      globalVariable: {fileID: 0}
+      localValue: 8
       usingGlobal: 0
     gravityZoneSteps:
     - 3
@@ -28,29 +44,13 @@ MonoBehaviour:
     - 11
     - 13
     - 15
-    supplyWeightLV1: 0.7
-    supplyWeightLV2: 0.2
-    supplyWeightLV3: 0.1
-    bookWeight: 1
-    moneyWeight: 1
-    foodWeight: 1
-    rimRewardFactor: 1
+    forbiddenPickupTypes: []
+    treasureChance: 0.05
+    rimRewardFactor: 1.01
     badGuySpawnChancePerMinute: 0.1
     building_Exchange: 1
     building_Upgrade: 1
     building_Casino: 1
-    foodSupplyPrefabs:
-    - {fileID: 597704076725716211, guid: 73295de480c9fcc44960ed743109bd8e, type: 3}
-    - {fileID: 6038634438410672312, guid: 99fe00d7728b9084782ee3cd7a3ab6fb, type: 3}
-    - {fileID: 3670817797942442410, guid: 8239d2f304f5c0149b45728fd43a9769, type: 3}
-    moneySupplyPrefabs:
-    - {fileID: 6639314255509224540, guid: bab3d073deded5e4ba9ddd2816e0d62d, type: 3}
-    - {fileID: 2854094718502979063, guid: 10f630ef3d4f73641b6a0e06117bdb60, type: 3}
-    - {fileID: 809790319917571231, guid: b0a12b6b84a34ab4598423cafdd584cd, type: 3}
-    bookSupplyPrefabs:
-    - {fileID: 6639314255509224540, guid: c17a6901ec09833438a51f50f547ac99, type: 3}
-    - {fileID: 2854094718502979063, guid: 670d3bc2997b5e44aab99570d3f8eb1f, type: 3}
-    - {fileID: 809790319917571231, guid: 1066980d0bde65f4b8e1058b48283db4, type: 3}
     gravityZonesRevolutionSpeeds:
     - 3
     - 5
@@ -64,9 +64,9 @@ MonoBehaviour:
     - 40
     - 48
     - 56
-    maxSupplyDrops: 25
-    minSupplyDrops: 10
-    densityBalancingDistance: 3
+    maxSupplyDrops: 40
+    minSupplyDrops: 16
+    densityBalancingDistance: 5
     passiveSPGainDelayInSconds: 5
   readOnly: 1
   description: 
