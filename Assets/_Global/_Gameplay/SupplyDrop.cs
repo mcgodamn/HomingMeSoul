@@ -13,7 +13,7 @@ namespace AngerStudio.HomingMeSoul.Game
         public void Picked (int playerIndex)
         {
             //TODO what to do with pindex
-            GameCore.Instance.Picked(this);
+            GameCore.Instance.PickedBy(this, playerIndex);
         }
     }
 }

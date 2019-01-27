@@ -26,6 +26,7 @@ namespace AngerStudio.HomingMeSoul.Game
         Dictionary<SupplyDrop, int> zoneIndexMap = new Dictionary<SupplyDrop, int>();
         
 
+        //playerIndex -> pickups
         BiMap<int, HashSet<SupplyDrop>> pickUpInstances;
 
         public GameObject burstVFXPrefab;
@@ -37,6 +38,8 @@ namespace AngerStudio.HomingMeSoul.Game
         public FloatReference[] CharacterStamina;
 
         Dictionary<KeyCode, CharacterProperty> Players;
+
+        
 
         public Transform homeTransform;
 
@@ -295,7 +298,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
             dropsPool = new GameObjectPool<SupplyDrop>(AppCore.Instance.config.supplyDropPrefab, 20);
             pickUpInstances = new BiMap<int, HashSet<SupplyDrop>>();
-            for (int i = 0; i < AppCore.Instance.config.usablePickupSprites.Length; i++) pickUpInstances.Add(i, new HashSet<SupplyDrop>());
+            for (int i = 0; i < AppCore.Instance.activePlayers.Count; i++) pickUpInstances.Add(i, new HashSet<SupplyDrop>());
 
         }
 
@@ -304,13 +307,23 @@ namespace AngerStudio.HomingMeSoul.Game
             stateMachine?.Update();
         }
 
-        public void Picked (SupplyDrop s)
+        // public void Picked (SupplyDrop s)
+        // {
+        //     s.Occupied = false;
+        //     dropsInZones[zoneIndexMap[s]].Remove(s);
+        //     pickUpInstances[s.typeIndex].Remove(s);
+        //     zoneIndexMap.Remove(s);
+        //     dropsPool.ReturnToPool(s);
+        // }
+
+        public void PickedBy (SupplyDrop s, int playerIndex)
         {
             s.Occupied = false;
             dropsInZones[zoneIndexMap[s]].Remove(s);
-            pickUpInstances[s.typeIndex].Remove(s);
+            pickUpInstances[playerIndex].Remove(s);
             zoneIndexMap.Remove(s);
             dropsPool.ReturnToPool(s);
+
         }
 
         public void Prepare ()
@@ -363,20 +376,20 @@ namespace AngerStudio.HomingMeSoul.Game
             return emptyZoneIndex;
         }
 
-        public int SpawnSupplyInRandomZone (int pickupType)
+        public int SpawnSupplyInRandomZone (int activePickupType)
         {
             int t = Random.Range(1, gravityZones.Value.Length);
-            PlaceSupply(t, pickupType);
+            PlaceSupply(t, activePickupType);
             return t;
         }
 
-        public void PlaceSupply (int zoneIndex, int pickupType)
+        public void PlaceSupply (int zoneIndex, int activePickupType)
         {
             
             GameObject t = null;
             SupplyDrop d = dropsPool.GetObjectFromPool(null);
             t = d.gameObject;
-            d.typeIndex = pickupType;
+            d.typeIndex = AppCore.Instance.orderedPlayers[activePickupType].assginedPickupType;
             t.GetComponentInChildren<SpriteRenderer>().sprite = AppCore.Instance.config.usablePickupSprites[d.typeIndex];
             
             PlaceToOrbit(Random.Range(config.Value.gravityZoneSteps[zoneIndex - 1], config.Value.gravityZoneSteps[zoneIndex]),
@@ -388,7 +401,8 @@ namespace AngerStudio.HomingMeSoul.Game
 
             zoneIndexMap.Add(d, zoneIndex);
 
-            pickUpInstances[pickupType].Add(d);
+            if (pickUpInstances[activePickupType] == null) pickUpInstances[activePickupType] = new HashSet<SupplyDrop>();
+            pickUpInstances[activePickupType].Add(d);
         }
 
         ContactFilter2D filter = new ContactFilter2D () { useTriggers = true };

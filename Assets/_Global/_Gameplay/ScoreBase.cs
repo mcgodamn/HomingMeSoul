@@ -40,6 +40,9 @@ namespace AngerStudio.HomingMeSoul.Game
         {
             if (storage == null || storage.Length != AppCore.Instance.activePlayers.Count) 
                 storage = new int[AppCore.Instance.activePlayers.Count];
+            
+            t.Clear();
+            
             for (int i = 0; i < AppCore.Instance.activePlayers.Count; i++)
             {
                 if (storage[i] > 0) t.Add(i);
@@ -50,6 +53,7 @@ namespace AngerStudio.HomingMeSoul.Game
         void Profit (ICollection<int> counted)
         {
             if (counted.Count < 2) return;
+
             foreach (int i in counted)
             {
                 storage[i] -= 1;

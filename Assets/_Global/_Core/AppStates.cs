@@ -75,6 +75,7 @@ namespace AngerStudio.HomingMeSoul.Core
             Context.countDownText.enabled = true;
         }
 
+
         public override void Update ()
         {
             foreach (KeyCode vKey in Context.allowedKeys)
@@ -111,7 +112,8 @@ namespace AngerStudio.HomingMeSoul.Core
 
         public override void Update ()
         {
-            
+            if (Input.GetKeyDown(KeyCode.F8)) 
+                UnityEngine.SceneManagement.SceneManager.LoadScene("Unloader");
         }
     }
 

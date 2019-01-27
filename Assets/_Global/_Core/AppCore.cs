@@ -29,6 +29,7 @@ namespace AngerStudio.HomingMeSoul.Core
         public AppConfig config;
         public ResourceConfig resourceConfig;
 
+        public List<PlayerProfile> orderedPlayers;
         public Dictionary<KeyCode, PlayerProfile> activePlayers;
         public Transform titleT;
         public CanvasGroup titleGroup;
@@ -87,6 +88,7 @@ namespace AngerStudio.HomingMeSoul.Core
             if (avaliableColors.Count == 0 || activePlayers.Count >= config.maxPlayers || activePlayers.ContainsKey(slot)) return;
             int r1 = Random.Range(0, avaliableColors.Count), r2 = Random.Range(0, avaliablePickup.Count);
             activePlayers.Add(slot, new PlayerProfile(avaliableSlots.Pop(), avaliablePickup[r2], avaliableColors[r1], avaliableAudio.Pop()));
+            orderedPlayers.Add(activePlayers[slot]);
             //m_View.AddPlayerCard(slot, avaliableColors[r]);
             cSPanel.AddCard(slot);
             avaliableColors.RemoveAt(r1);         
@@ -103,6 +105,7 @@ namespace AngerStudio.HomingMeSoul.Core
             avaliablePickup.Add(activePlayers[slot].assginedPickupType);
             avaliableSlots.Push(activePlayers[slot].UsingPlayerSlot);
             avaliableAudio.Push(activePlayers[slot].assignedActionAudio);
+            orderedPlayers.Remove(activePlayers[slot]);
             activePlayers.Remove(slot);
         }
 

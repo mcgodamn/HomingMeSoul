@@ -71,8 +71,11 @@ namespace AngerStudio.HomingMeSoul.Game
                 lastSupplyTime = Time.time;
             }
             //Free SP
-            if (Time.time - lastPassiveSpGainTime > Context.config.Value.passiveSPGainDelayInSconds) Context.sp.Value += 1;
-            lastPassiveSpGainTime = Time.time;
+            if (Time.time - lastPassiveSpGainTime > Context.config.Value.passiveSPGainDelayInSconds)
+            {
+                Context.sp.Value += 1;
+                lastPassiveSpGainTime = Time.time;
+            }
 
             //Controlling bad guys...
             //Random events...

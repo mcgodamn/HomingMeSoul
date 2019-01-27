@@ -97,9 +97,10 @@ namespace BA_Studio.DataStructure
                     Reverse.Add(t2, t1);
                 }
             }
-            catch
+            catch (Exception e)
             {
-                throw new System.Exception("BiMap: Unknow exception in Add().");
+                // throw new System.Exception("BiMap: Unknow exception in Add().");
+                throw e;
             }
         }
 
