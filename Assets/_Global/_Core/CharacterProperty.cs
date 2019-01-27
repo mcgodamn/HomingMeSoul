@@ -24,6 +24,7 @@ namespace AngerStudio.HomingMeSoul.Game
         public SpriteRenderer glowRenderer;
 
         public int supplyPoint = 0;
+        public int totalScore = 0;
 
         public Vector3 ForwardVector;
         public Vector3 gravityAccelator;
@@ -59,14 +60,6 @@ namespace AngerStudio.HomingMeSoul.Game
         {
             // return Stamina.Value * GameCore.Instance.config.Value.speedMultiplier;
             return GameCore.Instance.config.Value.speedMultiplier;
-        }
-
-        void onHit(GameObject other)
-        {
-            collideLocation = other;
-            faceLocation();
-            canCollide = false;
-            Ready = true;
         }
 
         void fitCircleCollider()
@@ -108,6 +101,7 @@ namespace AngerStudio.HomingMeSoul.Game
             draging = false;
             onHit(GameCore.Instance.homeTransform.gameObject);
             GameCore.Instance.homeTransform.gameObject.GetComponent<ScoreBase>().DeliverPickups(m_key, supplyPoint);
+            totalScore += supplyPoint;
             supplyPoint = 0;
             fitCircleCollider();
             GameCore.Instance.EnterHome(m_key);
@@ -121,6 +115,14 @@ namespace AngerStudio.HomingMeSoul.Game
             draging = true;
             this.dragger = dragger;
             relativeVector = transform.position - dragger.transform.position;
+        }
+
+        void onHit(GameObject other)
+        {
+            collideLocation = other;
+            faceLocation();
+            canCollide = false;
+            Ready = true;
         }
 
         void OnTriggerEnter2D(Collider2D other)
