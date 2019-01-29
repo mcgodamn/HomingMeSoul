@@ -83,6 +83,11 @@ namespace AngerStudio.HomingMeSoul.Core
             else AddPlayer(slot);
         }
 
+        public void RestartApp()
+        {
+            stateMachine.ChangeState(new AppRestarting(stateMachine));
+        }
+
         internal void AddPlayer (KeyCode slot)
         {
             if (avaliableColors.Count == 0 || activePlayers.Count >= config.maxPlayers || activePlayers.ContainsKey(slot)) return;

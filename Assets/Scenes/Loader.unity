@@ -509,6 +509,7 @@ MonoBehaviour:
     - {r: 0.7137255, g: 0.20392159, b: 0.47058827, a: 1}
     - {r: 0.8196079, g: 0.29803923, b: 0.73333335, a: 1}
     maxPlayers: 8
+    countDownSecs: 10
     usablePickupSprites:
     - {fileID: 21300000, guid: 3f4a479e173717040b8af948a4eadc77, type: 3}
     - {fileID: 21300000, guid: b61a2aae04db6d247bec5808f9a7a956, type: 3}
