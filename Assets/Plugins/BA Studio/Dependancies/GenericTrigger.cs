@@ -9,19 +9,9 @@ namespace BA_Studio.UnityLib.General
 	{
 		public GameObjectFilter filter;
 
-		public Collider triggerZone;
-
 		public CommonEvents.ColliderEvent triggerEnter, triggerStay, triggerExit;
-
-		void Awake ()
-		{
-			if (triggerZone == null) triggerZone = this.GetComponent<Collider>();
-		}
-
 		private void OnTriggerEnter (Collider other)
 		{
-//			Debug.Log("other.tag:" + other.tag);
-//			Debug.Log("tagFilter.Contains(other.tag): " +tagFilter.Contains(other.tag));
 			if (!this.enabled) return;
 			if (filter.Match(other.gameObject)) triggerEnter?.Invoke(other);
 		}

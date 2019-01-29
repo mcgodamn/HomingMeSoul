@@ -23,6 +23,8 @@ namespace AngerStudio.HomingMeSoul.Game
         public GameObject normalCharacter, dryCharacter;
         public SpriteRenderer glowRenderer;
 
+        public TrailRenderer trailRenderer;
+
         public int supplyPoint = 0;
         public int totalScore = 0;
 
@@ -84,6 +86,9 @@ namespace AngerStudio.HomingMeSoul.Game
         public void setColor(Color color)
         {
             glowRenderer.color = color;
+            trailRenderer.startColor = color;
+            Color t = new Color(color.r, color.g, color.b, 0);
+            trailRenderer.endColor = t;
         }
 
         public void ReturnSupply()

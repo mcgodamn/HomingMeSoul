@@ -19,14 +19,16 @@ namespace AngerStudio.HomingMeSoul.Game
         public GameObjectArrayReference gravityZones;
         public GameConfigReference config;
         public IntReference score, sp;
-        public List<HashSet<SupplyDrop>> dropsInZones;
+        public HashSet<SupplyDrop>[] dropsInZones;
 
         GameObjectPool<SupplyDrop> dropsPool;
 
         Dictionary<SupplyDrop, int> zoneIndexMap = new Dictionary<SupplyDrop, int>();
         
 
+        //playerIndex -> pickups
         BiMap<int, HashSet<SupplyDrop>> pickUpInstances;
+        float[] zoneWeights;
 
         public GameObject burstVFXPrefab;
 
@@ -37,6 +39,8 @@ namespace AngerStudio.HomingMeSoul.Game
         public FloatReference[] CharacterStamina;
 
         Dictionary<KeyCode, CharacterProperty> Players;
+
+        
 
         public Transform homeTransform;
 
@@ -246,7 +250,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
                 Players[player].lastLocationPosition = Players[player].collideLocation.transform.position;
 
-                Players[player].transform.RotateAround(Players[player].collideLocation.transform.position, Vector3.forward, 1f);
+                Players[player].transform.RotateAround(Players[player].collideLocation.transform.position, Vector3.forward, config.Value.capturedPickupRevolutionSpeed);
             }
         }
 
@@ -291,9 +295,9 @@ namespace AngerStudio.HomingMeSoul.Game
             stateMachine = new StateMachine<GameCore>(this);
             stateMachine.ChangeState(new GamePreparing(stateMachine));
 
-            dropsPool = new GameObjectPool<SupplyDrop>(AppCore.Instance.config.supplyDropPrefab, 20);
+            dropsPool = new GameObjectPool<SupplyDrop>(AppCore.Instance.config.supplyDropPrefab, 40);
             pickUpInstances = new BiMap<int, HashSet<SupplyDrop>>();
-            for (int i = 0; i < AppCore.Instance.config.usablePickupSprites.Length; i++) pickUpInstances.Add(i, new HashSet<SupplyDrop>());
+            for (int i = 0; i < AppCore.Instance.activePlayers.Count; i++) pickUpInstances.Add(i, new HashSet<SupplyDrop>());
 
         }
 
@@ -302,14 +306,24 @@ namespace AngerStudio.HomingMeSoul.Game
             stateMachine?.Update();
         }
 
-        public void Picked (SupplyDrop s)
+        // public void Picked (SupplyDrop s)
+        // {
+        //     s.Occupied = false;
+        //     dropsInZones[zoneIndexMap[s]].Remove(s);
+        //     pickUpInstances[s.typeIndex].Remove(s);
+        //     zoneIndexMap.Remove(s);
+        //     dropsPool.ReturnToPool(s);
+        // }
+
+        public void PickedBy (SupplyDrop s, int playerIndex)
         {
             s.m_collider.enabled = false;
             s.Occupied = false;
             dropsInZones[zoneIndexMap[s]].Remove(s);
-            pickUpInstances[s.typeIndex].Remove(s);
+            pickUpInstances[playerIndex].Remove(s);
             zoneIndexMap.Remove(s);
             dropsPool.ReturnToPool(s);
+
         }
 
         public void Prepare ()
@@ -319,8 +333,8 @@ namespace AngerStudio.HomingMeSoul.Game
             GameObject g = GameObject.Instantiate(gravityZonePrefab);
             g.transform.localScale = Vector3.one * config.Value.gravityZoneSteps[0];
             
-            dropsInZones = new List<HashSet<SupplyDrop>>();
-            for (int i = 0; i < gravityZones.Value.Length; i++) dropsInZones.Add(new HashSet<SupplyDrop>());
+            dropsInZones = new HashSet<SupplyDrop>[gravityZones.Value.Length];
+            for (int i = 0; i < gravityZones.Value.Length; i++) dropsInZones[i] = new HashSet<SupplyDrop>();
 
             for (int i = 1; i < config.Value.gravityZoneSteps.Length; i++)
             {
@@ -329,6 +343,14 @@ namespace AngerStudio.HomingMeSoul.Game
             }
             
             Players = new Dictionary<KeyCode, CharacterProperty>();
+            if (GameCore.Instance.config.Value.gravityZoneWeight.Length < gravityZones.Value.Length)
+            {
+                zoneWeights = new float[gravityZones.Value.Length];
+                GameCore.Instance.config.Value.gravityZoneWeight.CopyTo(zoneWeights, 0);
+                for (int i = GameCore.Instance.config.Value.gravityZoneWeight.Length; i < gravityZones.Value.Length; i++) zoneWeights[i] = 1;
+            }
+            else zoneWeights = GameCore.Instance.config.Value.gravityZoneWeight;
+            
         }
 
 
@@ -362,21 +384,30 @@ namespace AngerStudio.HomingMeSoul.Game
             return emptyZoneIndex;
         }
 
-        public int SpawnSupplyInRandomZone (int pickupType)
+        public int SpawnSupplyInRandomZone (int activePickupType)
         {
-            int t = Random.Range(1, gravityZones.Value.Length);
-            PlaceSupply(t, pickupType);
-            return t;
+            float t = Random.Range(0, zoneWeights.Sum());
+            for (int i = gravityZones.Value.Length - 1; i > 1 ; i--)
+            {
+                if (t > zoneWeights[i] && t - zoneWeights[i - 1] < zoneWeights[i])
+                {
+                    PlaceSupply(i, activePickupType);
+                    return i;   
+                }
+                t -= zoneWeights[i];
+            }
+
+            PlaceSupply(1, activePickupType);
+            return 1;
         }
 
-        public void PlaceSupply (int zoneIndex, int pickupType)
+        public void PlaceSupply (int zoneIndex, int activePickupType)
         {
             GameObject t = null;
             SupplyDrop d = dropsPool.GetObjectFromPool(null);
             t = d.gameObject;
             d.m_collider.enabled = true;
-            d.typeIndex = pickupType;
-            t.GetComponentInChildren<SpriteRenderer>().sprite = AppCore.Instance.config.usablePickupSprites[d.typeIndex];
+            d.SetType(activePickupType);
             
             PlaceToOrbit(Random.Range(config.Value.gravityZoneSteps[zoneIndex - 1], config.Value.gravityZoneSteps[zoneIndex]),
             gravityZones.Value[zoneIndex].transform,
@@ -387,7 +418,8 @@ namespace AngerStudio.HomingMeSoul.Game
 
             zoneIndexMap.Add(d, zoneIndex);
 
-            pickUpInstances[pickupType].Add(d);
+            if (pickUpInstances[activePickupType] == null) pickUpInstances[activePickupType] = new HashSet<SupplyDrop>();
+            pickUpInstances[activePickupType].Add(d);
         }
 
         ContactFilter2D filter = new ContactFilter2D () { useTriggers = true };
@@ -396,7 +428,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
         void PlaceToOrbit (float distance, Transform parentZone, GameObject t)
         {
-            t.transform.SetParent(parentZone);
+            t.transform.SetParent(parentZone, true);
             t.transform.localPosition = Vector3.zero;
             distance = distance / 2f; // Steps is scale value for zones.
             t.transform.position = parentZone.position + Quaternion.Euler(0, 0, Random.Range(0f, 359.9f)) * Vector2.left * distance;
