@@ -42,11 +42,12 @@ namespace AngerStudio.HomingMeSoul.Game
 
     public class GameOngoing : State<GameCore>
     {
-        float GAME_TIME = 60;
+        float GAME_TIME;
         float countDown;
 
         public GameOngoing (StateMachine<GameCore> machine) : base(machine)
         {
+            GAME_TIME = Context.config.Value.gamingTime;
             countDown = Time.time;
         }
 
@@ -122,7 +123,7 @@ namespace AngerStudio.HomingMeSoul.Game
         {
             if (SimpleInput.GetKeyDown(KeyCode.Space))
             {
-                
+                HomingMeSoul.Core.AppCore.Instance.RestartApp();
             }
         }
     }

@@ -36,5 +36,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public float capturedPickupRevolutionSpeed = 4f;
 
+        public float gamingTime;
+
     }
 }

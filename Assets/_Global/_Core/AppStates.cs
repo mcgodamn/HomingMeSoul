@@ -86,7 +86,7 @@ namespace AngerStudio.HomingMeSoul.Core
                     Context.TogglePlayer(vKey);
                 }
             }
-            float GAME_START_TIME = 10;
+            float GAME_START_TIME = Context.config.countDownSecs;
             float sec = GAME_START_TIME - (Time.time - countDown);
             if (sec < 0)
             {
@@ -113,7 +113,7 @@ namespace AngerStudio.HomingMeSoul.Core
 
         public override void Update ()
         {
-            if (Input.GetKeyDown(KeyCode.F8)) ChangeState(new AppRestarting(StateMachine));
+            // if (Input.GetKeyDown(KeyCode.F8)) ChangeState(new AppRestarting(StateMachine));
         }
     }
 
