@@ -19,14 +19,16 @@ namespace AngerStudio.HomingMeSoul.Game
         public GameObjectArrayReference gravityZones;
         public GameConfigReference config;
         public IntReference score, sp;
-        public List<HashSet<SupplyDrop>> dropsInZones;
+        public HashSet<SupplyDrop>[] dropsInZones;
 
         GameObjectPool<SupplyDrop> dropsPool;
 
         Dictionary<SupplyDrop, int> zoneIndexMap = new Dictionary<SupplyDrop, int>();
         
 
+        //playerIndex -> pickups
         BiMap<int, HashSet<SupplyDrop>> pickUpInstances;
+        float[] zoneWeights;
 
         public GameObject burstVFXPrefab;
 
@@ -37,6 +39,8 @@ namespace AngerStudio.HomingMeSoul.Game
         public FloatReference[] CharacterStamina;
 
         Dictionary<KeyCode, CharacterProperty> Players;
+
+        
 
         public Transform homeTransform;
 
@@ -80,9 +84,11 @@ namespace AngerStudio.HomingMeSoul.Game
                 character.typeIndex = player.Value.assginedPickupType;
                 character.setColor(player.Value.assignedColor);
                 character.m_key = player.Key;
+                character.playerIndex = player.Value.UsingPlayerSlot;
                 character.Stamina = CharacterStamina[i];
                 InitializeCharacter(character);
                 
+
                 Players.Add(player.Key, character);
                 listPlayerInHome.Add(player.Key);
 
@@ -97,8 +103,6 @@ namespace AngerStudio.HomingMeSoul.Game
             character.Stamina.Value = config.Value.staminaChargeNumber;
             character.faceLocation();
         }
-
-
 
         Vector2[] GetSpawnPosition(int playerNumber)
         {
@@ -199,13 +203,14 @@ namespace AngerStudio.HomingMeSoul.Game
                 midPosition = homeTransform.position;
                 listPlayerInHome.Remove(key);
             }
-
+            Players[key].ReturnSupply();
             Players[key].collideLocation = null;
 
             Players[key].ForwardVector = (Players[key].transform.position - midPosition).normalized * Players[key].GetSpeed();
 
             Players[key].Ready = false;
             Players[key].canCollide = true;
+            Players[key].audio.PlayOneShot(AppCore.Instance.activePlayers[key].assignedActionAudio);
             listPlayerMoving.Add(key);
         }
 
@@ -245,7 +250,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
                 Players[player].lastLocationPosition = Players[player].collideLocation.transform.position;
 
-                Players[player].transform.RotateAround(Players[player].collideLocation.transform.position, Vector3.forward, 1f);
+                Players[player].transform.RotateAround(Players[player].collideLocation.transform.position, Vector3.forward, config.Value.capturedPickupRevolutionSpeed);
             }
         }
 
@@ -288,15 +293,11 @@ namespace AngerStudio.HomingMeSoul.Game
         {
             SingletonBehaviourLocator<GameCore>.Set(this);
             stateMachine = new StateMachine<GameCore>(this);
-
-            Players = new Dictionary<KeyCode, CharacterProperty>();
-
             stateMachine.ChangeState(new GamePreparing(stateMachine));
 
-            SingletonBehaviourLocator<GameCore>.Set(this);
-            dropsPool = new GameObjectPool<SupplyDrop>(AppCore.Instance.config.supplyDropPrefab, 20);
+            dropsPool = new GameObjectPool<SupplyDrop>(AppCore.Instance.config.supplyDropPrefab, 40);
             pickUpInstances = new BiMap<int, HashSet<SupplyDrop>>();
-            for (int i = 0; i < AppCore.Instance.config.usablePickupSprites.Length; i++) pickUpInstances.Add(i, new HashSet<SupplyDrop>());
+            for (int i = 0; i < AppCore.Instance.activePlayers.Count; i++) pickUpInstances.Add(i, new HashSet<SupplyDrop>());
 
         }
 
@@ -305,12 +306,24 @@ namespace AngerStudio.HomingMeSoul.Game
             stateMachine?.Update();
         }
 
-        public void Picked (SupplyDrop s)
+        // public void Picked (SupplyDrop s)
+        // {
+        //     s.Occupied = false;
+        //     dropsInZones[zoneIndexMap[s]].Remove(s);
+        //     pickUpInstances[s.typeIndex].Remove(s);
+        //     zoneIndexMap.Remove(s);
+        //     dropsPool.ReturnToPool(s);
+        // }
+
+        public void PickedBy (SupplyDrop s, int playerIndex)
         {
+            s.m_collider.enabled = false;
+            s.Occupied = false;
             dropsInZones[zoneIndexMap[s]].Remove(s);
-            pickUpInstances[s.typeIndex].Remove(s);
+            pickUpInstances[playerIndex].Remove(s);
             zoneIndexMap.Remove(s);
             dropsPool.ReturnToPool(s);
+
         }
 
         public void Prepare ()
@@ -320,14 +333,24 @@ namespace AngerStudio.HomingMeSoul.Game
             GameObject g = GameObject.Instantiate(gravityZonePrefab);
             g.transform.localScale = Vector3.one * config.Value.gravityZoneSteps[0];
             
-            dropsInZones = new List<HashSet<SupplyDrop>>();
-            for (int i = 0; i < gravityZones.Value.Length; i++) dropsInZones.Add(new HashSet<SupplyDrop>());
+            dropsInZones = new HashSet<SupplyDrop>[gravityZones.Value.Length];
+            for (int i = 0; i < gravityZones.Value.Length; i++) dropsInZones[i] = new HashSet<SupplyDrop>();
 
             for (int i = 1; i < config.Value.gravityZoneSteps.Length; i++)
             {
                 gravityZones.Value[i - 1] = GameObject.Instantiate(gravityZonePrefab);
                 gravityZones.Value[i - 1].transform.localScale = Vector3.one * config.Value.gravityZoneSteps[i];                    
             }
+            
+            Players = new Dictionary<KeyCode, CharacterProperty>();
+            if (GameCore.Instance.config.Value.gravityZoneWeight.Length < gravityZones.Value.Length)
+            {
+                zoneWeights = new float[gravityZones.Value.Length];
+                GameCore.Instance.config.Value.gravityZoneWeight.CopyTo(zoneWeights, 0);
+                for (int i = GameCore.Instance.config.Value.gravityZoneWeight.Length; i < gravityZones.Value.Length; i++) zoneWeights[i] = 1;
+            }
+            else zoneWeights = GameCore.Instance.config.Value.gravityZoneWeight;
+            
         }
 
 
@@ -350,43 +373,53 @@ namespace AngerStudio.HomingMeSoul.Game
             int emptyZoneIndex = gravityZones.Value.Length - 1, lastLeast = dropsInZones[emptyZoneIndex].Count;
             for (int i = emptyZoneIndex - 1; i > 0; i--)
             {
-                if (dropsInZones[emptyZoneIndex].Count < lastLeast)
+                if (dropsInZones[i].Count < lastLeast)
                 {
-                    lastLeast = dropsInZones[emptyZoneIndex].Count;
+                    lastLeast = dropsInZones[i].Count;
                     emptyZoneIndex = i;
-                }                
+                }
             }
 
             PlaceSupply(emptyZoneIndex, typeIndex);
             return emptyZoneIndex;
         }
 
-        public int SpawnSupplyInRandomZone (int pickupType)
+        public int SpawnSupplyInRandomZone (int activePickupType)
         {
-            int t = Random.Range(1, gravityZones.Value.Length);
-            PlaceSupply(t, pickupType);
-            return t;
+            float t = Random.Range(0, zoneWeights.Sum());
+            for (int i = gravityZones.Value.Length - 1; i > 1 ; i--)
+            {
+                if (t > zoneWeights[i] && t - zoneWeights[i - 1] < zoneWeights[i])
+                {
+                    PlaceSupply(i, activePickupType);
+                    return i;   
+                }
+                t -= zoneWeights[i];
+            }
+
+            PlaceSupply(1, activePickupType);
+            return 1;
         }
 
-        public void PlaceSupply (int zoneIndex, int pickupType)
+        public void PlaceSupply (int zoneIndex, int activePickupType)
         {
-            
             GameObject t = null;
             SupplyDrop d = dropsPool.GetObjectFromPool(null);
             t = d.gameObject;
-            d.typeIndex = pickupType;
-            t.GetComponentInChildren<SpriteRenderer>().sprite = AppCore.Instance.config.usablePickupSprites[d.typeIndex];
+            d.m_collider.enabled = true;
+            d.SetType(activePickupType);
             
             PlaceToOrbit(Random.Range(config.Value.gravityZoneSteps[zoneIndex - 1], config.Value.gravityZoneSteps[zoneIndex]),
             gravityZones.Value[zoneIndex].transform,
             t);
 
-            //if (dropsInZones[zoneIndex] == null) dropsInZones[zoneIndex] = new HashSet<SupplyDrop>();
+            if (dropsInZones[zoneIndex] == null) dropsInZones[zoneIndex] = new HashSet<SupplyDrop>();
             dropsInZones[zoneIndex].Add(d);
 
             zoneIndexMap.Add(d, zoneIndex);
 
-            pickUpInstances[pickupType].Add(d);
+            if (pickUpInstances[activePickupType] == null) pickUpInstances[activePickupType] = new HashSet<SupplyDrop>();
+            pickUpInstances[activePickupType].Add(d);
         }
 
         ContactFilter2D filter = new ContactFilter2D () { useTriggers = true };
@@ -395,7 +428,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
         void PlaceToOrbit (float distance, Transform parentZone, GameObject t)
         {
-            t.transform.SetParent(parentZone);
+            t.transform.SetParent(parentZone, true);
             t.transform.localPosition = Vector3.zero;
             distance = distance / 2f; // Steps is scale value for zones.
             t.transform.position = parentZone.position + Quaternion.Euler(0, 0, Random.Range(0f, 359.9f)) * Vector2.left * distance;
@@ -408,5 +441,49 @@ namespace AngerStudio.HomingMeSoul.Game
             // GameObject p = GameObject.Instantiate(burstVFXPrefab, t.transform.position, Quaternion.identity);
             // MonoBehaviour.Destroy(p, 5f);
         }
+
+
+
+        public TMPro.TextMeshProUGUI countDownText;
+        public GameObject FinishUI;
+        public TMPro.TextMeshProUGUI Total;
+        public TMPro.TextMeshProUGUI[] PanelScore, PanelKey;
+
+        public void ShowFinishUI()
+        {
+            FinishUI.SetActive(true);
+            var score = homeTransform.gameObject.GetComponent<ScoreBase>();
+            Total.text = score.scoreR.Value.ToString();
+            Dictionary<KeyCode, int> scores = new Dictionary<KeyCode,int>();
+            foreach(var player in Players)
+                scores.Add(player.Key, player.Value.totalScore);
+
+            List<(int, KeyCode)> Top = new List<(int, KeyCode)>();
+            while(Top.Count < 3)
+            {
+                if (scores.Count <= 0) break;
+                KeyCode key = KeyCode.Q;
+                int s = -1;
+
+                foreach(var ds in scores)
+                {
+                    if (ds.Value > s)
+                    {
+                        key = ds.Key;
+                        s = ds.Value;
+                    } 
+                }
+                Top.Add((s,key));
+                scores.Remove(key);
+            }
+
+            for(int i = 0; i < Top.Count; i++)
+            {
+                PanelScore[i].text = Top[i].Item1.ToString();
+                PanelKey[i].text = Top[i].Item2.ToString();
+            }
+            
+        }
+        
     }
 }

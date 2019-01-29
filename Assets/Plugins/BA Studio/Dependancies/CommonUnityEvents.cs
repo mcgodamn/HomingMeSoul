@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
@@ -9,12 +10,12 @@ namespace BA_Studio.UnityLib.General.CommonEvents
 
 	[System.SerializableAttribute]
 	public class Int2Event : UnityEvent<int, int> {}
+	
+	[System.SerializableAttribute]
+	public class IntCollectionEvent : UnityEvent<ICollection<int>> {}
 
 	[System.SerializableAttribute]
 	public class BoolEvent : UnityEvent<bool> {}
-
-	[System.SerializableAttribute]
-	public class ReturnBoolEvent : UnityEvent<BoolWrapper> {}
 
 	[System.SerializableAttribute]
 	public class StringEvent : UnityEvent<string> {}
@@ -46,8 +47,4 @@ namespace BA_Studio.UnityLib.General.CommonEvents
 	[System.SerializableAttribute]
 	public class BaseEventDataEvent : UnityEvent<UnityEngine.EventSystems.BaseEventData> {}
 
-	public class BoolWrapper
-	{
-		public bool value;
-	}
 }

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using BA_Studio.StatePattern;
+using BA_Studio.UnityLib.SingletonLocator;
 using UnityEngine;
 using DG.Tweening;
 
@@ -56,7 +57,7 @@ namespace AngerStudio.HomingMeSoul.Core
             foreach (KeyCode k in Context.allowedKeys)
             {
                 if (SimpleInput.GetKey(k))
-                    Context.titleT.DOLocalMoveY(Context.titleT.localPosition.y + 900, 0.75f, true)
+                    Context.titleT.DOLocalMoveY(Context.titleT.localPosition.y + (Context.titleT.transform as RectTransform).rect.height, 0.75f, true)
                         .OnComplete(() => Context.titleT.gameObject.SetActive(false))
                         .OnComplete(() => ChangeState(new AwaitingPlayer(StateMachine)));      
             }
@@ -67,11 +68,14 @@ namespace AngerStudio.HomingMeSoul.Core
     {
         float[] lastKeyDownTime = new float[8];
         float[] lastKeyUpTime = new float[8];
-        
+        float countDown;
 
         public AwaitingPlayer (StateMachine<AppCore> machine) : base(machine)
         {
+            countDown = Time.time;
+            Context.countDownText.enabled = true;
         }
+
 
         public override void Update ()
         {
@@ -82,10 +86,15 @@ namespace AngerStudio.HomingMeSoul.Core
                     Context.TogglePlayer(vKey);
                 }
             }
-
-            if (Context.activePlayers.Count >= 8)
+            float GAME_START_TIME = 10;
+            float sec = GAME_START_TIME - (Time.time - countDown);
+            if (sec < 0)
             {
                 ChangeState(new GameStarting(StateMachine));
+            }
+            else
+            {
+                Context.countDownText.text = ((int)sec).ToString();
             }
 
         }
@@ -104,7 +113,7 @@ namespace AngerStudio.HomingMeSoul.Core
 
         public override void Update ()
         {
-            
+            if (Input.GetKeyDown(KeyCode.F8)) ChangeState(new AppRestarting(StateMachine));
         }
     }
 
@@ -138,6 +147,7 @@ namespace AngerStudio.HomingMeSoul.Core
         {
         }
 
+
         public override void Update ()
         {
             throw new System.NotImplementedException();
@@ -167,5 +177,24 @@ namespace AngerStudio.HomingMeSoul.Core
             throw new System.NotImplementedException();
         }
     }
+
+    public class AppRestarting : State<AppCore>
+    {
+        public AppRestarting  (StateMachine<AppCore> machine) : base(machine)
+        {
+        }
+
+        public override void OnEntered ()
+        {            
+            SingletonBehaviourLocator<AppCore>.Set(null);
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Unloader");
+        }
+
+        public override void Update ()
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
 
 }

@@ -9,7 +9,8 @@
         "BA_Studio_GameObjectPool",
         "BA_Studio_Main",
         "Unity.2D.Psdimporter.Editor",
-        "SceneField"
+        "SceneField",
+        "BA_Studio_General"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

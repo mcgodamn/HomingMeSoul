@@ -4,16 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Pickup1
-  - Pickup2
-  - Pickup3
-  - Pickup4
-  - Pickup5
-  - Pickup6
-  - Pickup7
-  - Pickup8
-  - Supply(Book)
   - Pickup
+  - Home
   layers:
   - Default
   - TransparentFX
@@ -25,7 +17,7 @@ TagManager:
   - 
   - PostProcessing
   - GameInteraction
-  - 
+  - Player
   - 
   - 
   - 

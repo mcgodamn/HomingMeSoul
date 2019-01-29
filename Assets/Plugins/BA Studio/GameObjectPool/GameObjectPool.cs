@@ -64,7 +64,7 @@ namespace BA_Studio.UnityLib.GameObjectPool
 			return returningO;
 		}
 
-		public List<T> GetObjectsFromPool (int count, Transform targetParent) {
+		public ICollection<T> GetObjectsFromPool (int count, Transform targetParent) {
 			if (poolList.Count < count) {
 				poolList.AddRange(NewPooledObjects(count + 5));
 			}
@@ -81,6 +81,13 @@ namespace BA_Studio.UnityLib.GameObjectPool
 			poolList.AddRange(returning);	
 		}
 
+		public void ReturnToPool (ICollection<T> returning) {
+			ReturnToPool(returning);
+		}
+
+		public void ReturnToPool (IEnumerable<T> returning) {
+			ReturnToPool(returning as T[]);
+		}
 		public List<T> NewPooledObjects(int count) {
 			List<T> newOs = new List<T>();
 			for (int i = 0; i < count; i++){

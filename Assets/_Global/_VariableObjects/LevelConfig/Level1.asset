@@ -31,19 +31,19 @@ MonoBehaviour:
       usingGlobal: 0
     speedMultiplier:
       globalVariable: {fileID: 0}
-      localValue: 7.5
+      localValue: 4
       usingGlobal: 0
     worldRidius:
       globalVariable: {fileID: 0}
       localValue: 8
       usingGlobal: 0
     gravityZoneSteps:
-    - 3
+    - 4
     - 6
-    - 9
-    - 11
-    - 13
-    - 15
+    - 8
+    - 10
+    - 12
+    - 14
     forbiddenPickupTypes: []
     treasureChance: 0.05
     rimRewardFactor: 1.01
@@ -64,9 +64,26 @@ MonoBehaviour:
     - 40
     - 48
     - 56
-    maxSupplyDrops: 40
-    minSupplyDrops: 16
-    densityBalancingDistance: 5
+    gravityZoneWeight:
+    - 3
+    - 2
+    - 1
+    - 1
+    - 1
+    - 1
+    maxSupplyDrops: 48
+    minSupplyDrops: 24
+    densityBalancingDistance: 6
+    rewardLevel:
+    - 1
+    - 1.15
+    - 1.3
+    - 1.4
+    - 1.5
+    - 1.7
+    - 2
     passiveSPGainDelayInSconds: 5
+    updatesDelayBetweenProfits: 6
+    capturedPickupRevolutionSpeed: 4
   readOnly: 1
   description: 

@@ -17,7 +17,7 @@ namespace AngerStudio.HomingMeSoul.Game
             Context.Prepare();
             Context.CreaterPlayers();
             ChangeState(new GameStarting(StateMachine));
-        } 
+        }
 
         public override void Update ()
         {
@@ -42,8 +42,12 @@ namespace AngerStudio.HomingMeSoul.Game
 
     public class GameOngoing : State<GameCore>
     {
+        float GAME_TIME = 60;
+        float countDown;
+
         public GameOngoing (StateMachine<GameCore> machine) : base(machine)
         {
+            countDown = Time.time;
         }
 
         float lastSupplyTime, lastPassiveSpGainTime;
@@ -62,7 +66,7 @@ namespace AngerStudio.HomingMeSoul.Game
             //Spawning supplies...
             if (Context.SuppliesSum < Context.config.Value.minSupplyDrops)
             {
-                Context.SpawnSupplyInMostEmptyZone(Context.GetLeastPickupTypeIndex());
+                Context.SpawnSupplyInRandomZone(Context.GetLeastPickupTypeIndex());
                 lastSupplyTime = Time.time;
             }
             if (Time.time - lastSupplyTime > 3f && Context.SuppliesSum < Context.config.Value.maxSupplyDrops)
@@ -71,12 +75,23 @@ namespace AngerStudio.HomingMeSoul.Game
                 lastSupplyTime = Time.time;
             }
             //Free SP
-            if (Time.time - lastPassiveSpGainTime > Context.config.Value.passiveSPGainDelayInSconds) Context.sp.Value += 1;
-            lastPassiveSpGainTime = Time.time;
+            if (Time.time - lastPassiveSpGainTime > Context.config.Value.passiveSPGainDelayInSconds)
+            {
+                Context.sp.Value += 1;
+                lastPassiveSpGainTime = Time.time;
+            }
 
             //Controlling bad guys...
             //Random events...
-            
+
+            if (Time.time - countDown > GAME_TIME)
+            {
+                ChangeState(new GameFinished(StateMachine));
+            }
+            else
+            {
+                Context.countDownText.text = ((int)(GAME_TIME - (Time.time - countDown))).ToString();
+            }
         }
     }
 
@@ -98,9 +113,17 @@ namespace AngerStudio.HomingMeSoul.Game
         {
         }
 
+        public override void OnEntered()
+        {
+            Context.ShowFinishUI();
+        }
+
         public override void Update ()
         {
-            throw new System.NotImplementedException();
+            if (SimpleInput.GetKeyDown(KeyCode.Space))
+            {
+                
+            }
         }
     }
 }

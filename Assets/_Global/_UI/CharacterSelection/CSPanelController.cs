@@ -16,10 +16,13 @@ public class CSPanelController : MonoBehaviour
 
     public GameObjectPool<CCardController> cardPool;
 
+    AudioSource audio;
+
     void Awake ()
     {
         cardPool = new GameObjectPool<CCardController>(cardPrefab);
         cardMap = new Dictionary<KeyCode, CCardController>();
+        this.audio = this.gameObject.AddComponent<AudioSource>();
     }
 
     public void AddCard (KeyCode control)
@@ -34,6 +37,7 @@ public class CSPanelController : MonoBehaviour
         g.Set(control);
         activeCards.Add(g);
         cardMap.Add(control, g);
+        this.audio.PlayOneShot(AppCore.Instance.activePlayers[control].assignedActionAudio);
         
     }
 

@@ -7,5 +7,7 @@ namespace AngerStudio.HomingMeSoul.Core
     {
         public Sprite[] playerSelctionCards;
         public Sprite[] characterThumbnails;
+
+        public AudioClip[] characterActionAudio;
     }
 }
