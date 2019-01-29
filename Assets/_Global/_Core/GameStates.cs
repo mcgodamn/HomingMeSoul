@@ -66,7 +66,7 @@ namespace AngerStudio.HomingMeSoul.Game
             //Spawning supplies...
             if (Context.SuppliesSum < Context.config.Value.minSupplyDrops)
             {
-                Context.SpawnSupplyInMostEmptyZone(Context.GetLeastPickupTypeIndex());
+                Context.SpawnSupplyInRandomZone(Context.GetLeastPickupTypeIndex());
                 lastSupplyTime = Time.time;
             }
             if (Time.time - lastSupplyTime > 3f && Context.SuppliesSum < Context.config.Value.maxSupplyDrops)

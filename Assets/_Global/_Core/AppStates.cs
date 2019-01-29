@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using BA_Studio.StatePattern;
+using BA_Studio.UnityLib.SingletonLocator;
 using UnityEngine;
 using DG.Tweening;
 
@@ -112,8 +113,7 @@ namespace AngerStudio.HomingMeSoul.Core
 
         public override void Update ()
         {
-            if (Input.GetKeyDown(KeyCode.F8)) 
-                UnityEngine.SceneManagement.SceneManager.LoadScene("Unloader");
+            if (Input.GetKeyDown(KeyCode.F8)) ChangeState(new AppRestarting(StateMachine));
         }
     }
 
@@ -147,6 +147,7 @@ namespace AngerStudio.HomingMeSoul.Core
         {
         }
 
+
         public override void Update ()
         {
             throw new System.NotImplementedException();
@@ -176,5 +177,24 @@ namespace AngerStudio.HomingMeSoul.Core
             throw new System.NotImplementedException();
         }
     }
+
+    public class AppRestarting : State<AppCore>
+    {
+        public AppRestarting  (StateMachine<AppCore> machine) : base(machine)
+        {
+        }
+
+        public override void OnEntered ()
+        {            
+            SingletonBehaviourLocator<AppCore>.Set(null);
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Unloader");
+        }
+
+        public override void Update ()
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
 
 }

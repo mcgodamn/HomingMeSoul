@@ -87,7 +87,7 @@ namespace AngerStudio.HomingMeSoul.Core
         {
             if (avaliableColors.Count == 0 || activePlayers.Count >= config.maxPlayers || activePlayers.ContainsKey(slot)) return;
             int r1 = Random.Range(0, avaliableColors.Count), r2 = Random.Range(0, avaliablePickup.Count);
-            activePlayers.Add(slot, new PlayerProfile(avaliableSlots.Pop(), avaliablePickup[r2], avaliableColors[r1], avaliableAudio.Pop()));
+            activePlayers.Add(slot, new PlayerProfile(avaliableSlots.Pop(), avaliablePickup[r2], avaliableColors[r1], (avaliableAudio.Count > 1)? avaliableAudio.Pop() : avaliableAudio.Peek()));
             orderedPlayers.Add(activePlayers[slot]);
             //m_View.AddPlayerCard(slot, avaliableColors[r]);
             cSPanel.AddCard(slot);

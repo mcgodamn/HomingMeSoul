@@ -18,9 +18,6 @@ namespace BA_Studio.UnityLib.General.CommonEvents
 	public class BoolEvent : UnityEvent<bool> {}
 
 	[System.SerializableAttribute]
-	public class ReturnBoolEvent : UnityEvent<BoolWrapper> {}
-
-	[System.SerializableAttribute]
 	public class StringEvent : UnityEvent<string> {}
 
 	[System.SerializableAttribute]
@@ -50,8 +47,4 @@ namespace BA_Studio.UnityLib.General.CommonEvents
 	[System.SerializableAttribute]
 	public class BaseEventDataEvent : UnityEvent<UnityEngine.EventSystems.BaseEventData> {}
 
-	public class BoolWrapper
-	{
-		public bool value;
-	}
 }

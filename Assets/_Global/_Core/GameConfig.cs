@@ -22,6 +22,8 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public float[] gravityZonesRevolutionSpeeds = { 3f, 5f, 8f, 12f, 16f, 20f, 25f, 30f, 35f, 40f, 48f, 56f };
 
+        public float[] gravityZoneWeight = { 3f, 2f, 1f, 1f, 1f, 1f };
+
         public int maxSupplyDrops = 100, minSupplyDrops = 40;
 
         public float densityBalancingDistance = 7f;
@@ -31,6 +33,8 @@ namespace AngerStudio.HomingMeSoul.Game
         public float passiveSPGainDelayInSconds = 5f;
 
         public int updatesDelayBetweenProfits = 6;
+
+        public float capturedPickupRevolutionSpeed = 4f;
 
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using AngerStudio.HomingMeSoul.Core;
 
 namespace AngerStudio.HomingMeSoul.Game
 {
@@ -20,6 +21,12 @@ namespace AngerStudio.HomingMeSoul.Game
         {
             //TODO what to do with pindex
             GameCore.Instance.PickedBy(this, playerIndex);
+        }
+
+        public void SetType (int type)
+        {
+            typeIndex = AppCore.Instance.orderedPlayers[type].assginedPickupType;
+            GetComponentInChildren<SpriteRenderer>().sprite = AppCore.Instance.config.usablePickupSprites[type];
         }
     }
 }
