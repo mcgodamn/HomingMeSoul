@@ -93,6 +93,9 @@ namespace AngerStudio.HomingMeSoul.Game
             {
                 Context.countDownText.text = ((int)(GAME_TIME - (Time.time - countDown))).ToString();
             }
+
+            // Profit
+            Context.scoreBase.DoUpdate();     
         }
     }
 

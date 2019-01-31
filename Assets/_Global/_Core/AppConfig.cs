@@ -9,7 +9,7 @@ namespace AngerStudio.HomingMeSoul.Core
 
         public int maxPlayers;
 
-        public float countDownSecs;
+        public int csCountDownSec;
 
         public Sprite[] usablePickupSprites;
 

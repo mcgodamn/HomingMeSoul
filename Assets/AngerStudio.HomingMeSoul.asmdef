@@ -10,7 +10,9 @@
         "BA_Studio_Main",
         "Unity.2D.Psdimporter.Editor",
         "SceneField",
-        "BA_Studio_General"
+        "BA_Studio_General",
+        "TrinitySoftware_MEC_Pro",
+        "BA_Studio_GlobalAudio"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

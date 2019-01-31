@@ -42,7 +42,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
         
 
-        public Transform homeTransform;
+        public ScoreBase scoreBase;
 
         public void CreaterPlayers()
         {
@@ -98,7 +98,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
         void InitializeCharacter(CharacterProperty character)
         {
-            character.collideLocation = homeTransform.gameObject;
+            character.collideLocation = scoreBase.gameObject;
             character.Ready = true;
             character.Stamina.Value = config.Value.staminaChargeNumber;
             character.faceLocation();
@@ -200,7 +200,7 @@ namespace AngerStudio.HomingMeSoul.Game
             }
             if (listPlayerInHome.Contains(key))
             {
-                midPosition = homeTransform.position;
+                midPosition = scoreBase.transform.position;
                 listPlayerInHome.Remove(key);
             }
             Players[key].ReturnSupply();
@@ -232,10 +232,10 @@ namespace AngerStudio.HomingMeSoul.Game
         void BorderDectection(KeyCode player)
         {
 
-            if (Vector2.Distance(Players[player].transform.position, homeTransform.position) >= config.Value.worldRidius)
+            if (Vector2.Distance(Players[player].transform.position, scoreBase.transform.position) >= config.Value.worldRidius)
             {
                 Vector3 inVector = Players[player].ForwardVector.normalized;
-                Vector3 normal = (Players[player].transform.position - homeTransform.position).normalized;
+                Vector3 normal = (Players[player].transform.position - scoreBase.transform.position).normalized;
                 Vector2 outVector = -1 * (Vector2.Dot(inVector, normal) * normal * 2 - inVector);
                 Players[player].ForwardVector = outVector.normalized * Players[player].ForwardVector.magnitude;
             }
@@ -260,7 +260,7 @@ namespace AngerStudio.HomingMeSoul.Game
             foreach(var player in listPlayerInHome)
             {
                 Players[player].Stamina.Value = config.Value.staminaChargeNumber;
-                Players[player].transform.RotateAround(homeTransform.position,Vector3.forward,1f);
+                Players[player].transform.RotateAround(scoreBase.transform.position,Vector3.forward,1f);
             }
         }
 
@@ -356,10 +356,10 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public int GetLeastPickupTypeIndex ()
         {
-            int least = pickUpInstances[0].Count, resultIndex = 0;
-            for (int i = 1; i < pickUpInstances.Count; i++)
+            int least = pickUpInstances[AppCore.Instance.orderedPlayers[0].UsingPlayerSlot].Count, resultIndex = 0;
+            for (int i = 1; i < AppCore.Instance.orderedPlayers.Count; i++)
             {
-                if (pickUpInstances[i].Count < least)
+                if (pickUpInstances[AppCore.Instance.orderedPlayers[i].UsingPlayerSlot].Count < least)
                 {
                     least = pickUpInstances[i].Count;
                     resultIndex = i;
@@ -452,7 +452,7 @@ namespace AngerStudio.HomingMeSoul.Game
         public void ShowFinishUI()
         {
             FinishUI.SetActive(true);
-            var score = homeTransform.gameObject.GetComponent<ScoreBase>();
+            var score = scoreBase.gameObject.GetComponent<ScoreBase>();
             Total.text = score.scoreR.Value.ToString();
             Dictionary<KeyCode, int> scores = new Dictionary<KeyCode,int>();
             foreach(var player in Players)

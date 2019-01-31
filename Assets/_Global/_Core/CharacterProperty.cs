@@ -103,8 +103,8 @@ namespace AngerStudio.HomingMeSoul.Game
         public void ReturnHome()
         {
             draging = false;
-            onHit(GameCore.Instance.homeTransform.gameObject);
-            GameCore.Instance.homeTransform.gameObject.GetComponent<ScoreBase>().DeliverPickups(m_key, supplyPoint);
+            onHit(GameCore.Instance.scoreBase.gameObject);
+            GameCore.Instance.scoreBase.gameObject.GetComponent<ScoreBase>().DeliverPickups(m_key, supplyPoint);
             totalScore += supplyPoint;
             supplyPoint = 0;
             fitCircleCollider();

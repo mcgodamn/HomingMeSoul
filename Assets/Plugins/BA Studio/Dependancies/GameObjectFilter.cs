@@ -1,12 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace BA_Studio.UnityLib.General
+namespace BA_Studio.UnityLib.Utilities
 {
     [System.Serializable]
     public class GameObjectFilter
     {
         public List<GameObject> targetGOFilter, ignoreGOList;
+        public List<string> targetNameFilter, ignoreNameFilter;
         [TagSelector]
         public List<string> targetTagFilter, ignoreTagFilter;
 
@@ -22,6 +23,16 @@ namespace BA_Studio.UnityLib.General
             if (ignoreGOList.Count > 0 && ignoreGOList.Contains(g))
             {
                 //Debug.Log("Target: False");
+                return false;
+            }
+            if (targetNameFilter.Count > 0 && !targetNameFilter.Contains(g.gameObject.name))
+            {
+                //Debug.Log("Tag: False");
+                return false;
+            }
+            if (ignoreNameFilter.Count > 0 && ignoreNameFilter.Contains(g.gameObject.name))
+            {
+                //Debug.Log("Tag: False");
                 return false;
             }
             if (targetTagFilter.Count > 0 && !targetTagFilter.Contains(g.tag))
