@@ -37,6 +37,8 @@ namespace AngerStudio.HomingMeSoul.Core
 
         public TMPro.TextMeshProUGUI countDownText;
 
+        public BA_Studio.UnityLib.Utilities.Reloader reloader;
+
         void Awake ()
         {
 
@@ -59,6 +61,7 @@ namespace AngerStudio.HomingMeSoul.Core
 
             
             stateMachine = new StateMachine<AppCore>(this);
+            stateMachine.debugLogOutput += (s) => Debug.Log(s);
             stateMachine.ChangeState(new Awaking(stateMachine));
 
             SingletonBehaviourLocator<AppCore>.Set(this);
@@ -81,6 +84,11 @@ namespace AngerStudio.HomingMeSoul.Core
         {
             if (activePlayers.ContainsKey(slot)) RemovePlayer(slot);
             else AddPlayer(slot);
+        }
+
+        public void RestartApp()
+        {
+            stateMachine.ChangeState(new AppRestarting(stateMachine));
         }
 
         internal void AddPlayer (KeyCode slot)

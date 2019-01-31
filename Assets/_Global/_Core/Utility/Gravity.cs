@@ -10,7 +10,7 @@ public static class Gravity
         float gravityMultiplier = gameCore.config.Value.gravityMultiplier; 
 
 
-        Vector3 origin = gameCore.homeTransform.position;
+        Vector3 origin = gameCore.scoreBase.transform.position;
         Vector3 newVector = Vector3.zero;
         float distance;
         float dx = nowPosition.x - origin.x;

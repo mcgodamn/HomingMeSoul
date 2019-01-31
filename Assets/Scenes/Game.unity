@@ -668,8 +668,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 36.92, y: 20.770004}
-  m_SizeDelta: {x: -73.83, y: -41.53}
+  m_AnchoredPosition: {x: 36.92, y: 24.3}
+  m_SizeDelta: {x: -73.8, y: -72.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &414450384
 MonoBehaviour:
@@ -701,8 +701,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278211839
-  m_fontColor: {r: 1, g: 0.3323384, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -720,7 +720,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 98.4
+  m_fontSize: 88.75
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1029,48 +1029,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!21 &473803354
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 2DxFX/Standard/FireAdditive
-  m_Shader: {fileID: 4800000, guid: 4fc9d00a1d741074e80b30dbf06dfa0b, type: 3}
-  m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex2:
-        m_Texture: {fileID: 2800000, guid: 167023acf6c0d8546947dbade221cda9, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - _Alpha: 0.100000024
-    - _ColorMask: 15
-    - _Stencil: 0
-    - _StencilComp: 8
-    - _StencilOp: 0
-    - _StencilReadMask: 255
-    - _StencilWriteMask: 255
-    - _Value1: 220.2
-    - _Value2: 0.191
-    - _Value3: 1
-    - _Value4: 0
-    - _Value5: 0
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &518650786
 GameObject:
   m_ObjectHideFlags: 0
@@ -1146,7 +1104,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 473803354}
+  - {fileID: 1235799715}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1286,8 +1244,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 300, y: 140}
+  m_AnchoredPosition: {x: 13.100098, y: 0}
+  m_SizeDelta: {x: 314.9, y: 161.2}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &561096157
 MonoBehaviour:
@@ -6872,7 +6830,7 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300000, guid: 026aa8360b3f0414885b76beabf944e5, type: 3}
   m_Type: 0
-  m_PreserveAspect: 1
+  m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -7098,6 +7056,7 @@ GameObject:
   - component: {fileID: 1086845256}
   - component: {fileID: 1086845257}
   - component: {fileID: 1086845258}
+  - component: {fileID: 1086845259}
   m_Layer: 0
   m_Name: Home
   m_TagString: Home
@@ -7227,6 +7186,12 @@ MonoBehaviour:
   innerScoreVisualPrefab: {fileID: 4901898632862311033, guid: 9b07ef96ba2285a448229cff6d254f7f,
     type: 3}
   innerScores: []
+  storageUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: BA_Studio.UnityLib.General.CommonEvents.IntCollectionEvent, BA_Studio_General,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  fX: {fileID: 1086845259}
 --- !u!95 &1086845257
 Animator:
   serializedVersion: 3
@@ -7254,6 +7219,22 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1086845252}
   m_Enabled: 1
+--- !u!114 &1086845259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1086845252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08c86c446bc08894991e3c7e736e2539, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  linePrefab: {fileID: 7788940879152549333, guid: b5f30cddc78fcab4ab5abdbc2f4796d9,
+    type: 3}
+  durationPerPath: 0.6
+  segmentPerPath: 10
 --- !u!1 &1157626899
 GameObject:
   m_ObjectHideFlags: 0
@@ -7529,6 +7510,48 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!21 &1235799715
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 2DxFX/Standard/FireAdditive
+  m_Shader: {fileID: 4800000, guid: 4fc9d00a1d741074e80b30dbf06dfa0b, type: 3}
+  m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex2:
+        m_Texture: {fileID: 2800000, guid: 167023acf6c0d8546947dbade221cda9, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _Alpha: 0.100000024
+    - _ColorMask: 15
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    - _Value1: 220.2
+    - _Value2: 0.191
+    - _Value3: 1
+    - _Value4: 0
+    - _Value5: 0
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1363574135
 GameObject:
   m_ObjectHideFlags: 0
@@ -8303,6 +8326,7 @@ MonoBehaviour:
       passiveSPGainDelayInSconds: 5
       updatesDelayBetweenProfits: 6
       capturedPickupRevolutionSpeed: 4
+      gamingTime: 0
     usingGlobal: 1
   score:
     globalVariable: {fileID: 0}
@@ -8372,7 +8396,7 @@ MonoBehaviour:
   - globalVariable: {fileID: 11400000, guid: bf5e4de98d0cf4b4fa7f436291bf0575, type: 2}
     localValue: 0
     usingGlobal: 1
-  homeTransform: {fileID: 1086845254}
+  scoreBase: {fileID: 1086845256}
   countDownText: {fileID: 1599962702}
   FinishUI: {fileID: 1447839793}
   Total: {fileID: 1016617721}

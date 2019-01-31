@@ -9,6 +9,8 @@ namespace AngerStudio.HomingMeSoul.Core
 
         public int maxPlayers;
 
+        public int csCountDownSec;
+
         public Sprite[] usablePickupSprites;
 
         public GameObject supplyDropPrefab;

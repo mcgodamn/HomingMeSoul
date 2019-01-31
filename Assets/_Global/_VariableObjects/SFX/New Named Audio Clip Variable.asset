@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4a3699bcce8d86f4e8e3231ecebd85a3, type: 3}
-  m_Name: TickTimeSFX
+  m_Name: New Named Audio Clip Variable
   m_EditorClassIdentifier: 
   value:
-    ID: Tick
-    clip: {fileID: 8300000, guid: 5e167f1a23012d84c8e678e722b3843a, type: 3}
+    ID: Profit
+    clip: {fileID: 8300000, guid: 632ba98fdc3dfc943ae28985d66042a0, type: 3}
     volumeOverwrite: 1
-    volume: 0.2
+    volume: 0.64
     pitchOverwrite: 1
-    pitch: 5
+    pitch: 1.48
   readOnly: 1
   description: 
