@@ -19,10 +19,14 @@ namespace BA_Studio.UnityLib.Utilities
 
 		public void Reload ()
 		{
-            foreach (var root in DDOLRegistry.GetDDOLs())
+			DontDestroyOnLoad(this);
+            foreach (var root in DDOLRegistry.GetDDOLs().Union(this.gameObject.scene.GetRootGameObjects()))
             {
-				if (dontUnloadFilter.Match(root as GameObject)) continue;
-                else Destroy(root);
+				if ( ! dontUnloadFilter.Match(root as GameObject)) continue;
+                else
+				{					
+					Destroy(root);
+				}
             }
 			
 			UnityEngine.SceneManagement.SceneManager.LoadScene(targetSceneName);

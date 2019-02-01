@@ -33,7 +33,7 @@ namespace BA_Studio.UnityLib.Utilities
             }
             if (ignoreNameFilter.Count > 0 && ignoreNameFilter.Contains(g.gameObject.name))
             {
-                //Debug.Log("Tag: False");
+                // Debug.Log("ignoreNameFilter: False");
                 return false;
             }
             if (targetTagFilter.Count > 0 && !targetTagFilter.Contains(g.tag))
@@ -51,6 +51,7 @@ namespace BA_Studio.UnityLib.Utilities
                 //Debug.Log("Layer: False (" + layerFilter.value + "/" + g.layer + ")");
                 return false;
             }
+
             return true;
         }
     }

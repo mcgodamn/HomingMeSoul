@@ -49,7 +49,7 @@ namespace AngerStudio.HomingMeSoul.Game
         {
             this.audio = this.gameObject.AddComponent<AudioSource>();
             stateMachine = new StateMachine<CharacterProperty>(this);
-            stateMachine.debugLogOutput += (s) => Debug.Log(s);
+            //stateMachine.debugLogOutput += (s) => Debug.Log(s);
             collider = this.GetComponent<Collider2D>();
             cFilterOthers = new ContactFilter2D ();
             cFilterOthers.useTriggers = true;

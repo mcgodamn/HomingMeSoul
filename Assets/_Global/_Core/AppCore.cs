@@ -61,7 +61,7 @@ namespace AngerStudio.HomingMeSoul.Core
 
             
             stateMachine = new StateMachine<AppCore>(this);
-            stateMachine.debugLogOutput += (s) => Debug.Log(s);
+            //stateMachine.debugLogOutput += (s) => Debug.Log(s);
             stateMachine.ChangeState(new Awaking(stateMachine));
 
             SingletonBehaviourLocator<AppCore>.Set(this);

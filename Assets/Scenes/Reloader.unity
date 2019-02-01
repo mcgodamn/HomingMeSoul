@@ -147,7 +147,7 @@ MonoBehaviour:
     ignoreGOList: []
     targetNameFilter: []
     ignoreNameFilter:
-    - '[Dotween]'
+    - '[DOTween]'
     - SimpleInput
     targetTagFilter: []
     ignoreTagFilter: []

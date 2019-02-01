@@ -18,7 +18,7 @@ namespace BA_Studio.UnityLib.GameObjectPool
 			if (dontDestroyOnLoad)
 			{
 				#if DDOL_EXT
-				DDOL_ObjectExtension.DontDestroyOnLoad(PoolGO);
+				DDOLRegistry.DontDestroyOnLoad(PoolGO);
 				#else
 				MonoBehaviour.DontDestroyOnLoad(PoolGO);
 				#endif
@@ -33,7 +33,7 @@ namespace BA_Studio.UnityLib.GameObjectPool
 			if (dontDestroyOnLoad)
 			{
 				#if DDOL_EXT
-				DDOL_ObjectExtension.DontDestroyOnLoad(PoolGO);
+				DDOLRegistry.DontDestroyOnLoad(PoolGO);
 				#else
 				MonoBehaviour.DontDestroyOnLoad(PoolGO);
 				#endif
@@ -48,7 +48,7 @@ namespace BA_Studio.UnityLib.GameObjectPool
 			if (dontDestroyOnLoad)
 			{
 				#if DDOL_EXT
-				DDOL_ObjectExtension.DontDestroyOnLoad(PoolGO);
+				DDOLRegistry.DontDestroyOnLoad(PoolGO);
 				#else
 				MonoBehaviour.DontDestroyOnLoad(PoolGO);
 				#endif
@@ -63,7 +63,7 @@ namespace BA_Studio.UnityLib.GameObjectPool
 			if (dontDestroyOnLoad)
 			{
 				#if DDOL_EXT
-				DDOL_ObjectExtension.DontDestroyOnLoad(PoolGO);
+				DDOLRegistry.DontDestroyOnLoad(PoolGO);
 				#else
 				MonoBehaviour.DontDestroyOnLoad(PoolGO);
 				#endif

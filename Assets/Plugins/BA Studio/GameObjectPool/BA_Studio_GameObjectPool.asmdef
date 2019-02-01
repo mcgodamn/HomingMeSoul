@@ -1,3 +1,14 @@
-﻿{
-	"name": "BA_Studio_GameObjectPool"
+{
+    "name": "BA_Studio_GameObjectPool",
+    "references": [
+        "DDOL_EXT"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
 }
