@@ -51,7 +51,7 @@ namespace BA_Studio.UnityLib.SingletonLocator
                     Debug.Log($"EditorMode: Force setting Singleton of type {newT.GetType().Name}...instance: " + newT);
                     SingletonBehaviourLocator<T>.instance = newT;                
                 }
-                MonoBehaviour.DontDestroyOnLoad(newT);  
+                DDOLRegistry.DontDestroyOnLoad(newT);  
             }
         }
     }

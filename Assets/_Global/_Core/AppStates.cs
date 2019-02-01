@@ -208,7 +208,7 @@ namespace AngerStudio.HomingMeSoul.Core
         public override void OnEntered ()
         {
             SingletonBehaviourLocator<AppCore>.Set(null);
-            UnityEngine.SceneManagement.SceneManager.LoadScene("Reloader");
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Reloader", UnityEngine.SceneManagement.LoadSceneMode.Single);
         }
 
         public override void Update ()

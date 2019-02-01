@@ -14,7 +14,8 @@
         "TrinitySoftware_MEC_Pro",
         "BA_Studio_GlobalAudio",
         "BA_Studio_Utilities",
-        "DylanEngelman_TagSelector"
+        "DylanEngelman_TagSelector",
+        "DDOL_EXT"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

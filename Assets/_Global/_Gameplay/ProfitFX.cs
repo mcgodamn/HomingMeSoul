@@ -20,11 +20,11 @@ public class ProfitFX : MonoBehaviour
         lineInstance.gameObject.SetActive(false);
     }
 
-    public void StartLine (ICollection<Vector3> path, bool loop = true, System.Action onStart = null, System.Action onDone = null)
+    public void StartLine (Vector3[] path, bool loop = true, System.Action onStart = null, System.Action onDone = null)
     {
         if (loop)
         {
-            Vector3[] t = new Vector3[path.Count];
+            Vector3[] t = new Vector3[path.Length];
             path.CopyTo(t, 0);
             path = new Vector3[t.Length + 1];
             t.CopyTo((path as Vector3[]), 0);
@@ -32,15 +32,21 @@ public class ProfitFX : MonoBehaviour
         Timing.RunCoroutine(FX(path, onStart, onDone));
     }
 
-    IEnumerator<float> FX (ICollection<Vector3> path, System.Action onStart = null, System.Action onDone = null)
+    IEnumerator<float> FX (Vector3[] path, System.Action onStart = null, System.Action onDone = null)
     {
         lineInstance.gameObject.SetActive(true);
-        Vector3[] pathPoints = new Vector3[path.Count * segmentPerPath];
+        Vector3[] pathPoints = new Vector3[path.Length * segmentPerPath];
         int currentIndex = 0;
         float durationPerPoint = durationPerPath / segmentPerPath;
         onStart?.Invoke();
         lineInstance.positionCount = pathPoints.Length;
-        while (currentIndex <= pathPoints.Length - 1)
+
+        for (int i = 0; i < path.Length; i += segmentPerPath)
+        {
+            CaculatePathPoints(path[i], path[i + 1], segmentPerPath).CopyTo(pathPoints, i * segmentPerPath);
+        }
+
+        for (int i = 0; i < pathPoints.Length - 1; i++)
         {
             lineInstance.SetPosition(currentIndex, pathPoints[currentIndex]);
             currentIndex += 1;

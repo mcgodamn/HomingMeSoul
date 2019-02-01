@@ -9,7 +9,7 @@ namespace AngerStudio.HomingMeSoul.Game
     public class CharacterProperty : MonoBehaviour
     {
         GameObject m_collideLocation;
-        public GameObject collideLocation
+        public GameObject dockedAt
         {
             get{return m_collideLocation;}
             set{
@@ -26,33 +26,44 @@ namespace AngerStudio.HomingMeSoul.Game
         public TrailRenderer trailRenderer;
 
         public int supplyPoint = 0;
-        public int totalScore = 0;
+        public int scoreThisGame = 0;
 
         public Vector3 ForwardVector;
         public Vector3 gravityAccelator;
         public Vector3 RotatePoint;
-        public bool Ready = true;
-        public bool canCollide = true;
         public FloatReference Stamina;
 
-        public KeyCode m_key;
+        public KeyCode keyCode;
         public int playerIndex;
 
         public int typeIndex;
 
         public AudioSource audio;
 
-        StateMachine<CharacterProperty> stateMachine;
+        internal StateMachine<CharacterProperty> stateMachine;
         internal List<CharacterProperty> dragging = new List<CharacterProperty>();
+
+        internal Collider2D collider;
 
         void Awake ()
         {
             this.audio = this.gameObject.AddComponent<AudioSource>();
             stateMachine = new StateMachine<CharacterProperty>(this);
+            stateMachine.debugLogOutput += (s) => Debug.Log(s);
+            collider = this.GetComponent<Collider2D>();
+            cFilterOthers = new ContactFilter2D ();
+            cFilterOthers.useTriggers = true;
+            cFilterOthers.useLayerMask = true;
+            cFilterOthers.SetLayerMask(LayerMask.GetMask("GameInteraction"));
         }
 
 
-        public void PlayerUpdate()
+        public void PlayerInitOnGameStart ()
+        {
+            stateMachine?.ChangeState(new AtHome(stateMachine));
+        }
+
+        public void DoUpdate()
         {
             stateMachine?.Update();
         }
@@ -70,7 +81,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public void faceLocation()
         {
-            Vector2 direction = transform.position - collideLocation.transform.position;
+            Vector2 direction = transform.position - dockedAt.transform.position;
             transform.up = direction;
         }
 
@@ -82,7 +93,7 @@ namespace AngerStudio.HomingMeSoul.Game
             dryCharacter.SetActive(isDry);
         }
 
-        public void setColor(Color color)
+        public void SetColor(Color color)
         {
             glowRenderer.color = color;
             trailRenderer.startColor = color;
@@ -90,9 +101,9 @@ namespace AngerStudio.HomingMeSoul.Game
             trailRenderer.endColor = t;
         }
 
-        public void ReturnSupply()
+        public void TryCollectPickup()
         {
-            var supply = collideLocation.GetComponent<SupplyDrop>();
+            var supply = dockedAt.GetComponent<SupplyDrop>();
             if(supply)
             {
                 supply.Picked(playerIndex);
@@ -113,11 +124,25 @@ namespace AngerStudio.HomingMeSoul.Game
             relativePositionToDragger = transform.position - dragger.transform.position;
         }
 
-        public void StartDrag (CharacterProperty c)
+        public void TryStartDrag (GameObject g)
         {
-            dragging.Add(c);
+            CharacterProperty c = g.GetComponent<CharacterProperty>();
+            if (c == null) return;
+            if (c.stateMachine.CurrentState is FlyingDepleted)
+            {
+                dragging.Add(c);
 
-            c.StartBeingDragged(this);
+                c.StartBeingDragged(this);
+            }
+        }
+
+        public void StartRotateOn (SupplyDrop pickup)
+        {
+            stateMachine?.ChangeState(new RotatingOn(stateMachine, pickup.transform));
+            supplyPoint += 1;
+            pickup.Occupied = true;
+            onHit(pickup.gameObject);
+            GameCore.Instance.EnterLocation(this);
         }
 
         public void StartBeingDragged (CharacterProperty c)
@@ -125,44 +150,39 @@ namespace AngerStudio.HomingMeSoul.Game
             stateMachine.ChangeState(new Dragged(stateMachine, c));
         }
 
-        internal void onHit(GameObject other)
+        public void StopBeingDragged ()
         {
-            collideLocation = other;
-            faceLocation();
-            Ready = true;
+            stateMachine.ChangeState(new FlyingDepleted(stateMachine));
         }
 
-        void OnTriggerEnter2D(Collider2D other)
+        internal void onHit(GameObject other)
         {
-            if (collideLocation == other.gameObject || IsDragging) return;
-            if (other.gameObject.CompareTag("Pickup"))
-            {
-                var supply = other.gameObject.GetComponent<SupplyDrop>();
-                if (supply.typeIndex == typeIndex && !supply.Occupied)
-                {
-                    supplyPoint += 1;
-                    supply.Occupied = true;
-                    onHit(other.gameObject);
-                    GameCore.Instance.EnterLocation(m_key);
-                }
-            }
-            else if (other.gameObject.CompareTag("Home"))
-            {
-                ReturnHome();
-                // foreach(var homie in dryHomies)
-                // {
-                //     homie.ReturnHome();
-                // }
-                // dryHomies.Clear();
-            }
-            else if (other.gameObject.CompareTag("Player"))
-            {
-                var homie = other.gameObject.GetComponent<CharacterProperty>();
-                if (homie.stateMachine.CurrentState is FlyingDepleted)
-                {
-                    StartDrag(homie);
-                }
-            }
+            dockedAt = other;
+            faceLocation();
         }
+
+        private void OnTriggerEnter2D (Collider2D other)
+        {
+            colliding = colliding ?? new List<Collider2D>();
+            collidingThisFrame = collidingThisFrame ?? new List<Collider2D>();
+            collidingThisFrame.Add(other);
+            colliding.Add(other);
+        }
+
+        private void OnTriggerExit2D (Collider2D other)
+        {
+            colliding = colliding ?? new List<Collider2D>();
+            collidingThisFrame = collidingThisFrame ?? new List<Collider2D>();
+            colliding.Remove(other);
+        }
+
+        void LateUpdate ()
+        {
+            collidingThisFrame.Clear();
+        }
+
+        public ContactFilter2D cFilterOthers;
+
+        internal List<Collider2D> colliding, collidingThisFrame;
     }
 }

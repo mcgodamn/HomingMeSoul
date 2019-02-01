@@ -27,6 +27,7 @@ namespace BA_Studio.StatePattern
 		
 		public void Update ()
 		{
+			if (Target == null) throw new System.Exception("Target is null. Did you destroy it?");
 			if (pauseCount > 0) 
 			{
 				pauseCount -= 1;
@@ -38,7 +39,7 @@ namespace BA_Studio.StatePattern
 
 		public void ChangeState (State<T> nextState, bool instantUpdate = false)
 		{
-			debugLogOutput?.Invoke("StateMachine<" + Target.GetType() + "> is switching to: " + nextState.GetType().Name);
+			debugLogOutput?.Invoke("StateMachine<" + Target.GetType().Name + "> is switching to: " + nextState.GetType().Name);
 			CurrentState?.OnLeaving();
 			CurrentState = nextState;
 			CurrentState?.OnEntered();

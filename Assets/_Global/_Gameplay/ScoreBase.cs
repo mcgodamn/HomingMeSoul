@@ -6,6 +6,7 @@ using UnityEngine.Events;
 using AngerStudio.HomingMeSoul.Core;
 using BA_Studio.UnityLib.General.CommonEvents;
 using BA_Studio.UnityLib.GameObjectPool;
+using BA_Studio.UnityLib.GlobalAudio;
 
 namespace AngerStudio.HomingMeSoul.Game
 {
@@ -84,7 +85,7 @@ namespace AngerStudio.HomingMeSoul.Game
             if (comboTypes == null) return;
 
             ProfitFX(comboTypes);
-
+            GlobalAudio.PlayPreLoadedClipByID("Profit");
         }
 
         void ProfitFX (int[] comboTypes)
@@ -127,7 +128,7 @@ namespace AngerStudio.HomingMeSoul.Game
             {
                 innerScores.Add(innerPickupPool.GetObjectFromPool(this.inner.transform));
                 innerScores.Last().gameObject.SetActive(true);
-                innerScores.Last().SetType(slot);
+                innerScores.Last().SetType(AppCore.Instance.activePlayers[key].assginedPickupType);
                 storageVisuals[slot].Add(innerScores.Last());
             }
         }

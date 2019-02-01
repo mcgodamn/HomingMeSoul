@@ -19,13 +19,9 @@ namespace BA_Studio.UnityLib.Utilities
 
 		public void Reload ()
 		{
-            List<GameObject> gos = new List<GameObject>();
-			for (int i = 0; i < SceneManager.sceneCount; i++) gos.AddRange(SceneManager.GetSceneAt(i).GetRootGameObjects());
-
-
-            foreach (var root in gos)
+            foreach (var root in DDOLRegistry.GetDDOLs())
             {
-				if (dontUnloadFilter.Match(root)) continue;
+				if (dontUnloadFilter.Match(root as GameObject)) continue;
                 else Destroy(root);
             }
 			

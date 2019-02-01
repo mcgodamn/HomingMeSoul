@@ -31,6 +31,7 @@ namespace AngerStudio.HomingMeSoul.Game
         }
         public override void OnEntered ()
         {
+            foreach (CharacterProperty cp in Context.characters) cp.PlayerInitOnGameStart();
             ChangeState(new GameOngoing(StateMachine));
         } 
 
@@ -55,8 +56,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public override void Update ()
         {
-            Context.ReceieveInput();
-            Context.PlayerUpdate();
+            Context.UpdatePlayers();
 
             
             //Rotate the supply belt
@@ -72,6 +72,7 @@ namespace AngerStudio.HomingMeSoul.Game
                 Context.SpawnSupplyInRandomZone(Context.GetLeastPickupTypeIndex());
                 lastSupplyTime = Time.time;
             }
+
             //Free SP
             if (Time.time - lastPassiveSpGainTime > Context.config.Value.passiveSPGainDelayInSconds)
             {

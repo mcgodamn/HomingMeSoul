@@ -82,9 +82,11 @@ MonoBehaviour:
     - 1.5
     - 1.7
     - 2
-    passiveSPGainDelayInSconds: 5
-    updatesDelayBetweenProfits: 10
+    passiveSPGainDelayInSconds: 2
+    updatesDelayBetweenProfits: 30
+    updatesDelayBetweenDeliver: 60
     capturedPickupRevolutionSpeed: 4
-    gamingTime: 60
+    gamingTime: 120
+    dryCharacterFallSpeed: 1
   readOnly: 1
   description: 
