@@ -178,7 +178,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
         void LateUpdate ()
         {
-            collidingThisFrame.Clear();
+            collidingThisFrame?.Clear();
         }
 
         public ContactFilter2D cFilterOthers;
