@@ -307,14 +307,18 @@ namespace AngerStudio.HomingMeSoul.Game
 
         void Awake ()
         {
-            SingletonBehaviourLocator<GameCore>.Set(this);
-            stateMachine = new StateMachine<GameCore>(this);
-            stateMachine?.ChangeState(new GamePreparing(stateMachine));
 
             dropsPool = new GameObjectPool<SupplyDrop>(AppCore.Instance.config.supplyDropPrefab, 40);
             pickUpInstances = new BiMap<int, HashSet<SupplyDrop>>();
             for (int i = 0; i < AppCore.Instance.orderedPlayers.Count; i++) pickUpInstances.Add(AppCore.Instance.orderedPlayers[i].assginedPickupType, new HashSet<SupplyDrop>());
 
+        }
+
+        void Start ()
+        {
+            SingletonBehaviourLocator<GameCore>.Set(this);
+            stateMachine = new StateMachine<GameCore>(this);
+            stateMachine?.ChangeState(new GamePreparing(stateMachine));
         }
 
         void Update ()
