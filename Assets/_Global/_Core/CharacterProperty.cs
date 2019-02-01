@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using AngerStudio.HomingMeSoul.Core;
-
+using BA_Studio.StatePattern;
 
 namespace AngerStudio.HomingMeSoul.Game
 {
@@ -42,28 +42,27 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public AudioSource audio;
 
+        StateMachine<CharacterProperty> stateMachine;
+        internal List<CharacterProperty> dragging = new List<CharacterProperty>();
+
         void Awake ()
         {
             this.audio = this.gameObject.AddComponent<AudioSource>();
+            stateMachine = new StateMachine<CharacterProperty>(this);
         }
 
-        List<CharacterProperty> dryHomies = new List<CharacterProperty>();
 
-        public void PlayerMove()
+        public void PlayerUpdate()
         {
-            ForwardVector += gravityAccelator;
-            transform.position = transform.position + ForwardVector * Time.deltaTime;
-            if (Stamina <= 0) ForwardVector = gravityAccelator;
-
-            if (draging) transform.position = dragger.transform.position + relativeVector;
+            stateMachine?.Update();
         }
 
-        public float GetSpeed()
+        public float Speed
         {
-            return GameCore.Instance.config.Value.speedMultiplier;
+            get => GameCore.Instance.config.Value.speedMultiplier;
         }
 
-        void fitCircleCollider()
+        internal void fitCircleCollider()
         {
             Vector2 dir = transform.up.normalized;
             transform.position = dir;
@@ -76,7 +75,7 @@ namespace AngerStudio.HomingMeSoul.Game
         }
 
         public bool isDry;
-        public void setIsDry(bool isDry)
+        public void SetDry(bool isDry)
         {
             this.isDry = isDry;
             normalCharacter.SetActive(!isDry);
@@ -102,36 +101,40 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public void ReturnHome()
         {
-            draging = false;
-            onHit(GameCore.Instance.scoreBase.gameObject);
-            GameCore.Instance.scoreBase.gameObject.GetComponent<ScoreBase>().DeliverPickups(m_key, supplyPoint);
-            totalScore += supplyPoint;
-            supplyPoint = 0;
-            fitCircleCollider();
-            GameCore.Instance.EnterHome(m_key);
+            stateMachine.ChangeState(new AtHome(stateMachine));
         }
 
         CharacterProperty dragger;
-        Vector3 relativeVector;
-        bool draging = false;
+        internal Vector3 relativePositionToDragger;
+        bool IsDragging { get => dragging.Count > 0; }
         public void setDragger(CharacterProperty dragger)
         {
-            draging = true;
             this.dragger = dragger;
-            relativeVector = transform.position - dragger.transform.position;
+            relativePositionToDragger = transform.position - dragger.transform.position;
         }
 
-        void onHit(GameObject other)
+        public void StartDrag (CharacterProperty c)
+        {
+            dragging.Add(c);
+
+            c.StartBeingDragged(this);
+        }
+
+        public void StartBeingDragged (CharacterProperty c)
+        {
+            stateMachine.ChangeState(new Dragged(stateMachine, c));
+        }
+
+        internal void onHit(GameObject other)
         {
             collideLocation = other;
             faceLocation();
-            canCollide = false;
             Ready = true;
         }
 
         void OnTriggerEnter2D(Collider2D other)
         {
-            if (!canCollide || collideLocation == other.gameObject || draging) return;
+            if (collideLocation == other.gameObject || IsDragging) return;
             if (other.gameObject.CompareTag("Pickup"))
             {
                 var supply = other.gameObject.GetComponent<SupplyDrop>();
@@ -146,19 +149,18 @@ namespace AngerStudio.HomingMeSoul.Game
             else if (other.gameObject.CompareTag("Home"))
             {
                 ReturnHome();
-                foreach(var homie in dryHomies)
-                {
-                    homie.ReturnHome();
-                }
-                dryHomies.Clear();
+                // foreach(var homie in dryHomies)
+                // {
+                //     homie.ReturnHome();
+                // }
+                // dryHomies.Clear();
             }
             else if (other.gameObject.CompareTag("Player"))
             {
                 var homie = other.gameObject.GetComponent<CharacterProperty>();
-                if (homie.isDry)
+                if (homie.stateMachine.CurrentState is FlyingDepleted)
                 {
-                    homie.setDragger(this);
-                    dryHomies.Add(homie);
+                    StartDrag(homie);
                 }
             }
         }

@@ -1,8 +1,6 @@
 {
-    "name": "BA_Studio_General",
+    "name": "BA_Studio_Utilities",
     "references": [
-        "NoBrainer_GlobalVariables",
-        "BA_Studio_Utilities",
         "DylanEngelman_TagSelector"
     ],
     "optionalUnityReferences": [],

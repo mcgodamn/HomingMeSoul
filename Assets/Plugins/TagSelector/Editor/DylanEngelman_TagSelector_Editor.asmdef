@@ -1,12 +1,12 @@
 {
-    "name": "BA_Studio_General",
+    "name": "DylanEngelman_TagSelector_Editor",
     "references": [
-        "NoBrainer_GlobalVariables",
-        "BA_Studio_Utilities",
         "DylanEngelman_TagSelector"
     ],
     "optionalUnityReferences": [],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

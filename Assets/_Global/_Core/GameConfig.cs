@@ -33,6 +33,8 @@ namespace AngerStudio.HomingMeSoul.Game
         public float passiveSPGainDelayInSconds = 5f;
 
         public int updatesDelayBetweenProfits = 6;
+        
+        public int updatesDelayBetweenDeliver = 6;
 
         public float capturedPickupRevolutionSpeed = 4f;
 

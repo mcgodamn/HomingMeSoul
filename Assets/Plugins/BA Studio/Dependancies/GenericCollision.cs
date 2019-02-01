@@ -16,11 +16,13 @@ namespace BA_Studio.UnityLib.General
 			if (!this.enabled) return;
 			if (filter.Match(collision.gameObject)) collisionEnter?.Invoke(collision);
 		}
+
 		private void OnCollisionStay(Collision collision)
 		{
 			if (!this.enabled) return;
 			if (filter.Match(collision.gameObject)) collisionStay?.Invoke(collision);	
 		}
+
 		private void OnCollisionExit(Collision collision)
 		{
 			if (!this.enabled) return;

@@ -12,7 +12,9 @@
         "SceneField",
         "BA_Studio_General",
         "TrinitySoftware_MEC_Pro",
-        "BA_Studio_GlobalAudio"
+        "BA_Studio_GlobalAudio",
+        "BA_Studio_Utilities",
+        "DylanEngelman_TagSelector"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

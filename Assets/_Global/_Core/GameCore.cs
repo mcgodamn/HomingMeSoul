@@ -19,7 +19,7 @@ namespace AngerStudio.HomingMeSoul.Game
         public GameObjectArrayReference gravityZones;
         public GameConfigReference config;
         public IntReference score, sp;
-        public HashSet<SupplyDrop>[] dropsInZones;
+        public HashSet<SupplyDrop>[] pickUpsInZones;
 
         GameObjectPool<SupplyDrop> dropsPool;
 
@@ -159,10 +159,9 @@ namespace AngerStudio.HomingMeSoul.Game
             }
         }
 
-        public void EnterHome(KeyCode key)
+        public void CharacterGoHome (KeyCode key)
         {
             if (!listPlayerMoving.Contains(key)) return;
-            Players[key].setIsDry(false);
             listPlayerMoving.Remove(key);
             listPlayerInHome.Add(key);
         }
@@ -175,20 +174,20 @@ namespace AngerStudio.HomingMeSoul.Game
             listPlayerOnLocation.Add(key);
         }
 
-        public void DecentStamina()
-        {
-            float decentValue = config.Value.characterStatminaDecayRate * Time.deltaTime;
-            foreach(var player in Players.Keys)
-            {
-                if (Players[player].Stamina.Value > 0)
-                    Players[player].Stamina.Value -= decentValue;
-                else if (Players[player].Stamina.Value < 0)
-                {
-                    Players[player].Stamina.Value = 0;
-                    Players[player].setIsDry(true);
-                }
-            }
-        }
+        // public void DecentStamina()
+        // {
+        //     float decentValue = config.Value.characterStatminaDecayRate * Time.deltaTime;
+        //     foreach(var player in Players.Keys)
+        //     {
+        //         if (Players[player].Stamina.Value > 0)
+        //             Players[player].Stamina.Value -= decentValue;
+        //         else if (Players[player].Stamina.Value < 0)
+        //         {
+        //             Players[player].Stamina.Value = 0;
+        //             Players[player].setIsDry(true);
+        //         }
+        //     }
+        // }
 
         void Shoot(KeyCode key)
         {
@@ -206,7 +205,7 @@ namespace AngerStudio.HomingMeSoul.Game
             Players[key].ReturnSupply();
             Players[key].collideLocation = null;
 
-            Players[key].ForwardVector = (Players[key].transform.position - midPosition).normalized * Players[key].GetSpeed();
+            Players[key].ForwardVector = (Players[key].transform.position - midPosition).normalized * Players[key].Speed;
 
             Players[key].Ready = false;
             Players[key].canCollide = true;
@@ -215,7 +214,7 @@ namespace AngerStudio.HomingMeSoul.Game
         }
 
         List<KeyCode> listPlayerMoving = new List<KeyCode>();
-        public void PlayerMove()
+        public void PlayerUpdate()
         {
             foreach(var player in listPlayerMoving)
             {
@@ -223,7 +222,7 @@ namespace AngerStudio.HomingMeSoul.Game
                 Vector3 vGravity = Gravity.getGravity(Players[player].transform.position,config.Value.gravityMultiplier);
                 
                 Players[player].gravityAccelator = vGravity;
-                Players[player].PlayerMove();
+                Players[player].PlayerUpdate();
 
                 BorderDectection(player);
             }
@@ -242,26 +241,20 @@ namespace AngerStudio.HomingMeSoul.Game
         }
 
         List<KeyCode> listPlayerOnLocation = new List<KeyCode>();
-        public void RotatePlayerOnLocation()
+        public void RotatePlayerOnLocation (CharacterProperty c, Vector3 position)
         {
-            foreach (var player in listPlayerOnLocation)
-            {
-                Players[player].transform.position += Players[player].collideLocation.transform.position - Players[player].lastLocationPosition;
+            c.transform.position += c.collideLocation.transform.position - position;
 
-                Players[player].lastLocationPosition = Players[player].collideLocation.transform.position;
+            c.lastLocationPosition = c.collideLocation.transform.position;
 
-                Players[player].transform.RotateAround(Players[player].collideLocation.transform.position, Vector3.forward, config.Value.capturedPickupRevolutionSpeed);
-            }
+            c.transform.RotateAround(c.collideLocation.transform.position, Vector3.forward, config.Value.capturedPickupRevolutionSpeed);
         }
 
         List<KeyCode> listPlayerInHome = new List<KeyCode>();
-        public void RotatePlayerInHome()
+        public void RotatePlayerInHome (CharacterProperty c)
         {
-            foreach(var player in listPlayerInHome)
-            {
-                Players[player].Stamina.Value = config.Value.staminaChargeNumber;
-                Players[player].transform.RotateAround(scoreBase.transform.position,Vector3.forward,1f);
-            }
+            c.Stamina.Value = config.Value.staminaChargeNumber;
+            c.transform.RotateAround(scoreBase.transform.position, Vector3.forward, 1f);
         }
 
         float GetHomeRadius(int peopleNumber)
@@ -280,7 +273,7 @@ namespace AngerStudio.HomingMeSoul.Game
             get
             {
                 int t = 0;
-                foreach (HashSet<SupplyDrop> h in dropsInZones)
+                foreach (HashSet<SupplyDrop> h in pickUpsInZones)
                 {
                     t += h.Count;
                 }
@@ -319,11 +312,10 @@ namespace AngerStudio.HomingMeSoul.Game
         {
             s.m_collider.enabled = false;
             s.Occupied = false;
-            dropsInZones[zoneIndexMap[s]].Remove(s);
+            pickUpsInZones[zoneIndexMap[s]].Remove(s);
             pickUpInstances[playerIndex].Remove(s);
             zoneIndexMap.Remove(s);
             dropsPool.ReturnToPool(s);
-
         }
 
         public void Prepare ()
@@ -333,8 +325,8 @@ namespace AngerStudio.HomingMeSoul.Game
             GameObject g = GameObject.Instantiate(gravityZonePrefab);
             g.transform.localScale = Vector3.one * config.Value.gravityZoneSteps[0];
             
-            dropsInZones = new HashSet<SupplyDrop>[gravityZones.Value.Length];
-            for (int i = 0; i < gravityZones.Value.Length; i++) dropsInZones[i] = new HashSet<SupplyDrop>();
+            pickUpsInZones = new HashSet<SupplyDrop>[gravityZones.Value.Length];
+            for (int i = 0; i < gravityZones.Value.Length; i++) pickUpsInZones[i] = new HashSet<SupplyDrop>();
 
             for (int i = 1; i < config.Value.gravityZoneSteps.Length; i++)
             {
@@ -356,10 +348,10 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public int GetLeastPickupTypeIndex ()
         {
-            int least = pickUpInstances[AppCore.Instance.orderedPlayers[0].UsingPlayerSlot].Count, resultIndex = 0;
+            int least = pickUpInstances[AppCore.Instance.orderedPlayers[0].assginedPickupType].Count, resultIndex = 0;
             for (int i = 1; i < AppCore.Instance.orderedPlayers.Count; i++)
             {
-                if (pickUpInstances[AppCore.Instance.orderedPlayers[i].UsingPlayerSlot].Count < least)
+                if (pickUpInstances[AppCore.Instance.orderedPlayers[i].assginedPickupType].Count < least)
                 {
                     least = pickUpInstances[i].Count;
                     resultIndex = i;
@@ -370,12 +362,12 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public int SpawnSupplyInMostEmptyZone (int typeIndex)
         {
-            int emptyZoneIndex = gravityZones.Value.Length - 1, lastLeast = dropsInZones[emptyZoneIndex].Count;
+            int emptyZoneIndex = gravityZones.Value.Length - 1, lastLeast = pickUpsInZones[emptyZoneIndex].Count;
             for (int i = emptyZoneIndex - 1; i > 0; i--)
             {
-                if (dropsInZones[i].Count < lastLeast)
+                if (pickUpsInZones[i].Count < lastLeast)
                 {
-                    lastLeast = dropsInZones[i].Count;
+                    lastLeast = pickUpsInZones[i].Count;
                     emptyZoneIndex = i;
                 }
             }
@@ -413,8 +405,8 @@ namespace AngerStudio.HomingMeSoul.Game
             gravityZones.Value[zoneIndex].transform,
             t);
 
-            if (dropsInZones[zoneIndex] == null) dropsInZones[zoneIndex] = new HashSet<SupplyDrop>();
-            dropsInZones[zoneIndex].Add(d);
+            if (pickUpsInZones[zoneIndex] == null) pickUpsInZones[zoneIndex] = new HashSet<SupplyDrop>();
+            pickUpsInZones[zoneIndex].Add(d);
 
             zoneIndexMap.Add(d, zoneIndex);
 

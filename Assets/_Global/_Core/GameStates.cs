@@ -56,10 +56,7 @@ namespace AngerStudio.HomingMeSoul.Game
         public override void Update ()
         {
             Context.ReceieveInput();
-            Context.DecentStamina();
-            Context.PlayerMove();
-            Context.RotatePlayerInHome();
-            Context.RotatePlayerOnLocation();
+            Context.PlayerUpdate();
 
             
             //Rotate the supply belt

@@ -8,6 +8,7 @@ namespace BA_Studio.UnityLib.Utilities
     {
         public List<GameObject> targetGOFilter, ignoreGOList;
         public List<string> targetNameFilter, ignoreNameFilter;
+        
         [TagSelector]
         public List<string> targetTagFilter, ignoreTagFilter;
 

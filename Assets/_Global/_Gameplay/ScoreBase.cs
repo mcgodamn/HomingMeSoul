@@ -35,6 +35,9 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public ProfitFX fX;
 
+        [Sirenix.OdinInspector.ReadOnly]
+        public List<SupplyDrop> dockedCharacter;
+
         void Awake ()
         {
             innerPickupPool = new GameObjectPool<SupplyDrop>(innerScoreVisualPrefab);
