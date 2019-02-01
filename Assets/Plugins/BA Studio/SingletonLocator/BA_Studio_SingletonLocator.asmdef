@@ -1,6 +1,8 @@
 {
     "name": "BA_Studio_SingletonLocator",
-    "references": [],
+    "references": [
+        "DDOL_EXT"
+    ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -19,14 +19,14 @@ namespace AngerStudio.HomingMeSoul.Game
         public GameObjectArrayReference gravityZones;
         public GameConfigReference config;
         public IntReference score, sp;
-        public HashSet<SupplyDrop>[] dropsInZones;
+        public HashSet<SupplyDrop>[] pickUpsInZones;
 
         GameObjectPool<SupplyDrop> dropsPool;
 
         Dictionary<SupplyDrop, int> zoneIndexMap = new Dictionary<SupplyDrop, int>();
         
 
-        //playerIndex -> pickups
+        //pickupTypeIndex -> pickups
         BiMap<int, HashSet<SupplyDrop>> pickUpInstances;
         float[] zoneWeights;
 
@@ -35,19 +35,23 @@ namespace AngerStudio.HomingMeSoul.Game
         float poolDepth = 0;
 
         public GameObject c1,c2,c3;
-        public GameObjectReference[] Characters;
+        public GameObjectReference[] CharacterGOs;
+
+        public CharacterProperty[] characters;
         public FloatReference[] CharacterStamina;
 
         Dictionary<KeyCode, CharacterProperty> Players;
 
         
 
-        public Transform homeTransform;
+        public ScoreBase scoreBase;
 
         public void CreaterPlayers()
         {
             int i = 0;
             Vector2[] positions = GetSpawnPosition(AppCore.Instance.activePlayers.Count);
+
+            characters = new CharacterProperty[AppCore.Instance.orderedPlayers.Count];
 
             foreach(var player in AppCore.Instance.activePlayers)
             {
@@ -78,19 +82,20 @@ namespace AngerStudio.HomingMeSoul.Game
 
                 //Initialize character
                 GameObject temp = Instantiate(prefab, positions[i], Quaternion.identity);
-                Characters[i].Value = temp;
+                CharacterGOs[i].Value = temp;
+                characters[i] = temp.GetComponent<CharacterProperty>();
 
                 CharacterProperty character = temp.GetComponent<CharacterProperty>();
                 character.typeIndex = player.Value.assginedPickupType;
-                character.setColor(player.Value.assignedColor);
-                character.m_key = player.Key;
+                character.SetColor(player.Value.assignedColor);
+                character.keyCode = player.Key;
                 character.playerIndex = player.Value.UsingPlayerSlot;
                 character.Stamina = CharacterStamina[i];
                 InitializeCharacter(character);
                 
 
                 Players.Add(player.Key, character);
-                listPlayerInHome.Add(player.Key);
+                listCharacterInHome.Add(character);
 
                 i++;
             }
@@ -98,8 +103,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
         void InitializeCharacter(CharacterProperty character)
         {
-            character.collideLocation = homeTransform.gameObject;
-            character.Ready = true;
+            character.dockedAt = scoreBase.gameObject;
             character.Stamina.Value = config.Value.staminaChargeNumber;
             character.faceLocation();
         }
@@ -145,123 +149,135 @@ namespace AngerStudio.HomingMeSoul.Game
             return returnVectors;
         }
 
-        public void ReceieveInput()
+        // public void ReceieveInput()
+        // {
+        //     foreach(var key in Players.Keys)
+        //     {
+        //         if (SimpleInput.GetKeyDown(key))
+        //         {
+        //             if (Players[key].Ready)
+        //             {
+        //                 Shoot(key);
+        //             }
+        //         }
+        //     }
+        // }
+
+        public void CharacterGoHome (CharacterProperty cp)
         {
-            foreach(var key in Players.Keys)
+            if (!listPlayerMoving.Contains(cp)) return;
+            listPlayerMoving.Remove(cp);
+            listCharacterInHome.Add(cp);
+        }
+
+        public void EnterLocation(CharacterProperty cp)
+        {
+            if (!listPlayerMoving.Contains(cp)) return;
+
+            listPlayerMoving.Remove(cp);
+            listPlayerDocked.Add(cp);
+        }
+
+        // public void DecentStamina()
+        // {
+        //     float decentValue = config.Value.characterStatminaDecayRate * Time.deltaTime;
+        //     foreach(var player in Players.Keys)
+        //     {
+        //         if (Players[player].Stamina.Value > 0)
+        //             Players[player].Stamina.Value -= decentValue;
+        //         else if (Players[player].Stamina.Value < 0)
+        //         {
+        //             Players[player].Stamina.Value = 0;
+        //             Players[player].setIsDry(true);
+        //         }
+        //     }
+        // }
+
+        internal void Undock(CharacterProperty cp, bool shoot = true)
+        {
+            Vector3 activeRevolutionPivot = Vector3.zero;
+
+            if (listPlayerDocked.Contains(cp))
             {
-                if (SimpleInput.GetKeyDown(key))
-                {
-                    if (Players[key].Ready)
-                    {
-                        Shoot(key);
-                    }
-                }
+                activeRevolutionPivot = cp.dockedAt.transform.position;
+                listPlayerDocked.Remove(cp);
             }
-        }
 
-        public void EnterHome(KeyCode key)
-        {
-            if (!listPlayerMoving.Contains(key)) return;
-            Players[key].setIsDry(false);
-            listPlayerMoving.Remove(key);
-            listPlayerInHome.Add(key);
-        }
-
-        public void EnterLocation(KeyCode key)
-        {
-            if (!listPlayerMoving.Contains(key)) return;
-
-            listPlayerMoving.Remove(key);
-            listPlayerOnLocation.Add(key);
-        }
-
-        public void DecentStamina()
-        {
-            float decentValue = config.Value.characterStatminaDecayRate * Time.deltaTime;
-            foreach(var player in Players.Keys)
+            if (listCharacterInHome.Contains(cp))
             {
-                if (Players[player].Stamina.Value > 0)
-                    Players[player].Stamina.Value -= decentValue;
-                else if (Players[player].Stamina.Value < 0)
-                {
-                    Players[player].Stamina.Value = 0;
-                    Players[player].setIsDry(true);
-                }
-            }
-        }
-
-        void Shoot(KeyCode key)
-        {
-            Vector3 midPosition = Vector3.zero;
-            if (listPlayerOnLocation.Contains(key))
-            {
-                midPosition = Players[key].collideLocation.transform.position;
-                listPlayerOnLocation.Remove(key);
-            }
-            if (listPlayerInHome.Contains(key))
-            {
-                midPosition = homeTransform.position;
-                listPlayerInHome.Remove(key);
-            }
-            Players[key].ReturnSupply();
-            Players[key].collideLocation = null;
-
-            Players[key].ForwardVector = (Players[key].transform.position - midPosition).normalized * Players[key].GetSpeed();
-
-            Players[key].Ready = false;
-            Players[key].canCollide = true;
-            Players[key].audio.PlayOneShot(AppCore.Instance.activePlayers[key].assignedActionAudio);
-            listPlayerMoving.Add(key);
-        }
-
-        List<KeyCode> listPlayerMoving = new List<KeyCode>();
-        public void PlayerMove()
-        {
-            foreach(var player in listPlayerMoving)
-            {
-                // float gravityMagnitude = config.Value.gravityMultiplier / (Players[player].Stamina + 1);
-                Vector3 vGravity = Gravity.getGravity(Players[player].transform.position,config.Value.gravityMultiplier);
+                activeRevolutionPivot = scoreBase.transform.position;
+                listCharacterInHome.Remove(cp);
                 
-                Players[player].gravityAccelator = vGravity;
-                Players[player].PlayerMove();
+            }
 
-                BorderDectection(player);
+            cp.TryCollectPickup();
+            cp.dockedAt = null;
+
+            if (shoot) cp.ForwardVector = (cp.transform.position - activeRevolutionPivot).normalized * cp.Speed;
+
+            cp.audio.PlayOneShot(AppCore.Instance.activePlayers[cp.keyCode].assignedActionAudio);
+            listPlayerMoving.Add(cp);
+        }
+
+        List<CharacterProperty> listPlayerMoving = new List<CharacterProperty>();
+        public void UpdatePlayers()
+        {
+            foreach (var character in characters)
+            {                
+                character.DoUpdate();
             }
         }
 
-        void BorderDectection(KeyCode player)
-        {
+        internal void UpdateMomentum (CharacterProperty c)
+        { 
 
-            if (Vector2.Distance(Players[player].transform.position, homeTransform.position) >= config.Value.worldRidius)
+            Vector3 vGravity = Gravity.GetGravity(c.transform.position, config.Value.gravityMultiplier);
+            
+            c.gravityAccelator = vGravity;
+
+            if (Vector2.Distance(c.transform.position, scoreBase.transform.position) >= config.Value.worldRidius)
             {
-                Vector3 inVector = Players[player].ForwardVector.normalized;
-                Vector3 normal = (Players[player].transform.position - homeTransform.position).normalized;
+                Vector3 inVector = c.ForwardVector.normalized;
+                Vector3 normal = (c.transform.position - scoreBase.transform.position).normalized;
                 Vector2 outVector = -1 * (Vector2.Dot(inVector, normal) * normal * 2 - inVector);
-                Players[player].ForwardVector = outVector.normalized * Players[player].ForwardVector.magnitude;
+                c.ForwardVector = outVector.normalized * c.ForwardVector.magnitude;
             }
         }
 
-        List<KeyCode> listPlayerOnLocation = new List<KeyCode>();
-        public void RotatePlayerOnLocation()
+        // void BorderDectection(KeyCode player)
+        // {
+
+        //     if (Vector2.Distance(Players[player].transform.position, scoreBase.transform.position) >= config.Value.worldRidius)
+        //     {
+        //         Vector3 inVector = Players[player].ForwardVector.normalized;
+        //         Vector3 normal = (Players[player].transform.position - scoreBase.transform.position).normalized;
+        //         Vector2 outVector = -1 * (Vector2.Dot(inVector, normal) * normal * 2 - inVector);
+        //         Players[player].ForwardVector = outVector.normalized * Players[player].ForwardVector.magnitude;
+        //     }
+        // }
+
+        List<CharacterProperty> listPlayerDocked = new List<CharacterProperty>();
+        public void RotatePlayerOnLocation (CharacterProperty c, Vector3 position)
         {
-            foreach (var player in listPlayerOnLocation)
-            {
-                Players[player].transform.position += Players[player].collideLocation.transform.position - Players[player].lastLocationPosition;
+            c.transform.position += c.dockedAt.transform.position - position;
 
-                Players[player].lastLocationPosition = Players[player].collideLocation.transform.position;
+            c.lastLocationPosition = c.dockedAt.transform.position;
 
-                Players[player].transform.RotateAround(Players[player].collideLocation.transform.position, Vector3.forward, config.Value.capturedPickupRevolutionSpeed);
-            }
+            c.transform.RotateAround(c.dockedAt.transform.position, Vector3.forward, config.Value.capturedPickupRevolutionSpeed);
         }
 
-        List<KeyCode> listPlayerInHome = new List<KeyCode>();
-        public void RotatePlayerInHome()
+        public void SpinCharacterAtPosition (CharacterProperty c, Vector3 position)
         {
-            foreach(var player in listPlayerInHome)
-            {
-                Players[player].Stamina.Value = config.Value.staminaChargeNumber;
-                Players[player].transform.RotateAround(homeTransform.position,Vector3.forward,1f);
-            }
+            c.transform.position = position;
+
+            c.transform.RotateAround(position, Vector3.forward, config.Value.capturedPickupRevolutionSpeed);
+        }
+
+        List<CharacterProperty> listCharacterInHome = new List<CharacterProperty>();
+
+        public void RotatePlayerInHome (CharacterProperty c)
+        {
+            c.transform.RotateAround(scoreBase.transform.position, Vector3.forward, 1f);
         }
 
         float GetHomeRadius(int peopleNumber)
@@ -280,7 +296,7 @@ namespace AngerStudio.HomingMeSoul.Game
             get
             {
                 int t = 0;
-                foreach (HashSet<SupplyDrop> h in dropsInZones)
+                foreach (HashSet<SupplyDrop> h in pickUpsInZones)
                 {
                     t += h.Count;
                 }
@@ -293,11 +309,11 @@ namespace AngerStudio.HomingMeSoul.Game
         {
             SingletonBehaviourLocator<GameCore>.Set(this);
             stateMachine = new StateMachine<GameCore>(this);
-            stateMachine.ChangeState(new GamePreparing(stateMachine));
+            stateMachine?.ChangeState(new GamePreparing(stateMachine));
 
             dropsPool = new GameObjectPool<SupplyDrop>(AppCore.Instance.config.supplyDropPrefab, 40);
             pickUpInstances = new BiMap<int, HashSet<SupplyDrop>>();
-            for (int i = 0; i < AppCore.Instance.activePlayers.Count; i++) pickUpInstances.Add(i, new HashSet<SupplyDrop>());
+            for (int i = 0; i < AppCore.Instance.orderedPlayers.Count; i++) pickUpInstances.Add(AppCore.Instance.orderedPlayers[i].assginedPickupType, new HashSet<SupplyDrop>());
 
         }
 
@@ -319,11 +335,10 @@ namespace AngerStudio.HomingMeSoul.Game
         {
             s.m_collider.enabled = false;
             s.Occupied = false;
-            dropsInZones[zoneIndexMap[s]].Remove(s);
-            pickUpInstances[playerIndex].Remove(s);
+            pickUpsInZones[zoneIndexMap[s]].Remove(s);
+            pickUpInstances[s.typeIndex].Remove(s);
             zoneIndexMap.Remove(s);
             dropsPool.ReturnToPool(s);
-
         }
 
         public void Prepare ()
@@ -333,8 +348,8 @@ namespace AngerStudio.HomingMeSoul.Game
             GameObject g = GameObject.Instantiate(gravityZonePrefab);
             g.transform.localScale = Vector3.one * config.Value.gravityZoneSteps[0];
             
-            dropsInZones = new HashSet<SupplyDrop>[gravityZones.Value.Length];
-            for (int i = 0; i < gravityZones.Value.Length; i++) dropsInZones[i] = new HashSet<SupplyDrop>();
+            pickUpsInZones = new HashSet<SupplyDrop>[gravityZones.Value.Length];
+            for (int i = 0; i < gravityZones.Value.Length; i++) pickUpsInZones[i] = new HashSet<SupplyDrop>();
 
             for (int i = 1; i < config.Value.gravityZoneSteps.Length; i++)
             {
@@ -356,13 +371,15 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public int GetLeastPickupTypeIndex ()
         {
-            int least = pickUpInstances[0].Count, resultIndex = 0;
-            for (int i = 1; i < pickUpInstances.Count; i++)
+            int typeIndexCache = AppCore.Instance.orderedPlayers[0].assginedPickupType;
+            int least = pickUpInstances[typeIndexCache].Count, resultIndex = typeIndexCache;
+            for (int i = 1; i < AppCore.Instance.orderedPlayers.Count; i++)
             {
-                if (pickUpInstances[i].Count < least)
+                typeIndexCache = AppCore.Instance.orderedPlayers[i].assginedPickupType;
+                if (pickUpInstances[typeIndexCache].Count < least)
                 {
-                    least = pickUpInstances[i].Count;
-                    resultIndex = i;
+                    least = pickUpInstances[typeIndexCache].Count;
+                    resultIndex = typeIndexCache;
                 }
             }
             return resultIndex; 
@@ -370,12 +387,12 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public int SpawnSupplyInMostEmptyZone (int typeIndex)
         {
-            int emptyZoneIndex = gravityZones.Value.Length - 1, lastLeast = dropsInZones[emptyZoneIndex].Count;
+            int emptyZoneIndex = gravityZones.Value.Length - 1, lastLeast = pickUpsInZones[emptyZoneIndex].Count;
             for (int i = emptyZoneIndex - 1; i > 0; i--)
             {
-                if (dropsInZones[i].Count < lastLeast)
+                if (pickUpsInZones[i].Count < lastLeast)
                 {
-                    lastLeast = dropsInZones[i].Count;
+                    lastLeast = pickUpsInZones[i].Count;
                     emptyZoneIndex = i;
                 }
             }
@@ -413,8 +430,8 @@ namespace AngerStudio.HomingMeSoul.Game
             gravityZones.Value[zoneIndex].transform,
             t);
 
-            if (dropsInZones[zoneIndex] == null) dropsInZones[zoneIndex] = new HashSet<SupplyDrop>();
-            dropsInZones[zoneIndex].Add(d);
+            if (pickUpsInZones[zoneIndex] == null) pickUpsInZones[zoneIndex] = new HashSet<SupplyDrop>();
+            pickUpsInZones[zoneIndex].Add(d);
 
             zoneIndexMap.Add(d, zoneIndex);
 
@@ -452,11 +469,11 @@ namespace AngerStudio.HomingMeSoul.Game
         public void ShowFinishUI()
         {
             FinishUI.SetActive(true);
-            var score = homeTransform.gameObject.GetComponent<ScoreBase>();
+            var score = scoreBase.gameObject.GetComponent<ScoreBase>();
             Total.text = score.scoreR.Value.ToString();
             Dictionary<KeyCode, int> scores = new Dictionary<KeyCode,int>();
             foreach(var player in Players)
-                scores.Add(player.Key, player.Value.totalScore);
+                scores.Add(player.Key, player.Value.scoreThisGame);
 
             List<(int, KeyCode)> Top = new List<(int, KeyCode)>();
             while(Top.Count < 3)

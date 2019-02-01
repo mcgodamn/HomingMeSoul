@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using AngerStudio.HomingMeSoul.Core;
-
+using BA_Studio.StatePattern;
 
 namespace AngerStudio.HomingMeSoul.Game
 {
     public class CharacterProperty : MonoBehaviour
     {
         GameObject m_collideLocation;
-        public GameObject collideLocation
+        public GameObject dockedAt
         {
             get{return m_collideLocation;}
             set{
@@ -26,44 +26,54 @@ namespace AngerStudio.HomingMeSoul.Game
         public TrailRenderer trailRenderer;
 
         public int supplyPoint = 0;
-        public int totalScore = 0;
+        public int scoreThisGame = 0;
 
         public Vector3 ForwardVector;
         public Vector3 gravityAccelator;
         public Vector3 RotatePoint;
-        public bool Ready = true;
-        public bool canCollide = true;
         public FloatReference Stamina;
 
-        public KeyCode m_key;
+        public KeyCode keyCode;
         public int playerIndex;
 
         public int typeIndex;
 
         public AudioSource audio;
 
+        internal StateMachine<CharacterProperty> stateMachine;
+        internal List<CharacterProperty> dragging = new List<CharacterProperty>();
+
+        internal Collider2D collider;
+
         void Awake ()
         {
             this.audio = this.gameObject.AddComponent<AudioSource>();
+            stateMachine = new StateMachine<CharacterProperty>(this);
+            //stateMachine.debugLogOutput += (s) => Debug.Log(s);
+            collider = this.GetComponent<Collider2D>();
+            cFilterOthers = new ContactFilter2D ();
+            cFilterOthers.useTriggers = true;
+            cFilterOthers.useLayerMask = true;
+            cFilterOthers.SetLayerMask(LayerMask.GetMask("GameInteraction"));
         }
 
-        List<CharacterProperty> dryHomies = new List<CharacterProperty>();
 
-        public void PlayerMove()
+        public void PlayerInitOnGameStart ()
         {
-            ForwardVector += gravityAccelator;
-            transform.position = transform.position + ForwardVector * Time.deltaTime;
-            if (Stamina <= 0) ForwardVector = gravityAccelator;
-
-            if (draging) transform.position = dragger.transform.position + relativeVector;
+            stateMachine?.ChangeState(new AtHome(stateMachine));
         }
 
-        public float GetSpeed()
+        public void DoUpdate()
         {
-            return GameCore.Instance.config.Value.speedMultiplier;
+            stateMachine?.Update();
         }
 
-        void fitCircleCollider()
+        public float Speed
+        {
+            get => GameCore.Instance.config.Value.speedMultiplier;
+        }
+
+        internal void fitCircleCollider()
         {
             Vector2 dir = transform.up.normalized;
             transform.position = dir;
@@ -71,19 +81,19 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public void faceLocation()
         {
-            Vector2 direction = transform.position - collideLocation.transform.position;
+            Vector2 direction = transform.position - dockedAt.transform.position;
             transform.up = direction;
         }
 
         public bool isDry;
-        public void setIsDry(bool isDry)
+        public void SetDry(bool isDry)
         {
             this.isDry = isDry;
             normalCharacter.SetActive(!isDry);
             dryCharacter.SetActive(isDry);
         }
 
-        public void setColor(Color color)
+        public void SetColor(Color color)
         {
             glowRenderer.color = color;
             trailRenderer.startColor = color;
@@ -91,9 +101,9 @@ namespace AngerStudio.HomingMeSoul.Game
             trailRenderer.endColor = t;
         }
 
-        public void ReturnSupply()
+        public void TryCollectPickup()
         {
-            var supply = collideLocation.GetComponent<SupplyDrop>();
+            var supply = dockedAt.GetComponent<SupplyDrop>();
             if(supply)
             {
                 supply.Picked(playerIndex);
@@ -102,65 +112,77 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public void ReturnHome()
         {
-            draging = false;
-            onHit(GameCore.Instance.homeTransform.gameObject);
-            GameCore.Instance.homeTransform.gameObject.GetComponent<ScoreBase>().DeliverPickups(m_key, supplyPoint);
-            totalScore += supplyPoint;
-            supplyPoint = 0;
-            fitCircleCollider();
-            GameCore.Instance.EnterHome(m_key);
+            stateMachine.ChangeState(new AtHome(stateMachine));
         }
 
         CharacterProperty dragger;
-        Vector3 relativeVector;
-        bool draging = false;
+        internal Vector3 relativePositionToDragger;
+        bool IsDragging { get => dragging.Count > 0; }
         public void setDragger(CharacterProperty dragger)
         {
-            draging = true;
             this.dragger = dragger;
-            relativeVector = transform.position - dragger.transform.position;
+            relativePositionToDragger = transform.position - dragger.transform.position;
         }
 
-        void onHit(GameObject other)
+        public void TryStartDrag (GameObject g)
         {
-            collideLocation = other;
+            CharacterProperty c = g.GetComponent<CharacterProperty>();
+            if (c == null) return;
+            if (c.stateMachine.CurrentState is FlyingDepleted)
+            {
+                dragging.Add(c);
+
+                c.StartBeingDragged(this);
+            }
+        }
+
+        public void StartRotateOn (SupplyDrop pickup)
+        {
+            stateMachine?.ChangeState(new RotatingOn(stateMachine, pickup.transform));
+            supplyPoint += 1;
+            pickup.Occupied = true;
+            onHit(pickup.gameObject);
+            GameCore.Instance.EnterLocation(this);
+        }
+
+        public void StartBeingDragged (CharacterProperty c)
+        {
+            stateMachine.ChangeState(new Dragged(stateMachine, c));
+        }
+
+        public void StopBeingDragged ()
+        {
+            stateMachine.ChangeState(new FlyingDepleted(stateMachine));
+        }
+
+        internal void onHit(GameObject other)
+        {
+            dockedAt = other;
             faceLocation();
-            canCollide = false;
-            Ready = true;
         }
 
-        void OnTriggerEnter2D(Collider2D other)
+        private void OnTriggerEnter2D (Collider2D other)
         {
-            if (!canCollide || collideLocation == other.gameObject || draging) return;
-            if (other.gameObject.CompareTag("Pickup"))
-            {
-                var supply = other.gameObject.GetComponent<SupplyDrop>();
-                if (supply.typeIndex == typeIndex && !supply.Occupied)
-                {
-                    supplyPoint += 1;
-                    supply.Occupied = true;
-                    onHit(other.gameObject);
-                    GameCore.Instance.EnterLocation(m_key);
-                }
-            }
-            else if (other.gameObject.CompareTag("Home"))
-            {
-                ReturnHome();
-                foreach(var homie in dryHomies)
-                {
-                    homie.ReturnHome();
-                }
-                dryHomies.Clear();
-            }
-            else if (other.gameObject.CompareTag("Player"))
-            {
-                var homie = other.gameObject.GetComponent<CharacterProperty>();
-                if (homie.isDry)
-                {
-                    homie.setDragger(this);
-                    dryHomies.Add(homie);
-                }
-            }
+            colliding = colliding ?? new List<Collider2D>();
+            collidingThisFrame = collidingThisFrame ?? new List<Collider2D>();
+            collidingThisFrame.Add(other);
+            colliding.Add(other);
         }
+
+        private void OnTriggerExit2D (Collider2D other)
+        {
+            colliding = colliding ?? new List<Collider2D>();
+            collidingThisFrame = collidingThisFrame ?? new List<Collider2D>();
+            colliding.Remove(other);
+        }
+
+        void LateUpdate ()
+        {
+            collidingThisFrame?.Clear();
+        }
+
+        public ContactFilter2D cFilterOthers;
+
+        internal List<Collider2D> colliding, collidingThisFrame;
     }
 }

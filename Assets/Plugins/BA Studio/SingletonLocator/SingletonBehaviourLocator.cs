@@ -18,7 +18,7 @@ namespace BA_Studio.UnityLib.SingletonLocator
             instance = null;
         }
         
-        public static void Set (T newT)
+        public static void Set (T newT, bool overwrite = false, System.Action<T> ifOverwriteDoThisOnOriginal = null, System.Action<T> ifNotOverwriteDoThisOnNewT = null)
         {
             lock (m_Lock)
             {
@@ -33,7 +33,17 @@ namespace BA_Studio.UnityLib.SingletonLocator
                 {
                     Debug.Log($"Trying to set Singleton of type {newT.GetType().Name}...instance: " + newT);
                     if (SingletonBehaviourLocator<T>.instance == null) SingletonBehaviourLocator<T>.instance = newT;
-                    if (SingletonBehaviourLocator<T>.instance != newT) MonoBehaviour.DestroyImmediate(newT);
+                    if (SingletonBehaviourLocator<T>.instance != newT && !overwrite)
+                    {
+                        ifNotOverwriteDoThisOnNewT?.Invoke(newT);
+                        MonoBehaviour.DestroyImmediate(newT);
+                    }
+                    else 
+                    {
+                        ifOverwriteDoThisOnOriginal?.Invoke(Instance);
+                        MonoBehaviour.DestroyImmediate(Instance);
+                        SingletonBehaviourLocator<T>.instance = newT;
+                    }
                     
                 }
                 else
@@ -41,7 +51,12 @@ namespace BA_Studio.UnityLib.SingletonLocator
                     Debug.Log($"EditorMode: Force setting Singleton of type {newT.GetType().Name}...instance: " + newT);
                     SingletonBehaviourLocator<T>.instance = newT;                
                 }
-                MonoBehaviour.DontDestroyOnLoad(newT);  
+                
+				#if DDOL_EXT
+                DDOLRegistry.DontDestroyOnLoad(newT.gameObject);  
+                #else
+                MonoBehaviour.DontDestroyOnLoad(newT);
+                #endif
             }
         }
     }

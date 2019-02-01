@@ -1,8 +1,16 @@
 {
     "name": "BA_Studio_General",
     "references": [
-        "NoBrainer_GlobalVariables"
+        "NoBrainer_GlobalVariables",
+        "BA_Studio_Utilities",
+        "DylanEngelman_TagSelector"
     ],
+    "optionalUnityReferences": [],
     "includePlatforms": [],
-    "excludePlatforms": []
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
 }

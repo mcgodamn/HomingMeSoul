@@ -15,7 +15,14 @@ namespace BA_Studio.UnityLib.GameObjectPool
 		public GameObjectPool (GameObject prefab, int defaultPop = 5, Transform parent = null, bool dontDestroyOnLoad = true) {
 			if (parent != null) PoolGO = parent.gameObject;
 			TryInit();
-			if (dontDestroyOnLoad) MonoBehaviour.DontDestroyOnLoad(PoolGO);
+			if (dontDestroyOnLoad)
+			{
+				#if DDOL_EXT
+				DDOLRegistry.DontDestroyOnLoad(PoolGO);
+				#else
+				MonoBehaviour.DontDestroyOnLoad(PoolGO);
+				#endif
+			}
 			pooledPrefab = new GameObject[1] { prefab };
 			poolList.AddRange(NewPooledObjects(defaultPop));
 		}
@@ -23,7 +30,14 @@ namespace BA_Studio.UnityLib.GameObjectPool
 		public GameObjectPool (GameObject[] prefabs, int defaultPop = 5, Transform parent = null, bool dontDestroyOnLoad = true) {
 			if (parent != null) PoolGO = parent.gameObject;
 			TryInit();
-			if (dontDestroyOnLoad) MonoBehaviour.DontDestroyOnLoad(PoolGO);
+			if (dontDestroyOnLoad)
+			{
+				#if DDOL_EXT
+				DDOLRegistry.DontDestroyOnLoad(PoolGO);
+				#else
+				MonoBehaviour.DontDestroyOnLoad(PoolGO);
+				#endif
+			}
 			pooledPrefab = prefabs;
 			poolList.AddRange(NewPooledObjects(defaultPop));
 		}
@@ -31,7 +45,14 @@ namespace BA_Studio.UnityLib.GameObjectPool
 		public GameObjectPool (T prefab, int defaultPop = 5, Transform parent = null, bool dontDestroyOnLoad = true) {
 			if (parent != null) PoolGO = parent.gameObject;
 			TryInit();
-			if (dontDestroyOnLoad) MonoBehaviour.DontDestroyOnLoad(PoolGO);
+			if (dontDestroyOnLoad)
+			{
+				#if DDOL_EXT
+				DDOLRegistry.DontDestroyOnLoad(PoolGO);
+				#else
+				MonoBehaviour.DontDestroyOnLoad(PoolGO);
+				#endif
+			}
 			pooledPrefab = new GameObject[1] { prefab.gameObject };
 			poolList.AddRange(NewPooledObjects(defaultPop));
 		}
@@ -39,7 +60,14 @@ namespace BA_Studio.UnityLib.GameObjectPool
 		public GameObjectPool (T[] prefabs, int defaultPop = 5, Transform parent = null, bool dontDestroyOnLoad = true) {
 			if (parent != null) PoolGO = parent.gameObject;
 			TryInit();
-			if (dontDestroyOnLoad) MonoBehaviour.DontDestroyOnLoad(PoolGO);
+			if (dontDestroyOnLoad)
+			{
+				#if DDOL_EXT
+				DDOLRegistry.DontDestroyOnLoad(PoolGO);
+				#else
+				MonoBehaviour.DontDestroyOnLoad(PoolGO);
+				#endif
+			}
 			pooledPrefab = new GameObject[prefabs.Length];
 			for (int i = 0; i < prefabs.Length; ++i) pooledPrefab[i] = prefabs[i].gameObject;
 			poolList.AddRange(NewPooledObjects(defaultPop));
@@ -77,7 +105,7 @@ namespace BA_Studio.UnityLib.GameObjectPool
 		}
 
 		public void ReturnToPool (params T[] returning) {
-			foreach (T obj in returning) obj.transform.SetParent(PoolGO.transform, false);
+			foreach (T obj in returning) obj.transform.SetParent(PoolGO.transform, true);
 			poolList.AddRange(returning);	
 		}
 

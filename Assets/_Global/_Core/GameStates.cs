@@ -31,6 +31,7 @@ namespace AngerStudio.HomingMeSoul.Game
         }
         public override void OnEntered ()
         {
+            foreach (CharacterProperty cp in Context.characters) cp.PlayerInitOnGameStart();
             ChangeState(new GameOngoing(StateMachine));
         } 
 
@@ -42,11 +43,12 @@ namespace AngerStudio.HomingMeSoul.Game
 
     public class GameOngoing : State<GameCore>
     {
-        float GAME_TIME = 60;
+        float GAME_TIME;
         float countDown;
 
         public GameOngoing (StateMachine<GameCore> machine) : base(machine)
         {
+            GAME_TIME = Context.config.Value.gamingTime;
             countDown = Time.time;
         }
 
@@ -54,11 +56,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public override void Update ()
         {
-            Context.ReceieveInput();
-            Context.DecentStamina();
-            Context.PlayerMove();
-            Context.RotatePlayerInHome();
-            Context.RotatePlayerOnLocation();
+            Context.UpdatePlayers();
 
             
             //Rotate the supply belt
@@ -74,6 +72,7 @@ namespace AngerStudio.HomingMeSoul.Game
                 Context.SpawnSupplyInRandomZone(Context.GetLeastPickupTypeIndex());
                 lastSupplyTime = Time.time;
             }
+
             //Free SP
             if (Time.time - lastPassiveSpGainTime > Context.config.Value.passiveSPGainDelayInSconds)
             {
@@ -92,6 +91,9 @@ namespace AngerStudio.HomingMeSoul.Game
             {
                 Context.countDownText.text = ((int)(GAME_TIME - (Time.time - countDown))).ToString();
             }
+
+            // Profit
+            Context.scoreBase.DoUpdate();     
         }
     }
 
@@ -122,7 +124,7 @@ namespace AngerStudio.HomingMeSoul.Game
         {
             if (SimpleInput.GetKeyDown(KeyCode.Space))
             {
-                
+                HomingMeSoul.Core.AppCore.Instance.RestartApp();
             }
         }
     }

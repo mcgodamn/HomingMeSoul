@@ -25,7 +25,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public void SetType (int type)
         {
-            typeIndex = AppCore.Instance.orderedPlayers[type].assginedPickupType;
+            typeIndex = type;
             GetComponentInChildren<SpriteRenderer>().sprite = AppCore.Instance.config.usablePickupSprites[type];
         }
     }

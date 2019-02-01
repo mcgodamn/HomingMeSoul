@@ -1,0 +1,16 @@
+{
+    "name": "DylanEngelman_TagSelector_Editor",
+    "references": [
+        "DylanEngelman_TagSelector"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}

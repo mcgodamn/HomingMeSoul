@@ -1,0 +1,14 @@
+{
+    "name": "BA_Studio_Utilities",
+    "references": [
+        "DylanEngelman_TagSelector"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}
