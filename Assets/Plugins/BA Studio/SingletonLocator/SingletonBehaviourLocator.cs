@@ -29,31 +29,22 @@ namespace BA_Studio.UnityLib.SingletonLocator
                     return;
                 }
                 
-                if (!Application.isEditor)
+                Debug.Log($"Trying to set Singleton of type {newT.GetType().Name}...instance: " + newT);
+                if (SingletonBehaviourLocator<T>.instance == null) SingletonBehaviourLocator<T>.instance = newT;
+                if (SingletonBehaviourLocator<T>.instance != newT)
                 {
-                    Debug.Log($"Trying to set Singleton of type {newT.GetType().Name}...instance: " + newT);
-                    if (SingletonBehaviourLocator<T>.instance == null) SingletonBehaviourLocator<T>.instance = newT;
-                    if (SingletonBehaviourLocator<T>.instance != newT)
+                    if (!overwrite)
                     {
-                        if (!overwrite)
-                        {
-                            ifNotOverwriteDoThisOnNewT?.Invoke(newT);
-                            MonoBehaviour.DestroyImmediate(newT);
-                        }
-                        else 
-                        {
-                            ifOverwriteDoThisOnOriginal?.Invoke(Instance);
-                            MonoBehaviour.DestroyImmediate(Instance);
-                            SingletonBehaviourLocator<T>.instance = newT;
-                        }
+                        ifNotOverwriteDoThisOnNewT?.Invoke(newT);
+                        MonoBehaviour.DestroyImmediate(newT);
                     }
-                    
+                    else 
+                    {
+                        ifOverwriteDoThisOnOriginal?.Invoke(Instance);
+                        MonoBehaviour.DestroyImmediate(Instance);
+                        SingletonBehaviourLocator<T>.instance = newT;
+                    }
                 }
-                // else
-                // {
-                //     Debug.Log($"EditorMode: Force setting Singleton of type {newT.GetType().Name}...instance: " + newT);
-                //     SingletonBehaviourLocator<T>.instance = newT;                
-                // }
                 
                 try
                 {
