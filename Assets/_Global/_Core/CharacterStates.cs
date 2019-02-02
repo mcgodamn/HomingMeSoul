@@ -22,7 +22,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
             Context.onHit(GameCore.Instance.scoreBase.gameObject);
             Context.fitCircleCollider();
-            foreach (CharacterProperty cp in Context.dragging.ToArray()) cp.StopBeingDragged(isBackToHome:true);
+            foreach (CharacterProperty cp in Context.dragging.ToArray()) cp.StopBeingDragged();
         }
 
         public override void Update()
@@ -109,6 +109,7 @@ namespace AngerStudio.HomingMeSoul.Game
         public override void OnEntered ()
         {
             Context.SetDry(true);
+            Context.collidingThisFrame = new List<Collider2D>(Context.colliding);
         }
 
         public override void Update()
