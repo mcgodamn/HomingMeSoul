@@ -150,9 +150,10 @@ namespace AngerStudio.HomingMeSoul.Game
             stateMachine.ChangeState(new Dragged(stateMachine, c));
         }
 
-        public void StopBeingDragged ()
+        public void StopBeingDragged (bool isBackToHome = false)
         {
-            stateMachine.ChangeState(new FlyingDepleted(stateMachine));
+            if (isBackToHome) stateMachine.ChangeState(new AtHome(stateMachine));
+            else stateMachine.ChangeState(new FlyingDepleted(stateMachine));
         }
 
         internal void onHit(GameObject other)
