@@ -51,7 +51,6 @@ namespace NoBrainer.Utility
 
         #region Editor Only
 
-#if UNITY_EDITOR
 
         [Header("Editor Only Settings"), Space]
 
@@ -66,6 +65,7 @@ namespace NoBrainer.Utility
         private T originalValue;
         private bool backupCreated = false;
 
+#if UNITY_EDTIOR
         public void OnEnable()
         {
             // If this is an asset stored on the disk, we make a backup of it's values.
@@ -99,6 +99,8 @@ namespace NoBrainer.Utility
             }
         }
 
+#endif
+
         public bool ReadOnly
         {
             get { return readOnly; }
@@ -109,8 +111,6 @@ namespace NoBrainer.Utility
         {
             get { return backupCreated; }
         }
-
-#endif
 
         #endregion
     }

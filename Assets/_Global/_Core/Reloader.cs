@@ -20,7 +20,11 @@ namespace BA_Studio.UnityLib.Utilities
 		public void Reload ()
 		{
 			DontDestroyOnLoad(this);
-            foreach (var root in DDOLRegistry.GetDDOLs().Union(this.gameObject.scene.GetRootGameObjects()))
+			List<GameObject> t = new List<GameObject>(this.gameObject.scene.GetRootGameObjects());
+			#if DDOL_EXT
+			t.Union(DDOLRegistry.GetDDOLs());
+			#endif
+            foreach (var root in t)
             {
 				if ( ! dontUnloadFilter.Match(root as GameObject)) continue;
                 else

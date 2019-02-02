@@ -64,8 +64,12 @@ namespace AngerStudio.HomingMeSoul.Core
             //stateMachine.debugLogOutput += (s) => Debug.Log(s);
             stateMachine.ChangeState(new Awaking(stateMachine));
 
-            SingletonBehaviourLocator<AppCore>.Set(this);
+        }
 
+        void Start ()
+        {
+
+            SingletonBehaviourLocator<AppCore>.Set(this);
         }
 
         void Update ()

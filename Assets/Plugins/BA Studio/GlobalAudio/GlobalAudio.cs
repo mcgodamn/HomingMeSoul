@@ -15,7 +15,6 @@ namespace BA_Studio.UnityLib.GlobalAudio
 
 		void Awake ()
 		{
-			SingletonBehaviourLocator<GlobalAudio>.Set(this, false, null, (ga) => { SingletonBehaviourLocator<GlobalAudio>.Instance.preLoadedClips.AddRange(ga.preLoadedClips); } );
 			audioSources = new Dictionary<string, AudioSource>();
 			audioSourcesBackUp = new Dictionary<string, AudioSource>();
 			audioSources.Add("Default", this.gameObject.AddComponent<AudioSource>());
@@ -24,6 +23,12 @@ namespace BA_Studio.UnityLib.GlobalAudio
 			audioSourcesBackUp.Add("Default", this.gameObject.AddComponent<AudioSource>());
 			audioSourcesBackUp["Default"].playOnAwake = false;
 			audioSourcesBackUp["Default"].bypassReverbZones = true;
+		}
+
+		void Start ()
+		{
+			SingletonBehaviourLocator<GlobalAudio>.Set(this, false, null, (ga) => { SingletonBehaviourLocator<GlobalAudio>.Instance.preLoadedClips.AddRange(ga.preLoadedClips); } );
+
 		}
 
 		public static void PlayPreLoadedClipByID (string ID, string channel = "Default")
