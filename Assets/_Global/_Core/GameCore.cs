@@ -468,43 +468,41 @@ namespace AngerStudio.HomingMeSoul.Game
         public TMPro.TextMeshProUGUI countDownText;
         public GameObject FinishUI;
         public TMPro.TextMeshProUGUI Total;
-        public TMPro.TextMeshProUGUI[] PanelScore, PanelKey;
+        public GameObject[] PlayerPanels;
 
         public void ShowFinishUI()
         {
-            FinishUI.SetActive(true);
-            var score = scoreBase.gameObject.GetComponent<ScoreBase>();
-            Total.text = score.scoreR.Value.ToString();
-            Dictionary<KeyCode, int> scores = new Dictionary<KeyCode,int>();
-            foreach(var player in Players)
-                scores.Add(player.Key, player.Value.scoreThisGame);
-
-            List<(int, KeyCode)> Top = new List<(int, KeyCode)>();
-            while(Top.Count < 3)
-            {
-                if (scores.Count <= 0) break;
-                KeyCode key = KeyCode.Q;
-                int s = -1;
-
-                foreach(var ds in scores)
-                {
-                    if (ds.Value > s)
-                    {
-                        key = ds.Key;
-                        s = ds.Value;
-                    } 
-                }
-                Top.Add((s,key));
-                scores.Remove(key);
-            }
-
-            for(int i = 0; i < Top.Count; i++)
-            {
-                PanelScore[i].text = Top[i].Item1.ToString();
-                PanelKey[i].text = Top[i].Item2.ToString();
-            }
             
+            List<TMPro.TextMeshProUGUI> PanelScore = new List<TMPro.TextMeshProUGUI>();
+            List<TMPro.TextMeshProUGUI> PanelKey = new List<TMPro.TextMeshProUGUI>();
+
+            foreach(var panel in PlayerPanels)
+            {
+                PanelScore.Add(panel.transform.GetChild(0).GetComponent<TMPro.TextMeshProUGUI>());
+                PanelKey.Add(panel.transform.GetChild(1).GetComponent<TMPro.TextMeshProUGUI>());
+                panel.SetActive(false);
+            }
+
+            FinishUI.SetActive(true);
+            ShowScores();
+
+            void ShowScores()
+            {
+                var score = scoreBase.gameObject.GetComponent<ScoreBase>();
+                Total.text = score.scoreR.Value.ToString();
+                
+                Dictionary<KeyCode, int> scores = new Dictionary<KeyCode, int>();
+                foreach (var player in Players)
+                    scores.Add(player.Key, player.Value.scoreThisGame);
+
+                var Top3 = scores.OrderByDescending(n => n.Value).Take(3);
+                foreach ((var value, int i) in Top3.Select((value, i) => (value, i)))
+                {
+                    PlayerPanels[i].SetActive(true);
+                    PanelScore[i].text = value.Value.ToString();
+                    PanelKey[i].text = value.Key.ToString();
+                }
+            }
         }
-        
     }
 }
