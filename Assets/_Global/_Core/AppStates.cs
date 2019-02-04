@@ -18,6 +18,7 @@ namespace AngerStudio.HomingMeSoul.Core
 
         public override void OnEntered ()
         {
+            Context.ToggleCastingscreen(false);
             ChangeState(new TitleScreen(StateMachine));
         }
 
@@ -82,7 +83,7 @@ namespace AngerStudio.HomingMeSoul.Core
 
         public override void OnEntered ()
         {
-            Context.countDownText.enabled = true;
+            Context.ToggleCastingscreen(true);
             CountdownEnd();
         }
 
