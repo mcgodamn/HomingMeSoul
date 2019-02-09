@@ -121,6 +121,13 @@ namespace AngerStudio.HomingMeSoul.Core
             activePlayers.Remove(slot);
         }
 
+        internal void ToggleCastingscreen(bool enable)
+        {
+            countDownText.enabled = enable;
+            // cSPanel.gameObject.SetActive(enable);
+        }
+
+
         [System.Serializable]
         public class PlayerProfile
         {

@@ -152,7 +152,7 @@ namespace AngerStudio.HomingMeSoul.Game
 
         public void StopBeingDragged ()
         {
-            stateMachine.ChangeState(new FlyingDepleted(stateMachine));
+            stateMachine.ChangeState(new FlyingDepleted(stateMachine),true);
         }
 
         internal void onHit(GameObject other)
