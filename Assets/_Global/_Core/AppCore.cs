@@ -124,7 +124,7 @@ namespace AngerStudio.HomingMeSoul.Core
         internal void ToggleCastingscreen(bool enable)
         {
             countDownText.enabled = enable;
-            cSPanel.enabled = enable;
+            // cSPanel.gameObject.SetActive(enable);
         }
 
 
